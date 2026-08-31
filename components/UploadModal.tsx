@@ -327,7 +327,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
                               
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Sector</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
                                 <select
                                   className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
                                   value={item.formData.sector}
@@ -342,7 +342,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category</label>
                                 <select
                                   className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none disabled:bg-gray-100 disabled:text-gray-400"
                                   value={item.formData.category}
