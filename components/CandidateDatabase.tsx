@@ -1,7 +1,11 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Search, UploadCloud, ChevronRight, X, Loader2, Code, Stethoscope, Settings, Plus, FileText, ChevronDown, CheckCircle, AlertCircle, ArrowDownCircle, Pencil, Trash2 } from 'lucide-react'
+import {
+  Search, UploadCloud, ChevronRight, X, Loader2, Code, Stethoscope, Settings, Plus,
+  FileText, ChevronDown, CheckCircle, AlertCircle, ArrowDownCircle, Pencil, Trash2,
+  CheckSquare, Square, SquareCheck
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'
@@ -13,6 +17,8 @@ interface CandidateDatabaseProps {
   availableCompanies?: string[]
   savedSectors?: string[]
 }
+
+const STAGE_OPTIONS = ['New', 'Screening', 'Interview', 'Offer', 'Hired', 'Rejected']
 
 export default function CandidateDatabase({ initialCandidates, availableCompanies = [], savedSectors = [] }: CandidateDatabaseProps) {
   const router = useRouter()
@@ -43,6 +49,11 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   const [analyzing, setAnalyzing] = useState(false)
   const [embedding, setEmbedding] = useState(false)
   const [progress, setProgress] = useState(0)
+
+  // ── Bulk selection state ──────────────────────────────────────────────────
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkStatusDropdownOpen, setBulkStatusDropdownOpen] = useState(false)
+  const [bulkLoading, setBulkLoading] = useState(false)
 
   // Calculate sector statistics
   const sectors = useMemo(() => {
@@ -85,6 +96,9 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
     return matchesSearch && matchesCategory
   })
 
+  const allFilteredSelected =
+    filteredCandidates.length > 0 && filteredCandidates.every(c => selectedIds.has(c.id))
+
   const openUploadModal = () => {
     setIsUploadModalOpen(true)
   }
@@ -95,8 +109,97 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
 
   const getStatusStyle = (status: string) => {
     if (status?.toLowerCase() === 'rejected') return 'bg-red-100 text-red-700'
-    if (status?.toLowerCase().includes('interview')) return 'bg-green-100 text-green-700'
+    if (status?.toLowerCase().includes('interview')) return 'bg-blue-100 text-blue-700'
+    if (status?.toLowerCase() === 'hired') return 'bg-emerald-100 text-emerald-700'
+    if (status?.toLowerCase() === 'offer') return 'bg-purple-100 text-purple-700'
+    if (status?.toLowerCase() === 'screening') return 'bg-yellow-100 text-yellow-700'
     return 'bg-green-100 text-green-700' 
+  }
+
+  // ── Selection Helpers ─────────────────────────────────────────────────────
+
+  const toggleSelect = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) {
+      // Deselect all filtered
+      setSelectedIds(prev => {
+        const next = new Set(prev)
+        filteredCandidates.forEach(c => next.delete(c.id))
+        return next
+      })
+    } else {
+      // Select all filtered
+      setSelectedIds(prev => {
+        const next = new Set(prev)
+        filteredCandidates.forEach(c => next.add(c.id))
+        return next
+      })
+    }
+  }
+
+  const clearSelection = () => setSelectedIds(new Set())
+
+  // ── Bulk Action Handlers ──────────────────────────────────────────────────
+
+  const handleBulkStatusChange = async (status: string) => {
+    setBulkStatusDropdownOpen(false)
+    if (selectedIds.size === 0) return
+    setBulkLoading(true)
+
+    const ids = Array.from(selectedIds)
+
+    // Optimistic update
+    setCandidates(prev => prev.map(c =>
+      ids.includes(c.id) ? { ...c, recruitmentStage: status } : c
+    ))
+    clearSelection()
+
+    try {
+      await fetch('/api/candidate/bulk-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'status', candidateIds: ids, status })
+      })
+      router.refresh()
+    } catch (err) {
+      console.error('Bulk status update failed', err)
+    } finally {
+      setBulkLoading(false)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return
+    const count = selectedIds.size
+    if (!confirm(`Delete ${count} candidate${count > 1 ? 's' : ''}? This cannot be undone.`)) return
+
+    setBulkLoading(true)
+    const ids = Array.from(selectedIds)
+
+    // Optimistic update
+    setCandidates(prev => prev.filter(c => !ids.includes(c.id)))
+    clearSelection()
+
+    try {
+      await fetch('/api/candidate/bulk-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', candidateIds: ids })
+      })
+      router.refresh()
+    } catch (err) {
+      console.error('Bulk delete failed', err)
+    } finally {
+      setBulkLoading(false)
+    }
   }
 
   // --- Sector Management Logic ---
@@ -243,8 +346,6 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
     }
   }
 
-  // Removed handleCompanyChange
-
   return (
     <>
       <UploadModal 
@@ -263,13 +364,13 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
       {/* Top Bar */}
       <div className="flex gap-4 items-center">
         <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
           <input 
             type="text" 
             placeholder="Search by name, skill, or sector" 
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition-all"
+            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition-all"
           />
         </div>
         <button 
@@ -292,29 +393,110 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         </p>
       </div>
 
-
-
       {/* List Header */}
-      <div className="flex justify-between items-end mt-4">
-        <h2 className="text-lg font-bold text-gray-900">
-          {activeCategory || 'All Candidates'} · {filteredCandidates.length} resumes
-        </h2>
+      <div className="flex justify-between items-center mt-4">
+        <div className="flex items-center gap-3">
+          {/* Select All checkbox */}
+          <button
+            onClick={toggleSelectAll}
+            className="text-gray-400 hover:text-green-600 transition-colors"
+            title={allFilteredSelected ? 'Deselect all' : 'Select all'}
+          >
+            {allFilteredSelected ? (
+              <CheckSquare className="w-5 h-5 text-green-600" />
+            ) : (
+              <Square className="w-5 h-5" />
+            )}
+          </button>
+          <h2 className="text-lg font-bold text-gray-900">
+            {activeCategory || 'All Candidates'} · {filteredCandidates.length} resumes
+          </h2>
+        </div>
       </div>
+
+      {/* ── Bulk Actions Toolbar ─────────────────────────────────────────── */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg -mt-4">
+          <span className="text-sm font-semibold bg-green-500 text-white px-2.5 py-0.5 rounded-full">
+            {selectedIds.size} selected
+          </span>
+
+          {/* Change Status dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setBulkStatusDropdownOpen(o => !o)}
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            >
+              Change Status
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+            {bulkStatusDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-white text-gray-900 rounded-xl shadow-xl border z-50 w-44 py-1 overflow-hidden">
+                {STAGE_OPTIONS.map(stage => (
+                  <button
+                    key={stage}
+                    onClick={() => handleBulkStatusChange(stage)}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                  >
+                    {stage}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Delete selected */}
+          <button
+            onClick={handleBulkDelete}
+            disabled={bulkLoading}
+            className="flex items-center gap-1.5 bg-red-500/90 hover:bg-red-500 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-60"
+          >
+            {bulkLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+            Delete Selected
+          </button>
+
+          {/* Clear */}
+          <button
+            onClick={clearSelection}
+            className="ml-auto text-gray-400 hover:text-white transition-colors p-1 rounded"
+            title="Clear selection"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Candidate List */}
       <div className="flex flex-col gap-3 pb-20">
         {filteredCandidates.map((candidate) => {
           const date = new Date(candidate.createdAt)
           const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true })}`
+          const isSelected = selectedIds.has(candidate.id)
           
           return (
             <div 
               key={candidate.id} 
               draggable
               onDragStart={(e) => handleDragStart(e, candidate.id)}
-              className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing group"
+              className={`flex items-center justify-between p-4 bg-white border rounded-xl hover:shadow-md transition-all cursor-grab active:cursor-grabbing group ${
+                isSelected ? 'border-green-400 bg-green-50/40 shadow-sm' : 'border-gray-200'
+              }`}
               onClick={() => router.push(`/candidates/${candidate.id}`)}
             >
+              {/* Row checkbox */}
+              <button
+                onClick={(e) => toggleSelect(e, candidate.id)}
+                className={`mr-3 flex-shrink-0 transition-colors ${
+                  isSelected ? 'text-green-600' : 'text-gray-300 hover:text-gray-500'
+                } ${selectedIds.size === 0 ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}
+              >
+                {isSelected ? (
+                  <CheckSquare className="w-5 h-5" />
+                ) : (
+                  <Square className="w-5 h-5" />
+                )}
+              </button>
+
               <div 
                 className="flex items-center gap-4 flex-1"
               >
@@ -355,7 +537,6 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <div 
                 className="flex items-center gap-4 justify-end flex-1"
               >
-                {/* Removed Company Dropdown */}
                 {/* Date / Time */}
                 <div className="flex items-center text-gray-500 text-sm min-w-[120px]">
                   <ArrowDownCircle className="w-4 h-4 mr-1.5 text-gray-400" />

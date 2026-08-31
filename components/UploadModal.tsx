@@ -2,8 +2,16 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { UploadCloud, File as FileIcon, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { UploadCloud, File as FileIcon, X, CheckCircle, AlertCircle, Loader2, AlertTriangle } from 'lucide-react'
 import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'
+import Link from 'next/link'
+
+type DuplicateWarning = {
+  id: string
+  name: string
+  matchedOn: 'email' | 'name'
+  dismissed?: boolean
+}
 
 type UploadItem = {
   id: string
@@ -12,12 +20,14 @@ type UploadItem = {
   candidateId?: string
   suggestedSector?: string
   formData: {
+    name: string
     age: string
     sector: string
     category: string
     yearsOfExperience: string
   }
   error?: string
+  duplicateWarning?: DuplicateWarning
 }
 
 interface UploadModalProps {
@@ -35,6 +45,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
       file,
       status: 'PENDING' as const,
       formData: {
+        name: '',
         age: '',
         sector: '',
         category: '',
@@ -70,9 +81,32 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
       const data = await res.json()
       const candidateId = data.candidate.id
 
+      // Check for duplicates after a successful upload
+      let duplicateWarning: DuplicateWarning | undefined = undefined
+      try {
+        const dupRes = await fetch('/api/candidate/check-duplicate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ candidateId })
+        })
+        if (dupRes.ok) {
+          const dupData = await dupRes.json()
+          if (dupData.duplicate) {
+            duplicateWarning = {
+              id: dupData.duplicate.id,
+              name: dupData.duplicate.name,
+              matchedOn: dupData.matchedOn
+            }
+          }
+        }
+      } catch {
+        // Non-critical: ignore duplicate check errors silently
+      }
+
       updateItem(item.id, { 
         status: 'NEEDS_FORM', 
         candidateId,
+        duplicateWarning,
         formData: { ...item.formData, sector: '' }
       })
 
@@ -230,6 +264,38 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                       </div>
                     </div>
 
+                    {/* ── Duplicate Warning Banner ── */}
+                    {item.duplicateWarning && !item.duplicateWarning.dismissed && (
+                      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                        <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-amber-800">Possible duplicate detected</p>
+                          <p className="text-xs text-amber-700 mt-0.5">
+                            Matched by <strong>{item.duplicateWarning.matchedOn}</strong> — an existing candidate named{' '}
+                            <Link
+                              href={`/candidates/${item.duplicateWarning.id}`}
+                              target="_blank"
+                              className="underline font-semibold hover:text-amber-900"
+                            >
+                              {item.duplicateWarning.name}
+                            </Link>{' '}
+                            may already be in the system.
+                          </p>
+                        </div>
+                        <button
+                          onClick={() =>
+                            updateItem(item.id, {
+                              duplicateWarning: { ...item.duplicateWarning!, dismissed: true }
+                            })
+                          }
+                          className="text-amber-400 hover:text-amber-600 flex-shrink-0"
+                          title="Dismiss warning"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+
                     {item.status === 'NEEDS_FORM' && (
                       <div className="bg-gray-50 border rounded-lg overflow-hidden mt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x border-gray-200 h-[500px]">
@@ -238,6 +304,17 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                             <h5 className="text-sm font-semibold text-gray-800 mb-4 border-b pb-2">Candidate Details Required</h5>
                             
                             <div className="space-y-4 flex-1">
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Name</label>
+                                <input
+                                  type="text"
+                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  value={item.formData.name}
+                                  onChange={(e) => updateFormData(item.id, 'name', e.target.value)}
+                                  placeholder="e.g. John Smith"
+                                />
+                              </div>
+
                               <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Age</label>
                                 <input

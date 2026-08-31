@@ -1,0 +1,41 @@
+import { NextRequest, NextResponse } from 'next/server'
+import prisma from '@/lib/prisma'
+
+export async function POST(request: NextRequest) {
+  try {
+    const { action, candidateIds, status } = await request.json()
+
+    if (!Array.isArray(candidateIds) || candidateIds.length === 0) {
+      return NextResponse.json({ error: 'candidateIds must be a non-empty array' }, { status: 400 })
+    }
+
+    if (action === 'delete') {
+      // Cascade delete: remove all related records first, then delete candidates
+      await prisma.$transaction([
+        prisma.resume.deleteMany({ where: { candidateId: { in: candidateIds } } }),
+        prisma.chatHistory.deleteMany({ where: { candidateId: { in: candidateIds } } }),
+        prisma.recruiterNote.deleteMany({ where: { candidateId: { in: candidateIds } } }),
+        prisma.interview.deleteMany({ where: { candidateId: { in: candidateIds } } }),
+        prisma.activityLog.deleteMany({ where: { candidateId: { in: candidateIds } } }),
+        prisma.candidate.deleteMany({ where: { id: { in: candidateIds } } }),
+      ])
+      return NextResponse.json({ success: true, deleted: candidateIds.length })
+    }
+
+    if (action === 'status') {
+      if (!status) {
+        return NextResponse.json({ error: 'status is required for status action' }, { status: 400 })
+      }
+      await prisma.candidate.updateMany({
+        where: { id: { in: candidateIds } },
+        data: { recruitmentStage: status }
+      })
+      return NextResponse.json({ success: true, updated: candidateIds.length })
+    }
+
+    return NextResponse.json({ error: 'Invalid action. Use "delete" or "status".' }, { status: 400 })
+  } catch (error: any) {
+    console.error('bulk-action error:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+}

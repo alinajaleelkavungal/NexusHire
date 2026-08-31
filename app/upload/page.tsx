@@ -13,6 +13,7 @@ type UploadItem = {
   candidateId?: string
   suggestedSector?: string
   formData: {
+    name: string
     age: string
     sector: string
     category: string
@@ -31,6 +32,7 @@ export default function UploadPage() {
       file,
       status: 'PENDING' as const,
       formData: {
+        name: '',
         age: '',
         sector: '',
         category: '',
@@ -189,7 +191,7 @@ export default function UploadPage() {
           {items.map((item) => {
             const isProcessing = ['PENDING', 'UPLOADING', 'ANALYZING', 'EMBEDDING'].includes(item.status)
             const categories = item.formData.sector ? SECTOR_CATEGORY_MAP[item.formData.sector] || [] : []
-            const isFormValid = item.formData.age && item.formData.sector && item.formData.category && item.formData.yearsOfExperience
+            const isFormValid = item.formData.name && item.formData.age && item.formData.sector && item.formData.category && item.formData.yearsOfExperience
 
             return (
               <div key={item.id} className="bg-white border rounded-xl p-5 shadow-sm space-y-4">
@@ -242,6 +244,17 @@ export default function UploadPage() {
                     <h5 className="text-sm font-semibold text-gray-800 mb-4 border-b pb-2">Candidate Details Required</h5>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                        <input
+                          type="text"
+                          className="w-full p-2.5 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                          value={item.formData.name}
+                          onChange={(e) => updateFormData(item.id, 'name', e.target.value)}
+                          placeholder="e.g. John Smith"
+                        />
+                      </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Age *</label>
                         <input
