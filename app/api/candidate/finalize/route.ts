@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
-    const { candidateId, name, age, sector, category, yearsOfExperience } = await request.json()
+    const { candidateId, name, age, sector, category, yearsOfExperience, agent } = await request.json()
 
     if (!candidateId) {
       return NextResponse.json({ error: 'Missing candidateId' }, { status: 400 })
@@ -13,12 +13,13 @@ export async function POST(request: NextRequest) {
     
     // Use raw SQL to bypass the Turbopack-cached Prisma Client which is throwing "Unknown argument"
     await prisma.$executeRawUnsafe(
-      `UPDATE Candidate SET name = ?, age = ?, sector = ?, category = ?, yearsOfExperience = ?, recruitmentStage = ? WHERE id = ?`,
+      `UPDATE Candidate SET name = ?, age = ?, sector = ?, category = ?, yearsOfExperience = ?, agent = ?, recruitmentStage = ? WHERE id = ?`,
       name || null,
       parsedAge,
       sector || null,
       category || null,
       yearsOfExperience || null,
+      agent || null,
       'Applied',
       candidateId
     )

@@ -35,6 +35,7 @@ model Candidate {
   age                 Int?
   sector              String?
   yearsOfExperience   String?
+  agent               String?
   resumes             Resume[]
   chatHistory         ChatHistory[]
   recruiterNotes      RecruiterNote[]

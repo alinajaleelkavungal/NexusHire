@@ -25,6 +25,7 @@ type UploadItem = {
     sector: string
     category: string
     yearsOfExperience: string
+    agent: string
   }
   error?: string
   duplicateWarning?: DuplicateWarning
@@ -49,7 +50,8 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
         age: '',
         sector: '',
         category: '',
-        yearsOfExperience: ''
+        yearsOfExperience: '',
+        agent: ''
       }
     }))
     setItems(prev => [...prev, ...newItems])
@@ -370,6 +372,17 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                                     <option key={e} value={e}>{e}</option>
                                   ))}
                                 </select>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Agent</label>
+                                <input
+                                  type="text"
+                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  value={item.formData.agent}
+                                  onChange={(e) => updateFormData(item.id, 'agent', e.target.value)}
+                                  placeholder="e.g. Agency or recruiter name"
+                                />
                               </div>
                             </div>
 
