@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { saveFile } from '@/lib/storage'
+import { uploadResume } from '@/services/resumeStorage'
 import { processResumeFile } from '@/services/resume-parser'
 
 export async function POST(request: NextRequest) {
@@ -21,14 +21,20 @@ export async function POST(request: NextRequest) {
     // Generate a unique filename
     const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
     
-    // Save file
-    const fileUrl = await saveFile(file, uniqueFileName)
+    // Read file into memory as Buffer — single read, reused for both parsing and upload
+    const arrayBuffer = await file.arrayBuffer()
+    const fileBuffer = Buffer.from(arrayBuffer)
 
-    // Determine file type from extension since browser MIME types can be unreliable
-    const resolvedType = fileNameLower.endsWith('.pdf') ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    // Determine MIME type from extension (browser MIME types can be unreliable)
+    const resolvedType = fileNameLower.endsWith('.pdf')
+      ? 'application/pdf'
+      : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
-    // Placeholder: Process resume file to get raw text
-    const { rawText } = await processResumeFile(fileUrl, resolvedType)
+    // Parse resume text from the in-memory buffer
+    const { rawText } = await processResumeFile(fileBuffer, resolvedType)
+
+    // Upload to Backblaze B2 — returns the storage key (used as fileUrl in DB)
+    const { key: fileUrl } = await uploadResume(fileBuffer, uniqueFileName, resolvedType)
 
     // Create a Candidate record (placeholder values since AI analysis is not done yet)
     const candidateName = file.name.split('.')[0] || 'Unknown Candidate'

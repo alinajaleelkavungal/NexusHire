@@ -1,54 +1,50 @@
-import fs from 'fs'
-import path from 'path'
+import pdfParse from 'pdf-parse'
+import mammoth from 'mammoth'
 
 export interface ParsedResume {
   rawText: string
-  // Extend this structure as needed later
 }
 
-export async function parsePdf(fileUrl: string): Promise<ParsedResume> {
-  const filePath = path.join(process.cwd(), 'public', fileUrl)
-  
-  if (!fs.existsSync(filePath)) {
-    throw new Error('File not found')
-  }
-
-  // Placeholder for PyMuPDF / pdf-parse logic
-  // For now, returning dummy text
-  const dummyText = `This is a dummy extracted text from the PDF at ${fileUrl}.
-In the future, this will be replaced with actual PDF extraction logic (e.g., pdf-parse or PyMuPDF if shifted to Python).`
-  
+/**
+ * Parses a PDF file from a raw Buffer.
+ * Uses pdf-parse to extract all text content.
+ */
+export async function parsePdf(fileBuffer: Buffer): Promise<ParsedResume> {
+  const data = await pdfParse(fileBuffer)
   return {
-    rawText: dummyText
+    rawText: data.text || ''
   }
 }
 
-export async function parseDocx(fileUrl: string): Promise<ParsedResume> {
-  const filePath = path.join(process.cwd(), 'public', fileUrl)
-
-  if (!fs.existsSync(filePath)) {
-    throw new Error('File not found')
-  }
-
-  // Placeholder for python-docx / mammoth logic
-  // For now, returning dummy text
-  const dummyText = `This is a dummy extracted text from the DOCX at ${fileUrl}.
-In the future, this will be replaced with actual DOCX extraction logic (e.g., mammoth).`
-
+/**
+ * Parses a DOCX file from a raw Buffer.
+ * Uses mammoth to extract all text content.
+ */
+export async function parseDocx(fileBuffer: Buffer): Promise<ParsedResume> {
+  const result = await mammoth.extractRawText({ buffer: fileBuffer })
   return {
-    rawText: dummyText
+    rawText: result.value || ''
   }
 }
 
-export async function processResumeFile(fileUrl: string, fileType: string): Promise<ParsedResume> {
+/**
+ * Detects the file type and delegates to the appropriate parser.
+ * Accepts a raw in-memory Buffer — no disk reads or HTTP fetches.
+ *
+ * @param fileBuffer  - Raw bytes of the uploaded file
+ * @param fileType    - MIME type string (e.g. 'application/pdf')
+ */
+export async function processResumeFile(fileBuffer: Buffer, fileType: string): Promise<ParsedResume> {
   if (fileType === 'application/pdf') {
-    return parsePdf(fileUrl)
-  } else if (
-    fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+    return parsePdf(fileBuffer)
+  }
+
+  if (
+    fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
     fileType === 'application/msword'
   ) {
-    return parseDocx(fileUrl)
+    return parseDocx(fileBuffer)
   }
-  
-  throw new Error('Unsupported file type')
+
+  throw new Error(`Unsupported file type: ${fileType}`)
 }
