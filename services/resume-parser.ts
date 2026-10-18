@@ -1,5 +1,9 @@
-import pdfParse from 'pdf-parse'
-import mammoth from 'mammoth'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { PDFParse } = require('pdf-parse')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const mammoth = require('mammoth') as {
+  extractRawText: (opts: { buffer: Buffer }) => Promise<{ value: string }>
+}
 
 export interface ParsedResume {
   rawText: string
@@ -7,12 +11,29 @@ export interface ParsedResume {
 
 /**
  * Parses a PDF file from a raw Buffer.
- * Uses pdf-parse to extract all text content.
+ * Uses pdf-parse (v2) PDFParse class to extract all text content.
  */
 export async function parsePdf(fileBuffer: Buffer): Promise<ParsedResume> {
-  const data = await pdfParse(fileBuffer)
-  return {
-    rawText: data.text || ''
+  let parser: any
+  try {
+    parser = new PDFParse({ data: fileBuffer })
+    const data = await parser.getText()
+    return {
+      rawText: data?.text || ''
+    }
+  } catch (error: any) {
+    console.warn('PDF text extraction error:', error?.message || error)
+    return {
+      rawText: ''
+    }
+  } finally {
+    if (parser && typeof parser.destroy === 'function') {
+      try {
+        await parser.destroy()
+      } catch {
+        // Ignore cleanup error
+      }
+    }
   }
 }
 
@@ -21,9 +42,16 @@ export async function parsePdf(fileBuffer: Buffer): Promise<ParsedResume> {
  * Uses mammoth to extract all text content.
  */
 export async function parseDocx(fileBuffer: Buffer): Promise<ParsedResume> {
-  const result = await mammoth.extractRawText({ buffer: fileBuffer })
-  return {
-    rawText: result.value || ''
+  try {
+    const result = await mammoth.extractRawText({ buffer: fileBuffer })
+    return {
+      rawText: result.value || ''
+    }
+  } catch (error: any) {
+    console.warn('DOCX text extraction error:', error?.message || error)
+    return {
+      rawText: ''
+    }
   }
 }
 

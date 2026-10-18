@@ -28,7 +28,32 @@ type UploadItem = {
     agent: string
   }
   error?: string
+  previewUrl: string
+  showErrors: boolean
   duplicateWarning?: DuplicateWarning
+}
+
+const FIELD_LABELS = {
+  name: 'Name',
+  age: 'Age',
+  sector: 'Category',
+  category: 'Sub Category',
+  yearsOfExperience: 'Experience',
+  agent: 'Agent',
+} as const
+
+type FormErrors = Partial<Record<keyof UploadItem['formData'], string>>
+
+function validateForm(f: UploadItem['formData']): FormErrors {
+  const errors: FormErrors = {}
+  for (const key of Object.keys(FIELD_LABELS) as (keyof typeof FIELD_LABELS)[]) {
+    if (!f[key].trim()) errors[key] = `${FIELD_LABELS[key]} is required`
+  }
+  if (!errors.age) {
+    const age = Number(f.age)
+    if (!Number.isInteger(age) || age < 14 || age > 80) errors.age = 'Enter a valid age (14–80)'
+  }
+  return errors
 }
 
 interface UploadModalProps {
@@ -40,11 +65,15 @@ interface UploadModalProps {
 export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalProps) {
   const [items, setItems] = useState<UploadItem[]>([])
 
+  // Files stay in the browser until the user submits the form — nothing is
+  // uploaded or saved before that.
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newItems = acceptedFiles.map(file => ({
       id: Math.random().toString(36).substring(7),
       file,
-      status: 'PENDING' as const,
+      previewUrl: URL.createObjectURL(file),
+      status: 'NEEDS_FORM' as const,
+      showErrors: false,
       formData: {
         name: '',
         age: '',
@@ -66,71 +95,37 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
     }
   })
 
-  const processFile = async (item: UploadItem) => {
-    updateItem(item.id, { status: 'UPLOADING' })
-    const formData = new FormData()
-    formData.append('file', item.file)
-
+  // Warn about a likely duplicate as soon as a name is typed (nothing is saved yet)
+  const checkDuplicate = async (item: UploadItem) => {
+    const name = item.formData.name.trim()
+    if (!name) return
     try {
-      const res = await fetch('/api/resume/upload', {
+      const res = await fetch('/api/candidate/check-duplicate', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
       })
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({ error: 'Upload failed' }))
-        throw new Error(errData.error || errData.details || 'Upload failed')
-      }
+      if (!res.ok) return
       const data = await res.json()
-      const candidateId = data.candidate.id
-
-      // Check for duplicates after a successful upload
-      let duplicateWarning: DuplicateWarning | undefined = undefined
-      try {
-        const dupRes = await fetch('/api/candidate/check-duplicate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ candidateId })
-        })
-        if (dupRes.ok) {
-          const dupData = await dupRes.json()
-          if (dupData.duplicate) {
-            duplicateWarning = {
-              id: dupData.duplicate.id,
-              name: dupData.duplicate.name,
-              matchedOn: dupData.matchedOn
-            }
-          }
-        }
-      } catch {
-        // Non-critical: ignore duplicate check errors silently
-      }
-
-      updateItem(item.id, { 
-        status: 'NEEDS_FORM', 
-        candidateId,
-        duplicateWarning,
-        formData: { ...item.formData, sector: '' }
+      updateItem(item.id, {
+        duplicateWarning: data.duplicate
+          ? { id: data.duplicate.id, name: data.duplicate.name, matchedOn: data.matchedOn }
+          : undefined
       })
-
-    } catch (err: any) {
-      console.error("Upload error details:", err)
-      updateItem(item.id, { status: 'ERROR', error: err.message })
+    } catch {
+      // Non-critical: ignore duplicate check errors silently
     }
   }
 
+  // Reset and release preview URLs whenever the modal closes
   useEffect(() => {
     if (!isOpen) {
-      setItems([])
+      setItems(prev => {
+        prev.forEach(i => URL.revokeObjectURL(i.previewUrl))
+        return []
+      })
     }
   }, [isOpen])
-
-  useEffect(() => {
-    const pendingItems = items.filter(i => i.status === 'PENDING')
-    pendingItems.forEach(item => {
-      processFile(item)
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items])
 
   const updateItem = (id: string, updates: Partial<UploadItem>) => {
     setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item))
@@ -150,25 +145,35 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
   }
 
   const removeFile = (id: string) => {
-    setItems(prev => prev.filter(i => i.id !== id))
+    setItems(prev => {
+      prev.filter(i => i.id === id).forEach(i => URL.revokeObjectURL(i.previewUrl))
+      return prev.filter(i => i.id !== id)
+    })
   }
 
+  // The CV is uploaded and the candidate is created only here, in one request
   const submitForm = async (item: UploadItem) => {
-    updateItem(item.id, { status: 'FINALIZING' })
+    if (Object.keys(validateForm(item.formData)).length > 0) {
+      updateItem(item.id, { showErrors: true })
+      return
+    }
+
+    updateItem(item.id, { status: 'FINALIZING', error: undefined })
     try {
-      const res = await fetch('/api/candidate/finalize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          candidateId: item.candidateId,
-          ...item.formData
-        })
-      })
-      if (!res.ok) throw new Error('Failed to finalize')
+      const body = new FormData()
+      body.append('file', item.file)
+      Object.entries(item.formData).forEach(([key, value]) => body.append(key, value.trim()))
+
+      const res = await fetch('/api/resume/upload', { method: 'POST', body })
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.error || errData.details || 'Upload failed')
+      }
       updateItem(item.id, { status: 'COMPLETED' })
       onSuccess() // Update the dashboard in the background immediately
     } catch (err: any) {
-      updateItem(item.id, { status: 'ERROR', error: err.message })
+      // Back to the form so the user can fix the problem and retry
+      updateItem(item.id, { status: 'NEEDS_FORM', error: err.message })
     }
   }
 
@@ -178,6 +183,10 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
   const allCompleted = items.length > 0 && items.every(i => i.status === 'COMPLETED')
 
   const handleClose = () => {
+    const unsaved = items.filter(i => i.status === 'NEEDS_FORM' || i.status === 'FINALIZING').length
+    if (unsaved > 0 && !confirm(
+      `${unsaved} CV${unsaved > 1 ? 's have' : ' has'} not been submitted and will be discarded. Close anyway?`
+    )) return
     const hasCompleted = items.some(i => i.status === 'COMPLETED')
     if (hasCompleted) {
       onSuccess()
@@ -193,7 +202,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
         <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Upload CVs</h2>
-            <p className="text-sm text-gray-500 mt-1">Upload and provide intake details for new candidates.</p>
+            <p className="text-sm text-gray-500 mt-1">The CV is saved only after you fill in the details and submit.</p>
           </div>
           <button onClick={handleClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
             <X className="w-6 h-6" />
@@ -221,7 +230,18 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
               {items.map((item) => {
                 const isProcessing = ['PENDING', 'UPLOADING'].includes(item.status)
                 const categories = item.formData.sector ? SECTOR_CATEGORY_MAP[item.formData.sector] || [] : []
-                const isFormValid = true // Allow empty or Nil submissions
+                const errors = validateForm(item.formData)
+                const isFormValid = Object.keys(errors).length === 0
+                const inputClass = (field: keyof FormErrors) =>
+                  `w-full p-2 border rounded-md text-sm bg-white text-gray-900 outline-none focus:ring-1 ${
+                    item.showErrors && errors[field]
+                      ? 'border-red-400 focus:ring-red-400'
+                      : 'focus:ring-green-500'
+                  } disabled:bg-gray-100 disabled:text-gray-400`
+                const fieldError = (field: keyof FormErrors) =>
+                  item.showErrors && errors[field] ? (
+                    <p className="text-xs text-red-600 mt-1">{errors[field]}</p>
+                  ) : null
 
                 return (
                   <div key={item.id} className="bg-white border rounded-xl p-5 shadow-sm space-y-4">
@@ -266,6 +286,13 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                       </div>
                     </div>
 
+                    {item.error && (
+                      <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2 rounded-lg">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
+                        <span>{item.error}</span>
+                      </div>
+                    )}
+
                     {/* ── Duplicate Warning Banner ── */}
                     {item.duplicateWarning && !item.duplicateWarning.dismissed && (
                       <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
@@ -303,35 +330,43 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x border-gray-200 h-[500px]">
                           {/* Left Side: Form */}
                           <div className="p-5 flex flex-col h-full overflow-y-auto">
-                            <h5 className="text-sm font-semibold text-gray-800 mb-4 border-b pb-2">Candidate Details Required</h5>
+                            <h5 className="text-sm font-semibold text-gray-800 mb-4 border-b pb-2">Candidate Details <span className="text-xs font-normal text-gray-500">(all fields required)</span></h5>
                             
                             <div className="space-y-4 flex-1">
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Name</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Name <span className="text-red-500">*</span></label>
                                 <input
                                   type="text"
-                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  required
+                                  className={inputClass('name')}
                                   value={item.formData.name}
                                   onChange={(e) => updateFormData(item.id, 'name', e.target.value)}
+                                  onBlur={() => checkDuplicate(item)}
                                   placeholder="e.g. John Smith"
                                 />
+                                {fieldError('name')}
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Age</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Age <span className="text-red-500">*</span></label>
                                 <input
                                   type="number"
-                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  required
+                                  min={14}
+                                  max={80}
+                                  className={inputClass('age')}
                                   value={item.formData.age}
                                   onChange={(e) => updateFormData(item.id, 'age', e.target.value)}
                                   placeholder="e.g. 28"
                                 />
+                                {fieldError('age')}
                               </div>
-                              
+
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Category <span className="text-red-500">*</span></label>
                                 <select
-                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  required
+                                  className={inputClass('sector')}
                                   value={item.formData.sector}
                                   onChange={(e) => updateFormData(item.id, 'sector', e.target.value)}
                                 >
@@ -341,12 +376,14 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                                     <option key={s} value={s}>{s}</option>
                                   ))}
                                 </select>
+                                {fieldError('sector')}
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category <span className="text-red-500">*</span></label>
                                 <select
-                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none disabled:bg-gray-100 disabled:text-gray-400"
+                                  required
+                                  className={inputClass('category')}
                                   value={item.formData.category}
                                   onChange={(e) => updateFormData(item.id, 'category', e.target.value)}
                                   disabled={!item.formData.sector}
@@ -357,12 +394,14 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                                     <option key={c} value={c}>{c}</option>
                                   ))}
                                 </select>
+                                {fieldError('category')}
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Experience</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Experience <span className="text-red-500">*</span></label>
                                 <select
-                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  required
+                                  className={inputClass('yearsOfExperience')}
                                   value={item.formData.yearsOfExperience}
                                   onChange={(e) => updateFormData(item.id, 'yearsOfExperience', e.target.value)}
                                 >
@@ -372,27 +411,30 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                                     <option key={e} value={e}>{e}</option>
                                   ))}
                                 </select>
+                                {fieldError('yearsOfExperience')}
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Agent</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Agent <span className="text-red-500">*</span></label>
                                 <input
                                   type="text"
-                                  className="w-full p-2 border rounded-md text-sm bg-white text-gray-900 focus:ring-1 focus:ring-green-500 outline-none"
+                                  required
+                                  className={inputClass('agent')}
                                   value={item.formData.agent}
                                   onChange={(e) => updateFormData(item.id, 'agent', e.target.value)}
                                   placeholder="e.g. Agency or recruiter name"
                                 />
+                                {fieldError('agent')}
                               </div>
                             </div>
 
                             <div className="mt-5 pt-4 border-t flex justify-end">
                               <button
                                 onClick={() => submitForm(item)}
-                                disabled={!isFormValid}
-                                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-5 text-sm rounded shadow-sm transition-colors disabled:opacity-50"
+                                aria-disabled={!isFormValid}
+                                className={`w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-5 text-sm rounded shadow-sm transition-colors ${isFormValid ? '' : 'opacity-60'}`}
                               >
-                                Submit & Finalize
+                                Submit & Save CV
                               </button>
                             </div>
                           </div>
@@ -400,7 +442,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                           {/* Right Side: CV Preview */}
                           <div className="bg-gray-200 h-[500px] hidden md:block">
                             <iframe 
-                              src={URL.createObjectURL(item.file)} 
+                              src={item.previewUrl} 
                               className="w-full h-full border-none"
                               title="CV Preview"
                             />

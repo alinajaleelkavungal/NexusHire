@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { deleteResumeFiles } from '@/services/resumeStorage'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +11,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'delete') {
+      const resumes = await prisma.resume.findMany({
+        where: { candidateId: { in: candidateIds } },
+        select: { fileUrl: true },
+      })
+
       // Cascade delete: remove all related records first, then delete candidates
       await prisma.$transaction([
         prisma.resume.deleteMany({ where: { candidateId: { in: candidateIds } } }),
@@ -19,6 +25,7 @@ export async function POST(request: NextRequest) {
         prisma.activityLog.deleteMany({ where: { candidateId: { in: candidateIds } } }),
         prisma.candidate.deleteMany({ where: { id: { in: candidateIds } } }),
       ])
+      await deleteResumeFiles(resumes.map(r => r.fileUrl))
       return NextResponse.json({ success: true, deleted: candidateIds.length })
     }
 

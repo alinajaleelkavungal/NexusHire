@@ -18,7 +18,27 @@ interface CandidateDatabaseProps {
   savedSectors?: string[]
 }
 
-const STAGE_OPTIONS = ['New', 'Screening', 'Interview', 'Offer', 'Hired', 'Rejected']
+function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+        active
+          ? 'bg-green-600 border-green-600 text-white shadow-sm'
+          : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
+// Keep in sync with STAGES in app/board/page.tsx
+const STAGE_OPTIONS = [
+  'Applied', 'Screening', 'Shortlisted', 'Interview Scheduled',
+  'Technical Interview', 'HR Interview', 'Selected', 'Rejected',
+]
 
 export default function CandidateDatabase({ initialCandidates, availableCompanies = [], savedSectors = [] }: CandidateDatabaseProps) {
   const router = useRouter()
@@ -28,6 +48,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   const [candidates, setCandidates] = useState(initialCandidates)
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(urlSector || null)
+  const [stageFilter, setStageFilter] = useState<string | null>(null)
   
   // Upload Modal State
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
@@ -93,7 +114,8 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
     
     // Filter by activeCategory (which maps to sector now)
     const matchesCategory = activeCategory ? (c.sector === activeCategory || c.category === activeCategory) : true
-    return matchesSearch && matchesCategory
+    const matchesStage = stageFilter ? (c.recruitmentStage || 'Applied') === stageFilter : true
+    return matchesSearch && matchesCategory && matchesStage
   })
 
   const allFilteredSelected =
@@ -110,10 +132,27 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   const getStatusStyle = (status: string) => {
     if (status?.toLowerCase() === 'rejected') return 'bg-red-100 text-red-700'
     if (status?.toLowerCase().includes('interview')) return 'bg-blue-100 text-blue-700'
-    if (status?.toLowerCase() === 'hired') return 'bg-emerald-100 text-emerald-700'
-    if (status?.toLowerCase() === 'offer') return 'bg-purple-100 text-purple-700'
+    if (status?.toLowerCase() === 'selected') return 'bg-emerald-100 text-emerald-700'
+    if (status?.toLowerCase() === 'shortlisted') return 'bg-purple-100 text-purple-700'
     if (status?.toLowerCase() === 'screening') return 'bg-yellow-100 text-yellow-700'
-    return 'bg-green-100 text-green-700' 
+    return 'bg-gray-100 text-gray-700'
+  }
+
+  const handleStageChange = async (candidateId: string, newStage: string) => {
+    const previous = candidates.find(c => c.id === candidateId)?.recruitmentStage
+    setCandidates(prev => prev.map(c => c.id === candidateId ? { ...c, recruitmentStage: newStage } : c))
+    try {
+      const res = await fetch(`/api/candidates/${candidateId}/stage`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage: newStage })
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      router.refresh()
+    } catch (err) {
+      console.error('Failed to update stage', err)
+      setCandidates(prev => prev.map(c => c.id === candidateId ? { ...c, recruitmentStage: previous } : c))
+    }
   }
 
   // ── Selection Helpers ─────────────────────────────────────────────────────
@@ -359,47 +398,83 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         onSuccess={() => router.refresh()} 
         candidate={editingCandidate}
       />
-      <div className="p-8 max-w-5xl mx-auto h-full flex flex-col space-y-8 bg-white min-h-screen font-sans">
-      
+      <div className="p-4 sm:p-8 max-w-6xl mx-auto flex flex-col gap-6 min-h-screen">
+
+      {/* Page title */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Candidates</h1>
+        <p className="text-sm text-gray-500 mt-1">Search, filter and manage every resume in one place.</p>
+      </div>
+
       {/* Top Bar */}
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-3 items-center">
         <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
-          <input 
-            type="text" 
-            placeholder="Search by name, skill, or sector" 
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden />
+          <input
+            type="search"
+            aria-label="Search candidates"
+            placeholder="Search by name or skill"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition-all"
+            className="w-full pl-12 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition-all [&::-webkit-search-cancel-button]:hidden"
           />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 rounded-full"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
-        <button 
+        <button
           onClick={openUploadModal}
-          className="flex items-center px-6 py-3 bg-[#22c55e] hover:bg-[#16a34a] rounded-lg text-white font-medium transition-colors shadow-sm"
+          className="flex items-center px-5 py-3 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl text-white font-medium transition-colors shadow-sm whitespace-nowrap"
         >
-          <UploadCloud className="w-5 h-5 mr-2" />
-          Upload CV
+          <UploadCloud className="w-5 h-5 sm:mr-2" />
+          <span className="max-sm:sr-only">Upload CV</span>
         </button>
       </div>
 
-      {/* Upload Banner */}
-      <div 
-        onClick={openUploadModal}
-        className="relative border-2 border-dashed border-green-300 bg-green-50/30 hover:bg-green-50 cursor-pointer rounded-xl p-8 text-center transition-colors flex flex-col items-center justify-center"
-      >
-        <UploadCloud className="h-8 w-8 text-green-600 mb-3" />
-        <p className="text-gray-600 font-medium text-[15px]">
-          Click here to upload CVs and fill Candidate Intake Forms
-        </p>
+      {/* Filters */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by sector">
+          <FilterChip active={!activeCategory} onClick={() => setActiveCategory(null)}>All sectors</FilterChip>
+          {sectors.map(s => (
+            <FilterChip
+              key={s.name}
+              active={activeCategory === s.name}
+              onClick={() => setActiveCategory(activeCategory === s.name ? null : s.name)}
+            >
+              <s.icon className="w-3.5 h-3.5" />
+              {s.name}
+              <span className="text-xs opacity-70">{s.count}</span>
+            </FilterChip>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by stage">
+          <FilterChip active={!stageFilter} onClick={() => setStageFilter(null)}>Any stage</FilterChip>
+          {STAGE_OPTIONS.map(stage => (
+            <FilterChip
+              key={stage}
+              active={stageFilter === stage}
+              onClick={() => setStageFilter(stageFilter === stage ? null : stage)}
+            >
+              {stage}
+            </FilterChip>
+          ))}
+        </div>
       </div>
 
       {/* List Header */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           {/* Select All checkbox */}
           <button
             onClick={toggleSelectAll}
             className="text-gray-400 hover:text-green-600 transition-colors"
+            aria-label={allFilteredSelected ? 'Deselect all' : 'Select all'}
             title={allFilteredSelected ? 'Deselect all' : 'Select all'}
           >
             {allFilteredSelected ? (
@@ -408,15 +483,16 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <Square className="w-5 h-5" />
             )}
           </button>
-          <h2 className="text-lg font-bold text-gray-900">
-            {activeCategory || 'All Candidates'} · {filteredCandidates.length} resumes
+          <h2 className="text-base font-semibold text-gray-900" aria-live="polite">
+            {activeCategory || 'All candidates'}
+            <span className="font-normal text-gray-500"> · {filteredCandidates.length} {filteredCandidates.length === 1 ? 'resume' : 'resumes'}</span>
           </h2>
         </div>
       </div>
 
       {/* ── Bulk Actions Toolbar ─────────────────────────────────────────── */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg -mt-4">
+        <div className="flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg sticky top-3 z-30">
           <span className="text-sm font-semibold bg-green-500 text-white px-2.5 py-0.5 rounded-full">
             {selectedIds.size} selected
           </span>
@@ -478,7 +554,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               key={candidate.id} 
               draggable
               onDragStart={(e) => handleDragStart(e, candidate.id)}
-              className={`flex items-center justify-between p-4 bg-white border rounded-xl hover:shadow-md transition-all cursor-grab active:cursor-grabbing group ${
+              className={`flex items-center justify-between max-lg:flex-wrap gap-y-3 p-4 bg-white border rounded-xl hover:shadow-md hover:border-gray-300 transition-all cursor-pointer active:cursor-grabbing group ${
                 isSelected ? 'border-green-400 bg-green-50/40 shadow-sm' : 'border-gray-200'
               }`}
               onClick={() => router.push(`/candidates/${candidate.id}`)}
@@ -486,9 +562,10 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               {/* Row checkbox */}
               <button
                 onClick={(e) => toggleSelect(e, candidate.id)}
+                aria-label={`${isSelected ? 'Deselect' : 'Select'} ${candidate.name}`}
                 className={`mr-3 flex-shrink-0 transition-colors ${
                   isSelected ? 'text-green-600' : 'text-gray-300 hover:text-gray-500'
-                } ${selectedIds.size === 0 ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}
+                } ${selectedIds.size === 0 ? 'lg:opacity-0 lg:group-hover:opacity-100 focus-visible:opacity-100' : 'opacity-100'}`}
               >
                 {isSelected ? (
                   <CheckSquare className="w-5 h-5" />
@@ -505,7 +582,15 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                 </div>
 
                 <div className="flex flex-col">
-                  <h3 className="font-bold text-gray-900 text-base group-hover:text-green-700 transition-colors">{candidate.name}</h3>
+                  <h3 className="font-semibold text-gray-900 text-base group-hover:text-green-700 transition-colors">
+                    <Link
+                      href={`/candidates/${candidate.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="hover:underline"
+                    >
+                      {candidate.name}
+                    </Link>
+                  </h3>
                   <div className="flex items-center flex-wrap gap-2 mt-1">
                     {candidate.sector && (
                       <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.sector}</span>
@@ -526,9 +611,10 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                         setEditingCandidate(candidate);
                       }}
                       className="ml-1 text-gray-400 hover:text-green-600 flex items-center gap-1 text-xs font-medium transition-colors"
+                      aria-label={`Edit details for ${candidate.name}`}
                     >
                       <Pencil className="w-3 h-3" />
-                      Edit Details
+                      Edit
                     </button>
                   </div>
                 </div>
@@ -545,9 +631,18 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
 
                 {/* Stage tag */}
                 <div className="flex items-center gap-3">
-                  <span className={`px-4 py-1 rounded-full text-sm font-semibold ${getStatusStyle(candidate.recruitmentStage)}`}>
-                    {candidate.recruitmentStage || 'New'}
-                  </span>
+                  <select
+                    value={candidate.recruitmentStage || 'Applied'}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleStageChange(candidate.id, e.target.value)}
+                    aria-label={`Status for ${candidate.name}`}
+                    title="Change status"
+                    className={`pl-3 pr-7 py-1 rounded-full text-sm font-semibold border-0 cursor-pointer appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:0.7rem] bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")] ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}
+                  >
+                    {[...new Set([candidate.recruitmentStage || 'Applied', ...STAGE_OPTIONS])].map(stage => (
+                      <option key={stage} value={stage}>{stage}</option>
+                    ))}
+                  </select>
                 </div>
                 
                 {/* Actions */}
@@ -556,6 +651,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                      onClick={(e) => handleDeleteCandidate(e, candidate.id)}
                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
                      title="Delete Candidate"
+                     aria-label={`Delete ${candidate.name}`}
                    >
                      <Trash2 className="w-4 h-4" />
                    </button>
@@ -568,8 +664,26 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         })}
 
         {filteredCandidates.length === 0 && (
-          <div className="text-center py-20 border border-gray-200 rounded-xl text-gray-500 bg-gray-50">
-            No candidates found.
+          <div className="flex flex-col items-center text-center py-16 px-6 border border-dashed border-gray-300 rounded-xl bg-white">
+            <Search className="w-10 h-10 text-gray-300 mb-3" aria-hidden />
+            <p className="font-medium text-gray-900">No candidates found</p>
+            <p className="text-sm text-gray-500 mt-1 mb-4">
+              {candidates.length === 0
+                ? 'Upload your first CV to get started.'
+                : 'Try a different search or clear your filters.'}
+            </p>
+            {candidates.length === 0 ? (
+              <button onClick={openUploadModal} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                Upload CV
+              </button>
+            ) : (
+              <button
+                onClick={() => { setSearch(''); setActiveCategory(null); setStageFilter(null) }}
+                className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         )}
       </div>

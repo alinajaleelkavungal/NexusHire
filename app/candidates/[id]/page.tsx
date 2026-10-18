@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import { Mail, Phone, MapPin, ClipboardList, FileText, ExternalLink, Calendar, Briefcase, LayoutGrid } from 'lucide-react'
 
 export default async function CandidateProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
+  const { id } = await params;
   // Use raw SQL to bypass the outdated Prisma Client which drops newly added columns
-  const candidatesRaw = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM Candidate WHERE id = ?`, resolvedParams.id)
+  const candidatesRaw = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM Candidate WHERE id = ?`, id)
   
   if (!candidatesRaw || candidatesRaw.length === 0) {
     notFound()
@@ -121,7 +121,7 @@ export default async function CandidateProfilePage({ params }: { params: Promise
                 </h2>
                 {candidate.resumes.length > 0 && (
                   <a 
-                    href={candidate.resumes[0].fileUrl} 
+                    href={`/api/resume/file/${candidate.resumes[0].id}`}
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="flex items-center px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors text-sm font-medium border border-green-200"
@@ -135,7 +135,7 @@ export default async function CandidateProfilePage({ params }: { params: Promise
               <div className="flex-1 min-h-[800px] bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
                 {candidate.resumes.length > 0 ? (
                   <iframe 
-                    src={`${candidate.resumes[0].fileUrl}#toolbar=0`} 
+                    src={`/api/resume/file/${candidate.resumes[0].id}#toolbar=0`} 
                     className="w-full h-full min-h-[800px]"
                     title="CV Viewer"
                   />

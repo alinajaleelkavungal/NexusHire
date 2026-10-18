@@ -81,7 +81,7 @@ Return ONLY valid JSON matching this schema:
       const response = await ai.models.generateContent({
         model: 'gemini-1.5-flash',
         contents: prompt,
-        generationConfig: {
+        config: {
           responseMimeType: 'application/json'
         }
       })

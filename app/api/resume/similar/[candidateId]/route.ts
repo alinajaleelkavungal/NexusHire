@@ -3,9 +3,9 @@ import prisma from '@/lib/prisma'
 import { qdrantClient, COLLECTION_NAME, initQdrantCollection } from '@/lib/qdrant'
 import { generateEmbedding } from '@/services/embedding-service'
 
-export async function GET(request: NextRequest, { params }: { params: { candidateId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ candidateId: string }> }) {
   try {
-    const candidateId = params.candidateId
+    const { candidateId } = await params
 
     if (!candidateId) {
       return NextResponse.json({ error: 'candidateId is required' }, { status: 400 })

@@ -3,10 +3,11 @@ import prisma from '@/lib/prisma'
 import { matchCandidatesToJob } from '@/services/job-matcher'
 import { generateRecommendations } from '@/services/recommendation-engine'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const job = await prisma.jobDescription.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!job) {

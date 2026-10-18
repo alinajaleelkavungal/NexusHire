@@ -41,25 +41,28 @@ function similarity(a: string, b: string): number {
 
 export async function POST(request: NextRequest) {
   try {
-    const { candidateId } = await request.json()
+    const body = await request.json()
+    const candidateId: string | undefined = body.candidateId
+    let newCandidate: { id: string | null; name: string; email: string | null } | null = null
 
-    if (!candidateId) {
-      return NextResponse.json({ error: 'candidateId is required' }, { status: 400 })
+    if (candidateId) {
+      newCandidate = await prisma.candidate.findUnique({
+        where: { id: candidateId },
+        select: { id: true, name: true, email: true }
+      })
+      if (!newCandidate) {
+        return NextResponse.json({ error: 'Candidate not found' }, { status: 404 })
+      }
+    } else if (typeof body.name === 'string' && body.name.trim()) {
+      // Pre-save check: nothing is stored yet, so match on the typed name
+      newCandidate = { id: null, name: body.name.trim(), email: null }
+    } else {
+      return NextResponse.json({ error: 'candidateId or name is required' }, { status: 400 })
     }
 
-    // Fetch the newly uploaded candidate
-    const newCandidate = await prisma.candidate.findUnique({
-      where: { id: candidateId },
-      select: { id: true, name: true, email: true }
-    })
-
-    if (!newCandidate) {
-      return NextResponse.json({ error: 'Candidate not found' }, { status: 404 })
-    }
-
-    // Fetch all *other* candidates (exclude the new one)
+    // Fetch all *other* candidates (exclude the new one, if it exists)
     const others = await prisma.candidate.findMany({
-      where: { id: { not: candidateId } },
+      where: candidateId ? { id: { not: candidateId } } : {},
       select: { id: true, name: true, email: true }
     })
 

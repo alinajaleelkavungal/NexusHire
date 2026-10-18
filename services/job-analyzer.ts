@@ -36,7 +36,7 @@ Return ONLY a valid JSON object matching the requested fields. Do not include ma
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
       contents: prompt,
-      generationConfig: {
+      config: {
         responseMimeType: 'application/json'
       }
     })

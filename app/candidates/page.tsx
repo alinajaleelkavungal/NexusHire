@@ -35,7 +35,7 @@ export default async function CandidatesPage() {
   const availableCompanies = Array.from(new Set([...jobCompanies, ...dbCompanies]))
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen">
       <CandidateDatabase 
         initialCandidates={candidates} 
         availableCompanies={availableCompanies} 

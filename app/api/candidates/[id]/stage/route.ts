@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const { stage } = await request.json()
 
     if (!stage) {
@@ -10,7 +11,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 
     const candidate = await prisma.candidate.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!candidate) {
@@ -21,14 +22,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     // Update candidate stage
     const updatedCandidate = await prisma.candidate.update({
-      where: { id: params.id },
+      where: { id },
       data: { recruitmentStage: stage }
     })
 
     // Log the activity
     await prisma.activityLog.create({
       data: {
-        candidateId: params.id,
+        candidateId: id,
         action: 'Stage Changed',
         description: `Moved from ${oldStage} to ${stage}`
       }

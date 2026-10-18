@@ -140,7 +140,7 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
         {unassigned.length > 0 && (
           <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
             <div 
-              onClick={() => setExpandedAge(expandedAge === -1 ? null : -1)}
+              onClick={() => setExpandedAge(expandedAge === 'unassigned' ? null : 'unassigned')}
               className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3">
@@ -152,10 +152,10 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
                   <p className="text-sm text-gray-500">{unassigned.length} candidate{unassigned.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedAge === -1 ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedAge === 'unassigned' ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedAge === -1 && (
+            {expandedAge === 'unassigned' && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {unassigned.map(candidate => (
                   <div 

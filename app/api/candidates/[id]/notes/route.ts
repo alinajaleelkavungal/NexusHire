@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const notes = await prisma.recruiterNote.findMany({
-      where: { candidateId: params.id },
+      where: { candidateId: id },
       orderBy: { createdAt: 'desc' }
     })
     return NextResponse.json({ success: true, notes })
@@ -13,14 +14,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const { content } = await request.json()
     if (!content) return NextResponse.json({ error: 'Content required' }, { status: 400 })
 
     const note = await prisma.recruiterNote.create({
       data: {
-        candidateId: params.id,
+        candidateId: id,
         content
       }
     })
@@ -30,15 +32,16 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const { searchParams } = new URL(request.url)
     const noteId = searchParams.get('noteId')
     
     if (!noteId) return NextResponse.json({ error: 'Note ID required' }, { status: 400 })
 
     await prisma.recruiterNote.delete({
-      where: { id: noteId, candidateId: params.id }
+      where: { id: noteId, candidateId: id }
     })
     return NextResponse.json({ success: true })
   } catch (error) {
