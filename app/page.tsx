@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Users, UserPlus, CalendarCheck, BadgeCheck, ArrowRight, Store } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { getSession, listCandidatesFor } from '@/lib/auth'
 import { listVacancies } from '@/lib/vacancies'
 import VacancyBoard from '@/components/VacancyBoard'
@@ -28,10 +28,10 @@ export default async function HomePage() {
   const countStage = (stage: string) => candidates.filter(c => stageOf(c) === stage).length
 
   const stats = [
-    { label: 'Total CVs', value: candidates.length, icon: Users, tone: 'bg-green-50 text-green-600' },
-    { label: 'Added this week', value: candidates.filter(c => c.createdAt.getTime() >= weekAgo).length, icon: UserPlus, tone: 'bg-blue-50 text-blue-600' },
-    { label: 'In interviews', value: candidates.filter(c => stageOf(c).includes('Interview')).length, icon: CalendarCheck, tone: 'bg-amber-50 text-amber-600' },
-    { label: 'Selected', value: countStage('Selected'), icon: BadgeCheck, tone: 'bg-emerald-50 text-emerald-600' },
+    { label: 'Total CVs', value: candidates.length },
+    { label: 'Added this week', value: candidates.filter(c => c.createdAt.getTime() >= weekAgo).length },
+    { label: 'In interviews', value: candidates.filter(c => stageOf(c).includes('Interview')).length },
+    { label: 'Selected', value: countStage('Selected') },
   ]
 
   const recent = candidates.slice(0, 6)
@@ -52,14 +52,14 @@ export default async function HomePage() {
     <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{greeting}, {session.name}</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">{greeting}, {session.name}</h1>
           <p className="text-sm text-gray-500 mt-1">
             {isAdmin ? "Here's everything across all branches." : "Here's an overview of the CVs your branch has uploaded."}
           </p>
         </div>
         <Link
           href="/candidates"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl shadow-sm transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-sm transition-colors"
         >
           View candidates <ArrowRight className="w-4 h-4" />
         </Link>
@@ -67,21 +67,18 @@ export default async function HomePage() {
 
       <VacancyBoard vacancies={vacancies} isAdmin={isAdmin} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <dl className="grid grid-cols-2 lg:grid-cols-4 bg-white border border-gray-300 rounded-md divide-x divide-gray-200 [&>div:nth-child(n+3)]:max-lg:border-t [&>div:nth-child(n+3)]:max-lg:border-gray-200">
         {stats.map(s => (
-          <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <span className={`w-9 h-9 rounded-lg flex items-center justify-center ${s.tone}`}>
-              <s.icon className="w-[18px] h-[18px]" />
-            </span>
-            <p className="text-3xl font-bold text-gray-900 mt-3">{s.value}</p>
-            <p className="text-sm text-gray-500">{s.label}</p>
+          <div key={s.label} className="px-5 py-4">
+            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{s.label}</dt>
+            <dd className="text-4xl font-extrabold text-gray-900 mt-1 tabular-nums">{s.value}</dd>
           </div>
         ))}
-      </div>
+      </dl>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <section className="lg:col-span-3 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <h2 className="font-semibold text-gray-900 mb-4">Recent uploads</h2>
+        <section className="lg:col-span-3 bg-white border border-gray-300 rounded-md p-5">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-4 pb-3 border-b border-gray-200">Recent uploads</h2>
           {recent.length === 0 ? (
             <p className="text-sm text-gray-500 py-6 text-center">No CVs yet. Upload your first one from the Candidates page.</p>
           ) : (
@@ -89,7 +86,7 @@ export default async function HomePage() {
               {recent.map(c => (
                 <li key={c.id}>
                   <Link href={`/candidates/${c.id}`} className="flex items-center gap-3 py-3 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors">
-                    <span className="w-9 h-9 shrink-0 rounded-full bg-green-100 text-green-700 text-xs font-semibold flex items-center justify-center">
+                    <span className="w-9 h-9 shrink-0 rounded-sm bg-gray-100 text-gray-700 text-xs font-semibold flex items-center justify-center">
                       {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                     </span>
                     <div className="flex-1 min-w-0">
@@ -109,8 +106,8 @@ export default async function HomePage() {
           )}
         </section>
 
-        <section className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <h2 className="font-semibold text-gray-900 mb-4">Pipeline</h2>
+        <section className="lg:col-span-2 bg-white border border-gray-300 rounded-md p-5">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-4 pb-3 border-b border-gray-200">Pipeline</h2>
           <ul className="space-y-3">
             {STAGES.map(stage => {
               const n = countStage(stage)
@@ -118,11 +115,11 @@ export default async function HomePage() {
                 <li key={stage}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-600">{stage}</span>
-                    <span className="font-medium text-gray-900">{n}</span>
+                    <span className="font-semibold text-gray-900 tabular-nums">{n}</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-gray-100 overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${stage === 'Rejected' ? 'bg-red-400' : 'bg-green-500'}`}
+                      className={`h-full ${stage === 'Rejected' ? 'bg-red-500' : 'bg-green-600'}`}
                       style={{ width: `${(n / maxStage) * 100}%` }}
                     />
                   </div>
@@ -134,15 +131,15 @@ export default async function HomePage() {
       </div>
 
       {isAdmin && byBranch.size > 0 && (
-        <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+        <section className="bg-white border border-gray-300 rounded-md p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2"><Store className="w-4 h-4" /> CVs by branch</h2>
-            <Link href="/admin/branches" className="text-sm text-green-700 hover:underline">Manage branches</Link>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">CVs by branch</h2>
+            <Link href="/admin/branches" className="text-sm text-green-700 underline underline-offset-4 decoration-green-300 hover:decoration-green-700">Manage branches</Link>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {Array.from(byBranch.entries()).sort((a, b) => b[1] - a[1]).map(([name, n]) => (
-              <li key={name} className="border border-gray-200 rounded-lg px-4 py-3">
-                <p className="text-xl font-bold text-gray-900">{n}</p>
+              <li key={name} className="border border-gray-200 rounded-sm px-4 py-3">
+                <p className="text-xl font-extrabold text-gray-900 tabular-nums">{n}</p>
                 <p className="text-sm text-gray-500 truncate">{name}</p>
               </li>
             ))}

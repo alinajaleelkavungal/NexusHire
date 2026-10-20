@@ -1,8 +1,146 @@
 @import "tailwindcss";
 
+/*
+  ResumeIQ visual system
+  ----------------------
+  Warm paper neutrals, one pine-green accent, brick for danger, ochre for warnings.
+  Corners are tight and surfaces are flat (hairline borders instead of soft shadows).
+  Every page uses the stock Tailwind color names (gray / green / blue / red ...), so the
+  palette is re-pointed here once and the whole app follows.
+*/
+
 :root {
-  --background: #f9fafb;
-  --foreground: #171717;
+  --background: #faf8f4;
+  --foreground: #1c1a17;
+  --ink: #1c1a17;
+  --paper: #ffffff;
+  --accent: #3a8570;
+}
+
+@theme {
+  /* Neutrals: warm stone instead of cold blue-grey */
+  --color-white: #ffffff;
+  --color-gray-50: #faf8f4;
+  --color-gray-100: #f3f0ea;
+  --color-gray-200: #e7e3da;
+  --color-gray-300: #d3cebf;
+  --color-gray-400: #aaa595;
+  --color-gray-500: #85806f;
+  --color-gray-600: #635f52;
+  --color-gray-700: #48443b;
+  --color-gray-800: #322f29;
+  --color-gray-900: #24211d;
+  --color-gray-950: #171512;
+
+  /* Accent: pine. green / emerald / teal / blue / indigo / violet / purple all resolve to it,
+     so there is one brand colour instead of a rainbow of Tailwind defaults. */
+  --color-green-50: #f1f8f5;
+  --color-green-100: #e0f0e8;
+  --color-green-200: #c3e1d3;
+  --color-green-300: #9accb7;
+  --color-green-400: #6fb399;
+  --color-green-500: #4a9a82;
+  --color-green-600: #3a8570;
+  --color-green-700: #2f6e5c;
+  --color-green-800: #27584a;
+  --color-green-900: #1f453b;
+  --color-green-950: #112a23;
+
+  --color-emerald-50: #f1f8f5;
+  --color-emerald-100: #e0f0e8;
+  --color-emerald-200: #c3e1d3;
+  --color-emerald-300: #9accb7;
+  --color-emerald-400: #6fb399;
+  --color-emerald-500: #4a9a82;
+  --color-emerald-600: #3a8570;
+  --color-emerald-700: #2f6e5c;
+  --color-emerald-800: #27584a;
+  --color-emerald-900: #1f453b;
+
+  --color-blue-50: #f1f8f5;
+  --color-blue-100: #e0f0e8;
+  --color-blue-200: #c3e1d3;
+  --color-blue-300: #9accb7;
+  --color-blue-400: #6fb399;
+  --color-blue-500: #4a9a82;
+  --color-blue-600: #3a8570;
+  --color-blue-700: #2f6e5c;
+  --color-blue-800: #27584a;
+  --color-blue-900: #1f453b;
+
+  --color-indigo-50: #f1f8f5;
+  --color-indigo-100: #e0f0e8;
+  --color-indigo-500: #4a9a82;
+  --color-indigo-600: #3a8570;
+  --color-indigo-700: #2f6e5c;
+  --color-violet-50: #f1f8f5;
+  --color-violet-100: #e0f0e8;
+  --color-violet-500: #4a9a82;
+  --color-violet-600: #3a8570;
+  --color-violet-700: #2f6e5c;
+  --color-purple-50: #f1f8f5;
+  --color-purple-100: #e0f0e8;
+  --color-purple-500: #4a9a82;
+  --color-purple-600: #3a8570;
+  --color-purple-700: #2f6e5c;
+
+  /* Danger: brick */
+  --color-red-50: #fbefec;
+  --color-red-100: #f6dcd6;
+  --color-red-200: #ecb9ae;
+  --color-red-300: #de8f7f;
+  --color-red-400: #cc6552;
+  --color-red-500: #b44a37;
+  --color-red-600: #983a2b;
+  --color-red-700: #7b2f24;
+  --color-red-800: #5f261e;
+  --color-red-900: #451c17;
+
+  /* Warning / highlight: ochre */
+  --color-amber-50: #fbf3df;
+  --color-amber-100: #f6e5b8;
+  --color-amber-200: #ecd088;
+  --color-amber-300: #dfb85a;
+  --color-amber-400: #cf9f34;
+  --color-amber-500: #b88624;
+  --color-amber-600: #976b1c;
+  --color-amber-700: #75521a;
+  --color-amber-800: #5a4018;
+  --color-amber-900: #3f2c12;
+  --color-yellow-50: #fbf3df;
+  --color-yellow-100: #f6e5b8;
+  --color-yellow-200: #ecd088;
+  --color-yellow-300: #dfb85a;
+  --color-yellow-400: #cf9f34;
+  --color-yellow-500: #b88624;
+  --color-yellow-600: #976b1c;
+  --color-yellow-700: #75521a;
+  --color-yellow-800: #5a4018;
+  --color-yellow-900: #3f2c12;
+  --color-orange-50: #fbf0e4;
+  --color-orange-100: #f5dcc0;
+  --color-orange-500: #b8672a;
+  --color-orange-600: #964f1d;
+  --color-orange-700: #763e19;
+
+  /* Tight corners */
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+
+  /* Flat surfaces: a hairline instead of a floating card */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 1px 0 rgb(28 26 23 / 0.04);
+  --shadow: 0 1px 0 rgb(28 26 23 / 0.05);
+  --shadow-md: 0 2px 6px -2px rgb(28 26 23 / 0.14);
+  --shadow-lg: 0 10px 28px -10px rgb(28 26 23 / 0.28);
+  --shadow-xl: 0 18px 44px -16px rgb(28 26 23 / 0.34);
+  --shadow-2xl: 0 24px 60px -20px rgb(28 26 23 / 0.4);
 }
 
 @theme inline {
@@ -20,13 +158,30 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-jakarta-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: #c3e1d3;
+  color: var(--ink);
+}
+
+/* Inputs read as part of the page, not as glowing widgets */
+input, select, textarea {
+  accent-color: var(--accent);
 }
 
 /* Visible keyboard focus everywhere, without affecting mouse clicks */
 :focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 button:not(:disabled),
@@ -36,6 +191,12 @@ button:not(:disabled),
 
 button:disabled {
   cursor: not-allowed;
+}
+
+/* Quiet, warm scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d3cebf transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {

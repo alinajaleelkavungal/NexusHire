@@ -603,7 +603,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <div 
                 className="flex items-center gap-4 flex-1"
               >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-green-700 font-semibold bg-green-100 flex-shrink-0">
+                <div className="w-12 h-12 rounded-sm flex items-center justify-center text-green-700 font-semibold bg-green-100 flex-shrink-0">
                   {getInitials(candidate.name)}
                 </div>
 

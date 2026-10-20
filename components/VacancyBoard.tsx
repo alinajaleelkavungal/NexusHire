@@ -11,12 +11,12 @@ import type { Vacancy } from '@/lib/vacancies'
 const SLIDE_MS = 6000
 const NEW_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
 
-// Soft rotating backgrounds for posters without an image
+// Flat rotating backgrounds for posters without an image
 const THEMES = [
-  'from-green-600 to-emerald-700',
-  'from-blue-600 to-indigo-700',
-  'from-violet-600 to-purple-700',
-  'from-amber-500 to-orange-600',
+  'bg-green-500',
+  'bg-gray-600',
+  'bg-red-500',
+  'bg-amber-500',
 ]
 
 const fmt = (iso: string) =>
@@ -135,13 +135,13 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                           <ZoomIn className="w-3 h-3" /> Enlarge
                         </span>
                       </button>
-                      <div className={`shrink-0 px-4 py-2.5 text-white bg-gradient-to-r ${THEMES[i % THEMES.length]}`}>
+                      <div className={`shrink-0 px-4 py-2.5 text-white ${THEMES[i % THEMES.length]}`}>
                         <h3 className="font-bold text-sm leading-snug truncate">{v.title}</h3>
                         <VacancyMeta v={v} mounted={mounted} compact />
                       </div>
                     </>
                   ) : (
-                    <div className={`flex-1 min-h-0 overflow-hidden px-14 pb-4 pt-14 text-white bg-gradient-to-br ${THEMES[i % THEMES.length]} flex flex-col`}>
+                    <div className={`flex-1 min-h-0 overflow-hidden px-14 pb-4 pt-14 text-white ${THEMES[i % THEMES.length]} flex flex-col`}>
                       <span className="self-start text-[11px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full mb-3">
                         We&apos;re hiring
                       </span>
@@ -160,7 +160,7 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
           <div className="absolute top-3 inset-x-3 z-10 grid grid-cols-3 items-center pointer-events-none">
             <div className="flex items-center gap-2 justify-self-start">
               {isNewV(current) && (
-                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-yellow-300 text-yellow-900 px-2.5 py-1 rounded-full animate-pulse shadow">
+                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-amber-300 text-amber-900 px-2.5 py-1 rounded-sm">
                   New
                 </span>
               )}

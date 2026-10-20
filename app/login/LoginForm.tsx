@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Sparkles, Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -37,17 +37,14 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-sm p-8 space-y-5">
-      <div className="flex flex-col items-center text-center">
-        <span className="w-12 h-12 rounded-xl bg-green-600 text-white flex items-center justify-center shadow-sm mb-3">
-          <Sparkles className="w-6 h-6" />
-        </span>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">ResumeIQ</h1>
+    <form onSubmit={submit} className="w-full max-w-sm bg-white border border-gray-300 rounded-md p-8 space-y-5">
+      <div className="border-b border-gray-200 pb-5">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Resume<span className="text-green-600">IQ</span></h1>
         <p className="text-sm text-gray-500 mt-1">Sign in with your branch or admin ID</p>
       </div>
 
       {error && (
-        <div role="alert" className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-lg">
+        <div role="alert" className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-sm">
           <AlertCircle className="w-4 h-4 shrink-0" />
           {error}
         </div>
@@ -63,7 +60,7 @@ export default function LoginForm() {
           required
           value={loginId}
           onChange={e => setLoginId(e.target.value)}
-          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          className="w-full px-3 py-2.5 border border-gray-300 rounded-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
         />
       </div>
 
@@ -77,7 +74,7 @@ export default function LoginForm() {
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
           />
           <button
             type="button"
@@ -93,7 +90,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg transition-colors"
+        className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-medium py-2.5 rounded-sm transition-colors"
       >
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
         {loading ? 'Signing in…' : 'Sign in'}

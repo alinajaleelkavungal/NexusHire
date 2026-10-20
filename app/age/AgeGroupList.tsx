@@ -119,7 +119,7 @@ export default function AgeGroupList({ initialCandidates, initialQuery = '' }: {
                     className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-blue-700 font-semibold bg-blue-100 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-sm flex items-center justify-center text-blue-700 font-semibold bg-blue-100 flex-shrink-0">
                         {getInitials(candidate.name)}
                       </div>
                       <div>
@@ -173,7 +173,7 @@ export default function AgeGroupList({ initialCandidates, initialQuery = '' }: {
                     className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-gray-600 font-semibold bg-gray-200 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-sm flex items-center justify-center text-gray-600 font-semibold bg-gray-200 flex-shrink-0">
                         {getInitials(candidate.name)}
                       </div>
                       <div>
