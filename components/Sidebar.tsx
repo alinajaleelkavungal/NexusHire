@@ -19,7 +19,6 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
     items: [
       { name: 'Home', href: '/', icon: Home },
       { name: 'Candidates', href: '/candidates', icon: Users },
-      { name: 'Category', href: '/categories', icon: FolderTree },
       { name: 'Search', href: '/search', icon: Search },
       { name: 'AI Assistant', href: '/chat', icon: MessageSquare },
     ],
@@ -31,6 +30,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Browse by',
     items: [
+      { name: 'Category', href: '/categories', icon: FolderTree },
       { name: 'Sectors', href: '/sectors', icon: LayoutGrid },
       { name: 'Age', href: '/age', icon: Calendar },
       { name: 'Experience', href: '/experience', icon: Briefcase },
