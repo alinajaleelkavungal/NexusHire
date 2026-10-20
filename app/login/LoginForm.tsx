@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Loader2, Eye, EyeOff, AlertCircle } from '@/components/icons'
 
 export default function LoginForm() {
   const router = useRouter()

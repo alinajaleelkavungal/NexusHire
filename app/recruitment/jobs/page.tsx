@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Briefcase, MapPin, Loader2, FileText, ChevronRight } from 'lucide-react'
+import { Plus, Briefcase, MapPin, Loader2, FileText, ChevronRight } from '@/components/icons'
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<any[]>([])

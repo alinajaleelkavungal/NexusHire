@@ -1,4 +1,4 @@
-import { FileText } from 'lucide-react'
+import { FileText } from '@/components/icons'
 
 /** When a search matches a candidate's saved CV file name, show that file name on the row. */
 export default function FileHit({ candidate, query }: { candidate: any; query: string }) {

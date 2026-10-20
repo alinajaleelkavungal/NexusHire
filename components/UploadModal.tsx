@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { UploadCloud, File as FileIcon, X, CheckCircle, AlertCircle, Loader2, AlertTriangle } from 'lucide-react'
+import { UploadCloud, File as FileIcon, X, CheckCircle, AlertCircle, Loader2, AlertTriangle } from '@/components/icons'
 import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'
 import Link from 'next/link'
 

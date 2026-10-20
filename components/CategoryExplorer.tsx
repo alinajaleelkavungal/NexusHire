@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Search, X, FileText, ChevronDown, ChevronRight, FolderTree } from 'lucide-react'
+import { Search, X, FileText, ChevronDown, ChevronRight, FolderTree } from '@/components/icons'
 
 interface CategoryExplorerProps {
   candidates: any[]

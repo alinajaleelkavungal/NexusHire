@@ -1,5 +1,5 @@
 import ChatBox from '@/components/chat/ChatBox'
-import { MessagesSquare } from 'lucide-react'
+import { MessagesSquare } from '@/components/icons'
 
 export default function GlobalChatPage() {
   return (

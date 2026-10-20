@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { UserCircle, Loader2, GripVertical } from 'lucide-react'
+import { UserCircle, Loader2, GripVertical } from '@/components/icons'
 import Link from 'next/link'
 
 const STAGES = [

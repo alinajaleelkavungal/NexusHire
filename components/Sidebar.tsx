@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   Home, Users, Briefcase, LogOut, KeyRound, ShieldCheck, Store, LayoutGrid, Calendar, Search, MessageSquare, Building2,
   type LucideIcon,
-} from 'lucide-react'
+} from '@/components/icons'
 
 interface NavItem {
   name: string
@@ -95,7 +95,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                           : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`}
                     >
-                      <item.icon className={`w-[18px] h-[18px] shrink-0 ${active ? 'text-green-600' : 'text-gray-400'}`} />
+                      <item.icon weight={active ? 'fill' : 'regular'} className={`w-[18px] h-[18px] shrink-0 ${active ? 'text-green-600' : 'text-gray-400'}`} />
                       <span className="max-md:hidden">{item.name}</span>
                     </Link>
                   </li>

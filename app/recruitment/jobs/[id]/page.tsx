@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, ArrowLeft, Building2, MapPin, Briefcase, ChevronDown, ChevronUp, UserCircle, Star, AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
+import { Loader2, ArrowLeft, Building2, MapPin, Briefcase, ChevronDown, ChevronUp, UserCircle, Star, AlertCircle, CheckCircle2, XCircle } from '@/components/icons'
 
 export default function JobMatchDashboard() {
   const params = useParams()

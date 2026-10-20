@@ -5,7 +5,7 @@ import {
   Search, UploadCloud, ChevronRight, X, Loader2, Code, Stethoscope, Settings, Plus,
   FileText, ChevronDown, CheckCircle, AlertCircle, ArrowDownCircle, Pencil, Trash2,
   CheckSquare, Square, SquareCheck
-} from 'lucide-react'
+} from '@/components/icons'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'

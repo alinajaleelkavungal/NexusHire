@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Plus, KeyRound, Power, Loader2, Store, AlertCircle, CheckCircle } from 'lucide-react'
+import { Plus, KeyRound, Power, Loader2, Store, AlertCircle, CheckCircle } from '@/components/icons'
 
 interface Branch {
   id: string

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { Calendar, MessageSquare, Clock, Plus, Trash2, Loader2 } from 'lucide-react'
+import { Calendar, MessageSquare, Clock, Plus, Trash2, Loader2 } from '@/components/icons'
 
 interface WorkflowProps {
   candidateId: string

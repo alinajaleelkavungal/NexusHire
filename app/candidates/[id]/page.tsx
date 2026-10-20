@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 import { notFound, redirect } from 'next/navigation'
 import { getSession, canAccessCandidate } from '@/lib/auth'
-import { Mail, Phone, MapPin, ClipboardList, FileText, ExternalLink, Calendar, Briefcase, LayoutGrid } from 'lucide-react'
+import { Mail, Phone, MapPin, ClipboardList, FileText, ExternalLink, Calendar, Briefcase, LayoutGrid } from '@/components/icons'
 
 export default async function CandidateProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

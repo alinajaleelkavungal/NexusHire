@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   ChevronLeft, ChevronRight, Megaphone, MapPin, Building2, Users, CalendarDays, CalendarClock,
   Plus, Trash2, X, Loader2, AlertCircle, ImagePlus, ZoomIn, Pencil,
-} from 'lucide-react'
+} from '@/components/icons'
 import type { Vacancy } from '@/lib/vacancies'
 
 const SLIDE_MS = 6000

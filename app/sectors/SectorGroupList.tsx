@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { LayoutGrid, ChevronRight, FileText, Code, Stethoscope, Settings, Briefcase, Search } from 'lucide-react'
+import { LayoutGrid, ChevronRight, FileText, Code, Stethoscope, Settings, Briefcase, Search } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import FileHit from '@/components/FileHit'
 import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'

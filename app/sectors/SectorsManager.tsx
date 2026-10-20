@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Code, Stethoscope, Settings, Plus, FileText, Pencil, Trash2 } from 'lucide-react'
+import { Code, Stethoscope, Settings, Plus, FileText, Pencil, Trash2 } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 
 export default function SectorsManager({ initialCandidates, savedSectors = [] }: { initialCandidates: { category: string | null }[], savedSectors?: string[] }) {

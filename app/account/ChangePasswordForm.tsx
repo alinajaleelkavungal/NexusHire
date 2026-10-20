@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, AlertCircle, CheckCircle } from 'lucide-react'
+import { Loader2, AlertCircle, CheckCircle } from '@/components/icons'
 
 export default function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState('')

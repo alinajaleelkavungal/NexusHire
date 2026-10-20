@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Calendar, ChevronRight, FileText, Search } from 'lucide-react'
+import { Calendar, ChevronRight, FileText, Search } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import FileHit from '@/components/FileHit'
 

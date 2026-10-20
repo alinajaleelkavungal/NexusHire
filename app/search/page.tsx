@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Loader2, Star, Briefcase, UserCircle } from 'lucide-react'
+import { Search, Loader2, Star, Briefcase, UserCircle } from '@/components/icons'
 
 interface SearchResult {
   candidateId: string

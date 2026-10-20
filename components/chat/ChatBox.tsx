@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Bot, User, Loader2 } from 'lucide-react'
+import { Send, Bot, User, Loader2 } from '@/components/icons'
 
 interface ChatMessage {
   id: string

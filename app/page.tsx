@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight } from '@/components/icons'
 import { getSession, listCandidatesFor } from '@/lib/auth'
 import { listVacancies } from '@/lib/vacancies'
 import VacancyBoard from '@/components/VacancyBoard'
