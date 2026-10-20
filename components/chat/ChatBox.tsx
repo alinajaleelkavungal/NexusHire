@@ -11,27 +11,36 @@ interface ChatMessage {
   confidence?: number
 }
 
+const SUGGESTIONS = [
+  'How many candidates are there?',
+  'How many vacancy posters are active?',
+  'Candidates by category',
+  'Candidates added this week',
+  'Give me a summary',
+]
+
 interface ChatBoxProps {
   candidateId?: string
   placeholder?: string
 }
 
-export default function ChatBox({ candidateId, placeholder = "Ask a question about the uploaded resumes..." }: ChatBoxProps) {
+export default function ChatBox({ candidateId,  placeholder = "Ask about candidates, vacancies, stages, branches..." }: ChatBoxProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([{
     id: 'welcome',
     role: 'ai',
     content: candidateId 
       ? "Hi! I've analyzed this candidate's resume. What would you like to know about them?"
-      : "Hi! I'm ResumeIQ's RAG Assistant. Ask me anything about your uploaded candidates!"
+      : "Hi! Ask me anything about ResumeIQ: how many candidates or active vacancy posters there are, CVs by category, age or stage, a specific candidate, and more."
   }])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSend = async (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent, preset?: string) => {
     e.preventDefault()
-    if (!input.trim() || isLoading) return
+    const text = (preset ?? input).trim()
+    if (!text || isLoading) return
 
-    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: input }
+    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: text }
     setMessages(prev => [...prev, userMsg])
     setInput('')
     setIsLoading(true)
@@ -74,7 +83,7 @@ export default function ChatBox({ candidateId, placeholder = "Ask a question abo
         <div className="flex items-center space-x-2">
           <h2 className="font-semibold text-gray-800">AI Resume Assistant</h2>
         </div>
-        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-md font-medium">Powered by Gemini 2.5</span>
+        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-md font-medium">Answers from your live data</span>
       </div>
 
       {/* Messages */}
@@ -111,14 +120,30 @@ export default function ChatBox({ candidateId, placeholder = "Ask a question abo
             </div>
             <div className="px-4 py-3 rounded-2xl bg-gray-100 rounded-tl-sm flex items-center space-x-2">
               <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-              <span className="text-sm text-gray-500">Searching resumes...</span>
+              <span className="text-sm text-gray-500">Looking that up...</span>
             </div>
           </div>
         )}
       </div>
 
+      {!candidateId && (
+        <div className="px-4 pt-3 pb-1 border-t bg-gray-50 flex flex-wrap gap-2">
+          {SUGGESTIONS.map(s => (
+            <button
+              key={s}
+              type="button"
+              disabled={isLoading}
+              onClick={e => handleSend(e as unknown as React.FormEvent, s)}
+              className="text-xs px-2.5 py-1 rounded-full border border-gray-300 bg-white text-gray-600 hover:border-green-500 hover:text-green-700 disabled:opacity-50 transition-colors"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input Form */}
-      <form onSubmit={handleSend} className="p-4 border-t bg-gray-50">
+      <form onSubmit={handleSend} className={`p-4 bg-gray-50 ${candidateId ? 'border-t' : 'pt-2'}`}>
         <div className="relative flex items-center">
           <input 
             type="text" 

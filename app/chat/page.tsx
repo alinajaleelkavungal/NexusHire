@@ -8,9 +8,9 @@ export default function GlobalChatPage() {
         <div className="inline-flex items-center justify-center bg-blue-100 p-4 rounded-full mb-2">
           <MessagesSquare className="w-8 h-8 text-blue-600" />
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">RAG Resume Chat</h1>
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">AI Assistant</h1>
         <p className="text-gray-500 max-w-xl mx-auto">
-          Ask complex questions across your entire candidate database. The AI will retrieve the most relevant resumes and synthesize an answer backed by real data.
+          Ask about anything in the app: candidate and vacancy counts, categories, ages, stages, branches or a specific CV. Numbers come straight from your live data.
         </p>
       </div>
 
