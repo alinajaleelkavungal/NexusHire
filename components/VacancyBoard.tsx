@@ -50,6 +50,8 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
   }, [count, paused, reducedMotion, showForm, editing, lightbox])
 
   const go = (delta: number) => setIndex(i => (i + delta + count) % count)
+  const isNewV = (v: Vacancy) => mounted && Date.now() - new Date(v.postedAt).getTime() < NEW_WINDOW_MS
+  const current = vacancies[index] ?? vacancies[0]
 
   const remove = async (v: Vacancy) => {
     if (!confirm(`Take down the vacancy "${v.title}"?`)) return
@@ -79,14 +81,14 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
       {count === 0 ? (
         <button
           onClick={() => setShowForm(true)}
-          className="w-full max-w-[400px] border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-2xl py-10 text-center text-gray-500 transition-colors"
+          className="w-full max-w-[520px] border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-2xl py-10 text-center text-gray-500 transition-colors"
         >
           <Megaphone className="w-8 h-8 mx-auto text-gray-300 mb-2" />
           No vacancies posted yet. Click to post the first one.
         </button>
       ) : (
         <div
-          className="relative w-full max-w-[400px] aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white"
+          className="relative w-full max-w-[520px] aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocus={() => setPaused(true)}
@@ -98,7 +100,6 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
             style={{ transform: `translateX(-${index * 100}%)` }}
           >
             {vacancies.map((v, i) => {
-              const isNew = mounted && Date.now() - new Date(v.postedAt).getTime() < NEW_WINDOW_MS
               return (
                 <article
                   key={v.id}
@@ -107,21 +108,6 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                   aria-roledescription="slide"
                   aria-label={`${i + 1} of ${count}`}
                 >
-                  {(isNew || (isAdmin && v.expired && !isNew)) && (
-                    <div className="absolute top-3 left-3 z-10 flex gap-2">
-                      {isNew && (
-                        <span className="text-[11px] font-bold uppercase tracking-widest bg-yellow-300 text-yellow-900 px-2.5 py-1 rounded-full animate-pulse shadow">
-                          New
-                        </span>
-                      )}
-                      {isAdmin && v.expired && !isNew && (
-                        <span className="text-[11px] font-bold uppercase tracking-widest bg-black/60 text-white px-2.5 py-1 rounded-full">
-                          Expired
-                        </span>
-                      )}
-                    </div>
-                  )}
-
                   {v.hasImage ? (
                     <>
                       {/* The 4:3 box never changes: any poster shape is scaled to fit inside it, never cropped */}
@@ -144,63 +130,84 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                       </div>
                     </>
                   ) : (
-                    <div className={`flex-1 min-h-0 overflow-hidden p-4 text-white bg-gradient-to-br ${THEMES[i % THEMES.length]} flex flex-col`}>
+                    <div className={`flex-1 min-h-0 overflow-hidden px-14 pb-4 pt-14 text-white bg-gradient-to-br ${THEMES[i % THEMES.length]} flex flex-col`}>
                       <span className="self-start text-[11px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full mb-3">
                         We&apos;re hiring
                       </span>
-                      <h3 className="text-lg font-extrabold tracking-tight leading-tight line-clamp-2">{v.title}</h3>
+                      <h3 className="text-xl font-extrabold tracking-tight leading-tight line-clamp-2">{v.title}</h3>
                       <VacancyMeta v={v} mounted={mounted} />
                       {v.details && <p className="mt-2 text-xs text-white/90 leading-relaxed line-clamp-3 whitespace-pre-line">{v.details}</p>}
                     </div>
                   )}
 
-                  {isAdmin && (
-                    <button
-                      onClick={() => setEditing(v)}
-                      aria-label={`Edit vacancy ${v.title}`}
-                      title="Edit vacancy"
-                      className="absolute top-3 right-14 z-10 h-9 px-3 inline-flex items-center gap-1.5 rounded-full bg-white text-gray-800 text-sm font-semibold shadow-md ring-1 ring-black/10 hover:bg-green-50 hover:text-green-700 transition-colors"
-                      style={{ display: i === index ? 'inline-flex' : 'none' }}
-                    >
-                      <Pencil className="w-4 h-4" /> Edit
-                    </button>
-                  )}
-
-                  {isAdmin && (
-                    <button
-                      onClick={() => remove(v)}
-                      aria-label={`Remove vacancy ${v.title}`}
-                      title="Remove vacancy"
-                      className="absolute top-3 right-3 z-10 h-9 w-9 inline-flex items-center justify-center rounded-full bg-white text-gray-600 shadow-md ring-1 ring-black/10 hover:bg-red-50 hover:text-red-600 transition-colors"
-                      style={{ display: i === index ? 'inline-flex' : 'none' }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
                 </article>
               )
             })}
           </div>
 
+          {/* One shared top bar keeps everything aligned: badges left · dots centre · actions right */}
+          <div className="absolute top-3 inset-x-3 z-10 grid grid-cols-3 items-center pointer-events-none">
+            <div className="flex items-center gap-2 justify-self-start">
+              {isNewV(current) && (
+                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-yellow-300 text-yellow-900 px-2.5 py-1 rounded-full animate-pulse shadow">
+                  New
+                </span>
+              )}
+              {isAdmin && current.expired && !isNewV(current) && (
+                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-black/60 text-white px-2.5 py-1 rounded-full">
+                  Expired
+                </span>
+              )}
+            </div>
+
+            <div className="justify-self-center">
+              {count > 1 && (
+                <div className="pointer-events-auto flex gap-1.5 bg-black/30 px-2.5 py-1.5 rounded-full">
+                  {vacancies.map((v, i) => (
+                    <button
+                      key={v.id}
+                      onClick={() => setIndex(i)}
+                      aria-label={`Show vacancy ${i + 1}`}
+                      aria-current={i === index}
+                      className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 justify-self-end">
+              {isAdmin && (
+                <>
+                  <button
+                    onClick={() => setEditing(current)}
+                    aria-label={`Edit vacancy ${current.title}`}
+                    title="Edit vacancy"
+                    className="pointer-events-auto h-9 px-3 inline-flex items-center gap-1.5 rounded-full bg-white text-gray-800 text-sm font-semibold shadow-md ring-1 ring-black/10 hover:bg-green-50 hover:text-green-700 transition-colors"
+                  >
+                    <Pencil className="w-4 h-4" /> Edit
+                  </button>
+                  <button
+                    onClick={() => remove(current)}
+                    aria-label={`Remove vacancy ${current.title}`}
+                    title="Remove vacancy"
+                    className="pointer-events-auto h-9 w-9 inline-flex items-center justify-center rounded-full bg-white text-gray-600 shadow-md ring-1 ring-black/10 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
           {count > 1 && (
             <>
-              <button onClick={() => go(-1)} aria-label="Previous vacancy" className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition-colors">
+              <button onClick={() => go(-1)} aria-label="Previous vacancy" className="absolute left-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-full bg-black/35 hover:bg-black/55 text-white transition-colors">
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <button onClick={() => go(1)} aria-label="Next vacancy" className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition-colors">
+              <button onClick={() => go(1)} aria-label="Next vacancy" className="absolute right-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-full bg-black/35 hover:bg-black/55 text-white transition-colors">
                 <ChevronRight className="w-5 h-5" />
               </button>
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 bg-black/25 px-2 py-1 rounded-full">
-                {vacancies.map((v, i) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setIndex(i)}
-                    aria-label={`Show vacancy ${i + 1}`}
-                    aria-current={i === index}
-                    className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`}
-                  />
-                ))}
-              </div>
             </>
           )}
         </div>
