@@ -18,10 +18,44 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
   // Per-sector search boxes (file name / candidate name inside that sector only)
   const [barSearch, setBarSearch] = useState<Record<string, string>>({})
   const localQ = (key: string) => (barSearch[key] ?? '').trim().toLowerCase()
+  // Selected sub category chip per sector (null / missing = all)
+  const [subSel, setSubSel] = useState<Record<string, string | null>>({})
   const inBar = (list: any[], key: string) => {
     const lq = localQ(key)
-    if (!lq) return list
-    return list.filter(c => c.name.toLowerCase().includes(lq) || hasFileMatch(c, lq))
+    const sub = subSel[key]
+    return list.filter(c =>
+      (!sub || (c.category || 'Other') === sub) &&
+      (!lq || c.name.toLowerCase().includes(lq) || hasFileMatch(c, lq))
+    )
+  }
+  // All sub categories of a sector: the configured ones plus any custom ones already in use
+  const subsFor = (key: string, list: any[]) => {
+    const set = new Set<string>(SECTOR_CATEGORY_MAP[key] ?? [])
+    list.forEach(c => set.add(c.category || 'Other'))
+    return Array.from(set)
+  }
+  const subChips = (key: string, list: any[]) => {
+    const subs = subsFor(key, list)
+    if (subs.length <= 1) return null
+    const chip = (active: boolean) =>
+      `px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+        active ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200 hover:border-green-400 hover:text-green-700'
+      }`
+    return (
+      <div className="flex flex-wrap gap-2 px-6 pb-4" role="group" aria-label={`Sub categories of ${key}`}>
+        <button onClick={() => setSubSel(p => ({ ...p, [key]: null }))} aria-pressed={!subSel[key]} className={chip(!subSel[key])}>
+          All ({list.length})
+        </button>
+        {subs.map(s => {
+          const n = list.filter(c => (c.category || 'Other') === s).length
+          return (
+            <button key={s} onClick={() => setSubSel(p => ({ ...p, [key]: p[key] === s ? null : s }))} aria-pressed={subSel[key] === s} className={chip(subSel[key] === s)}>
+              {s} ({n})
+            </button>
+          )
+        })}
+      </div>
+    )
   }
   // Called as a plain function (not <Component/>) so typing never remounts the input
   const barSearchBox = (k: string, label: string) => (
@@ -114,7 +148,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
       <div className="space-y-6">
         {sectorGroups.filter(g => !searching || g.candidates.length > 0).map(group => {
           const shown = inBar(group.candidates, group.sector)
-          const open = searching || !!localQ(group.sector) || expandedSector === group.sector
+          const open = searching || !!localQ(group.sector) || !!subSel[group.sector] || expandedSector === group.sector
           return (
           <div key={group.sector} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
             <div 
@@ -133,6 +167,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
               <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedSector === group.sector) ? 'rotate-90' : ''}`} />
             </div>
             {barSearchBox(group.sector, group.sector)}
+            {subChips(group.sector, group.candidates)}
 
             {open && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
@@ -163,7 +198,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                 
                 {shown.length === 0 && (
                   <div className="text-center py-8 text-gray-400 text-sm">
-                    {localQ(group.sector) ? `No file name in ${group.sector} matches “${barSearch[group.sector].trim()}”.` : 'No candidates in this sector yet.'}
+                    {subSel[group.sector] && !localQ(group.sector) ? `No CVs under ${subSel[group.sector]} yet.` : localQ(group.sector) ? `No file name in ${group.sector} matches “${barSearch[group.sector].trim()}”.` : 'No candidates in this sector yet.'}
                   </div>
                 )}
               </div>
