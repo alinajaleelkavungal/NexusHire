@@ -173,3 +173,14 @@ export async function listCandidatesFor(session: Session): Promise<any[]> {
     updatedAt: new Date(c.updatedAt),
   }))
 }
+
+/** Same as listCandidatesFor, with each candidate's saved CV file name(s) attached as `resumes`. */
+export async function listCandidatesWithResumesFor(session: Session): Promise<any[]> {
+  const candidates = await listCandidatesFor(session)
+  if (candidates.length === 0) return candidates
+  const resumes = await prisma.resume.findMany({
+    where: { candidateId: { in: candidates.map(c => c.id) } },
+    select: { id: true, candidateId: true, fileName: true },
+  })
+  return candidates.map(c => ({ ...c, resumes: resumes.filter(r => r.candidateId === c.id) }))
+}

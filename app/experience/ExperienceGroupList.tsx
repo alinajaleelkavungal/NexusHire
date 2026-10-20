@@ -3,11 +3,17 @@
 import { useState, useMemo } from 'react'
 import { Briefcase, ChevronRight, FileText, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import FileHit from '@/components/FileHit'
 
-export default function ExperienceGroupList({ initialCandidates }: { initialCandidates: any[] }) {
+// True when the search text matches any saved CV file name of the candidate
+const hasFileMatch = (c: any, q: string) =>
+  (c.resumes ?? []).some((r: any) => r.fileName?.toLowerCase().includes(q))
+
+export default function ExperienceGroupList({ initialCandidates, initialQuery = '' }: { initialCandidates: any[]; initialQuery?: string }) {
   const router = useRouter()
   const [expandedExp, setExpandedExp] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
+  const searching = searchQuery.trim() !== ''
 
   const experienceOptions = ['Fresher', '1 year', '2 years', '3 years', '4 years', '5 years', '6 years', '7 years', '8 years', '9 years', '10+ years']
 
@@ -15,7 +21,9 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
     if (!searchQuery.trim()) return initialCandidates
     const lowerQ = searchQuery.toLowerCase()
     return initialCandidates.filter(c => 
-      c.name.toLowerCase().includes(lowerQ) || 
+      c.name.toLowerCase().includes(lowerQ) ||
+      hasFileMatch(c, lowerQ) ||
+      
       (c.skills && c.skills.toLowerCase().includes(lowerQ)) ||
       (c.category && c.category.toLowerCase().includes(lowerQ)) ||
       (c.sector && c.sector.toLowerCase().includes(lowerQ))
@@ -66,7 +74,7 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input 
           type="text" 
-          placeholder="Search candidates by name, skill, or role..." 
+          placeholder="Search by name, skill, file name or sub category..." 
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm"
@@ -74,7 +82,7 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
       </div>
 
       <div className="space-y-6">
-        {expGroups.map(group => (
+        {expGroups.filter(g => !searching || g.candidates.length > 0).map(group => (
           <div key={group.exp} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
             <div 
               onClick={() => setExpandedExp(expandedExp === group.exp ? null : group.exp)}
@@ -89,10 +97,10 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
                   <p className="text-sm text-gray-500">{group.candidates.length} candidate{group.candidates.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedExp === group.exp ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedExp === group.exp) ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedExp === group.exp && (
+            {(searching || expandedExp === group.exp) && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {group.candidates.map(candidate => (
                   <div 
@@ -106,6 +114,7 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-orange-600">{candidate.name}</h4>
+                        <FileHit candidate={candidate} query={searchQuery} />
                         <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>
@@ -142,10 +151,10 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
                   <p className="text-sm text-gray-500">{unassigned.length} candidate{unassigned.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedExp === 'unassigned' ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedExp === 'unassigned') ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedExp === 'unassigned' && (
+            {(searching || expandedExp === 'unassigned') && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {unassigned.map(candidate => (
                   <div 
@@ -159,6 +168,7 @@ export default function ExperienceGroupList({ initialCandidates }: { initialCand
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-gray-600">{candidate.name}</h4>
+                        <FileHit candidate={candidate} query={searchQuery} />
                         <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>

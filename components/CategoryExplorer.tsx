@@ -43,6 +43,8 @@ const byName = (a: string, b: string) =>
 export default function CategoryExplorer({ candidates, isAdmin = false, initialQuery = '' }: CategoryExplorerProps) {
   const [search, setSearch] = useState(initialQuery)
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  // Per-category search boxes (file name / candidate name inside that category only)
+  const [sectorSearch, setSectorSearch] = useState<Record<string, string>>({})
   const q = search.trim().toLowerCase()
 
   // One entry per saved CV file
@@ -147,7 +149,23 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
       ) : (
         <div className="flex flex-col gap-4 pb-20">
           {groups.list.map(({ sector, count, subs }) => {
-            const open = !!q || !collapsed.has(sector)
+            const rawLocal = sectorSearch[sector] ?? ''
+            const local = rawLocal.trim().toLowerCase()
+            const hl = local || q
+            const open = !!q || !!local || !collapsed.has(sector)
+            const shownSubs = local
+              ? subs
+                  .map(([sub, list]) => [
+                    sub,
+                    list.filter(
+                      e =>
+                        (e.fileName?.toLowerCase().includes(local) ?? false) ||
+                        e.candidateName.toLowerCase().includes(local)
+                    ),
+                  ] as [string, Entry[]])
+                  .filter(([, list]) => list.length > 0)
+              : subs
+            const shownCount = shownSubs.reduce((n, [, l]) => n + l.length, 0)
             return (
               <section key={sector} className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
                 <button
@@ -166,9 +184,35 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
                   </span>
                 </button>
 
+                <div className="relative px-5 pb-3">
+                  <Search className="absolute left-8 top-1/2 -translate-y-1/2 -mt-1.5 w-4 h-4 text-gray-400" aria-hidden />
+                  <input
+                    type="search"
+                    aria-label={`Search file names in ${sector}`}
+                    placeholder={`Search file name in ${sector}`}
+                    value={rawLocal}
+                    onChange={e => setSectorSearch(prev => ({ ...prev, [sector]: e.target.value }))}
+                    className="w-full pl-9 pr-9 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all [&::-webkit-search-cancel-button]:hidden"
+                  />
+                  {rawLocal && (
+                    <button
+                      onClick={() => setSectorSearch(prev => ({ ...prev, [sector]: '' }))}
+                      aria-label={`Clear search in ${sector}`}
+                      className="absolute right-8 top-1/2 -translate-y-1/2 -mt-1.5 p-1 text-gray-400 hover:text-gray-700 rounded-full"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
                 {open && (
                   <div className="border-t border-gray-100">
-                    {subs.map(([sub, list]) => (
+                    {local && shownCount === 0 && (
+                      <p className="px-5 py-6 text-center text-sm text-gray-500">
+                        No file name in {sector} matches “{rawLocal.trim()}”.
+                      </p>
+                    )}
+                    {shownSubs.map(([sub, list]) => (
                       <div key={sub} className="border-b last:border-b-0 border-gray-100">
                         <div className="flex items-center gap-2 px-5 py-2 bg-gray-50 text-sm">
                           <span className="text-xs font-medium text-gray-400">Sub category</span>
@@ -187,10 +231,10 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
                                 <FileText className="w-4 h-4 text-gray-400 shrink-0" />
                                 <div className="flex-1 min-w-[200px]">
                                   <p className="text-sm font-medium text-gray-900 break-all">
-                                    {e.fileName ? <Highlight text={e.fileName} query={q} /> : <span className="text-gray-400">No file saved</span>}
+                                    {e.fileName ? <Highlight text={e.fileName} query={hl} /> : <span className="text-gray-400">No file saved</span>}
                                   </p>
                                   <p className="text-xs text-gray-500">
-                                    <Highlight text={e.candidateName} query={q} />
+                                    <Highlight text={e.candidateName} query={hl} />
                                     {isAdmin && e.branch && <span className="text-blue-600"> · {e.branch}</span>}
                                   </p>
                                 </div>

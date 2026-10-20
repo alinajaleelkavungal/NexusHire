@@ -3,11 +3,17 @@
 import { useState, useMemo } from 'react'
 import { Calendar, ChevronRight, FileText, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import FileHit from '@/components/FileHit'
 
-export default function AgeGroupList({ initialCandidates }: { initialCandidates: any[] }) {
+// True when the search text matches any saved CV file name of the candidate
+const hasFileMatch = (c: any, q: string) =>
+  (c.resumes ?? []).some((r: any) => r.fileName?.toLowerCase().includes(q))
+
+export default function AgeGroupList({ initialCandidates, initialQuery = '' }: { initialCandidates: any[]; initialQuery?: string }) {
   const router = useRouter()
   const [expandedAge, setExpandedAge] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
+  const searching = searchQuery.trim() !== ''
 
   const ageBrackets = [
     { label: '18-24 Years', min: 18, max: 24 },
@@ -21,7 +27,9 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
     if (!searchQuery.trim()) return initialCandidates
     const lowerQ = searchQuery.toLowerCase()
     return initialCandidates.filter(c => 
-      c.name.toLowerCase().includes(lowerQ) || 
+      c.name.toLowerCase().includes(lowerQ) ||
+      hasFileMatch(c, lowerQ) ||
+      
       (c.skills && c.skills.toLowerCase().includes(lowerQ)) ||
       (c.category && c.category.toLowerCase().includes(lowerQ)) ||
       (c.sector && c.sector.toLowerCase().includes(lowerQ))
@@ -76,7 +84,7 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input 
           type="text" 
-          placeholder="Search candidates by name, skill, or role..." 
+          placeholder="Search by name, skill, file name or sub category..." 
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
@@ -84,7 +92,7 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
       </div>
 
       <div className="space-y-6">
-        {ageGroups.map(group => (
+        {ageGroups.filter(g => !searching || g.candidates.length > 0).map(group => (
           <div key={group.label} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
             <div 
               onClick={() => setExpandedAge(expandedAge === group.label ? null : group.label as any)}
@@ -99,10 +107,10 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
                   <p className="text-sm text-gray-500">{group.candidates.length} candidate{group.candidates.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedAge === group.label ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedAge === group.label) ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedAge === group.label && (
+            {(searching || expandedAge === group.label) && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {group.candidates.map(candidate => (
                   <div 
@@ -116,6 +124,7 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-blue-600">{candidate.name}</h4>
+                        <FileHit candidate={candidate} query={searchQuery} />
                         <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>
@@ -152,10 +161,10 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
                   <p className="text-sm text-gray-500">{unassigned.length} candidate{unassigned.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedAge === 'unassigned' ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedAge === 'unassigned') ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedAge === 'unassigned' && (
+            {(searching || expandedAge === 'unassigned') && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {unassigned.map(candidate => (
                   <div 
@@ -169,6 +178,7 @@ export default function AgeGroupList({ initialCandidates }: { initialCandidates:
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-blue-600">{candidate.name}</h4>
+                        <FileHit candidate={candidate} query={searchQuery} />
                         <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>

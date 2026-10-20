@@ -3,12 +3,18 @@
 import { useState, useMemo } from 'react'
 import { LayoutGrid, ChevronRight, FileText, Code, Stethoscope, Settings, Briefcase, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import FileHit from '@/components/FileHit'
 import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'
 
-export default function SectorGroupList({ initialCandidates }: { initialCandidates: any[] }) {
+// True when the search text matches any saved CV file name of the candidate
+const hasFileMatch = (c: any, q: string) =>
+  (c.resumes ?? []).some((r: any) => r.fileName?.toLowerCase().includes(q))
+
+export default function SectorGroupList({ initialCandidates, initialQuery = '' }: { initialCandidates: any[]; initialQuery?: string }) {
   const router = useRouter()
   const [expandedSector, setExpandedSector] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
+  const searching = searchQuery.trim() !== ''
 
   const allSectors = Object.keys(SECTOR_CATEGORY_MAP)
 
@@ -16,7 +22,9 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
     if (!searchQuery.trim()) return initialCandidates
     const lowerQ = searchQuery.toLowerCase()
     return initialCandidates.filter(c => 
-      c.name.toLowerCase().includes(lowerQ) || 
+      c.name.toLowerCase().includes(lowerQ) ||
+      hasFileMatch(c, lowerQ) ||
+      
       (c.skills && c.skills.toLowerCase().includes(lowerQ)) ||
       (c.category && c.category.toLowerCase().includes(lowerQ))
     )
@@ -74,7 +82,7 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input 
           type="text" 
-          placeholder="Search candidates by name, skill, or role..." 
+          placeholder="Search by name, skill, file name or sub category..." 
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
@@ -82,7 +90,7 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
       </div>
 
       <div className="space-y-6">
-        {sectorGroups.map(group => (
+        {sectorGroups.filter(g => !searching || g.candidates.length > 0).map(group => (
           <div key={group.sector} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
             <div 
               onClick={() => setExpandedSector(expandedSector === group.sector ? null : group.sector)}
@@ -97,10 +105,10 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
                   <p className="text-sm text-gray-500">{group.candidates.length} candidate{group.candidates.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedSector === group.sector ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedSector === group.sector) ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedSector === group.sector && (
+            {(searching || expandedSector === group.sector) && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {group.candidates.map(candidate => (
                   <div 
@@ -114,6 +122,7 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-green-600">{candidate.name}</h4>
+                        <FileHit candidate={candidate} query={searchQuery} />
                         <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>
@@ -151,10 +160,10 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
                   <p className="text-sm text-gray-500">{unassigned.length} candidate{unassigned.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedSector === 'unassigned' ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedSector === 'unassigned') ? 'rotate-90' : ''}`} />
             </div>
 
-            {expandedSector === 'unassigned' && (
+            {(searching || expandedSector === 'unassigned') && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
                 {unassigned.map(candidate => (
                   <div 
@@ -168,6 +177,7 @@ export default function SectorGroupList({ initialCandidates }: { initialCandidat
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-gray-600">{candidate.name}</h4>
+                        <FileHit candidate={candidate} query={searchQuery} />
                         <p className="text-xs text-gray-500">Uncategorized</p>
                       </div>
                     </div>
