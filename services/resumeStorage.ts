@@ -82,3 +82,27 @@ export async function deleteResumeFiles(fileUrls: string[]): Promise<void> {
         )
     );
 }
+
+
+/**
+ * Uploads a vacancy poster image to B2 under `posters/`.
+ * Reuse getResumeDownloadUrl / deleteResume (they work on any key) to read or remove it.
+ */
+export async function uploadPoster(
+    fileBuffer: Buffer,
+    originalFileName: string,
+    contentType: string
+): Promise<{ key: string }> {
+    const key = `posters/${randomUUID()}-${originalFileName}`;
+
+    await b2Client.send(
+        new PutObjectCommand({
+            Bucket: B2_BUCKET_NAME,
+            Key: key,
+            Body: fileBuffer,
+            ContentType: contentType,
+        })
+    );
+
+    return { key };
+}

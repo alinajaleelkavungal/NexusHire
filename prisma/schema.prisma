@@ -133,6 +133,20 @@ model Account {
   createdAt    DateTime @default(now())
 }
 
+// Job vacancy posters shown on the Home page (posted by an admin)
+model Vacancy {
+  id          String   @id @default(cuid())
+  title       String
+  company     String?
+  location    String?
+  openings    Int?
+  details     String?
+  imageKey    String?  // Backblaze key of an optional poster image
+  closingDate String?  // YYYY-MM-DD
+  postedBy    String?  // Account id
+  createdAt   DateTime @default(now())
+}
+
 model Sector {
   id        String   @id @default(cuid())
   name      String   @unique
