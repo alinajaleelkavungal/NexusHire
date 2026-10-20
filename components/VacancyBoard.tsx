@@ -76,13 +76,14 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
   return (
     <section aria-label="Vacancies" className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+        <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">
           <Megaphone className="w-4 h-4 text-green-600" /> Current vacancies
+          {count > 0 && <span className="text-gray-700 bg-gray-100 border border-gray-200 rounded-sm px-1.5 py-px tabular-nums">{count}</span>}
         </h2>
         {isAdmin && (
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-700 border border-green-200 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-sm transition-colors"
           >
             <Plus className="w-4 h-4" /> Post vacancy
           </button>
@@ -92,14 +93,15 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
       {count === 0 ? (
         <button
           onClick={() => setShowForm(true)}
-          className="w-full max-w-[520px] border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-2xl py-10 text-center text-gray-500 transition-colors"
+          className="w-full max-w-[520px] border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-md py-10 text-center text-gray-500 transition-colors"
         >
           <Megaphone className="w-8 h-8 mx-auto text-gray-300 mb-2" />
           No vacancies posted yet. Click to post the first one.
         </button>
       ) : (
+        <div className="flex flex-wrap items-start gap-5">
         <div
-          className="relative w-full max-w-[520px] aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white"
+          className="relative w-full max-w-[520px] aspect-[4/3] rounded-md overflow-hidden border border-gray-300 bg-white"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocus={() => setPaused(true)}
@@ -135,19 +137,21 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                           <ZoomIn className="w-3 h-3" /> Enlarge
                         </span>
                       </button>
-                      <div className={`shrink-0 px-4 py-2.5 text-white ${THEMES[i % THEMES.length]}`}>
-                        <h3 className="font-bold text-sm leading-snug truncate">{v.title}</h3>
-                        <VacancyMeta v={v} mounted={mounted} compact />
+                      <div className="shrink-0 px-4 py-2.5 bg-white border-t border-gray-200">
+                        <h3 className="font-bold text-sm leading-snug truncate text-gray-900">{v.title}</h3>
+                        <VacancyMeta v={v} mounted={mounted} compact tone="light" />
                       </div>
                     </>
                   ) : (
-                    <div className={`flex-1 min-h-0 overflow-hidden px-14 pb-4 pt-14 text-white ${THEMES[i % THEMES.length]} flex flex-col`}>
-                      <span className="self-start text-[11px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full mb-3">
-                        We&apos;re hiring
-                      </span>
-                      <h3 className="text-xl font-extrabold tracking-tight leading-tight line-clamp-2">{v.title}</h3>
-                      <VacancyMeta v={v} mounted={mounted} />
-                      {v.details && <p className="mt-2 text-xs text-white/90 leading-relaxed line-clamp-3 whitespace-pre-line">{v.details}</p>}
+                    <div className="flex-1 min-h-0 overflow-hidden bg-green-50 flex flex-col pt-14 pb-4 px-12">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-green-700 flex items-center gap-2">
+                        <span className={`w-6 h-0.5 ${THEMES[i % THEMES.length]}`} /> We&apos;re hiring
+                      </p>
+                      <h3 className="mt-2 text-2xl font-extrabold tracking-tight leading-tight text-gray-900 line-clamp-2">{v.title}</h3>
+                      {v.details && <p className="mt-2 text-[13px] text-gray-600 leading-relaxed line-clamp-3 whitespace-pre-line">{v.details}</p>}
+                      <div className="mt-auto pt-3 border-t border-green-200">
+                        <VacancyMeta v={v} mounted={mounted} tone="light" />
+                      </div>
                     </div>
                   )}
 
@@ -165,7 +169,7 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                 </span>
               )}
               {isAdmin && current.expired && !isNewV(current) && (
-                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-black/60 text-white px-2.5 py-1 rounded-full">
+                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-gray-800 text-white px-2.5 py-1 rounded-sm">
                   Expired
                 </span>
               )}
@@ -173,14 +177,15 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
 
             <div className="justify-self-center">
               {count > 1 && (
-                <div className="pointer-events-auto flex gap-1.5 bg-black/30 px-2.5 py-1.5 rounded-full">
+                <div className="pointer-events-auto flex items-center gap-1.5 bg-white/90 border border-gray-200 px-2.5 py-1.5 rounded-full">
+                  <span className="text-[11px] font-semibold text-gray-600 tabular-nums mr-1">{index + 1}/{count}</span>
                   {vacancies.map((v, i) => (
                     <button
                       key={v.id}
                       onClick={() => setIndex(i)}
                       aria-label={`Show vacancy ${i + 1}`}
                       aria-current={i === index}
-                      className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`}
+                      className={`h-2 rounded-full transition-all ${i === index ? 'w-5 bg-green-600' : 'w-2 bg-gray-300 hover:bg-gray-400'}`}
                     />
                   ))}
                 </div>
@@ -194,7 +199,7 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                     onClick={() => setEditing(current)}
                     aria-label={`Edit vacancy ${current.title}`}
                     title="Edit vacancy"
-                    className="pointer-events-auto h-9 px-3 inline-flex items-center gap-1.5 rounded-full bg-white text-gray-800 text-sm font-semibold shadow-md ring-1 ring-black/10 hover:bg-green-50 hover:text-green-700 transition-colors"
+                    className="pointer-events-auto h-9 px-3 inline-flex items-center gap-1.5 rounded-sm bg-white text-gray-800 text-sm font-semibold ring-1 ring-gray-300 hover:bg-green-50 hover:text-green-700 transition-colors"
                   >
                     <Pencil className="w-4 h-4" /> Edit
                   </button>
@@ -202,7 +207,7 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                     onClick={() => remove(current)}
                     aria-label={`Remove vacancy ${current.title}`}
                     title="Remove vacancy"
-                    className="pointer-events-auto h-9 w-9 inline-flex items-center justify-center rounded-full bg-white text-gray-600 shadow-md ring-1 ring-black/10 hover:bg-red-50 hover:text-red-600 transition-colors"
+                    className="pointer-events-auto h-9 w-9 inline-flex items-center justify-center rounded-sm bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-red-50 hover:text-red-600 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -213,14 +218,42 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
 
           {count > 1 && (
             <>
-              <button onClick={() => go(-1)} aria-label="Previous vacancy" className="absolute left-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-full bg-black/35 hover:bg-black/55 text-white transition-colors">
+              <button onClick={() => go(-1)} aria-label="Previous vacancy" className="absolute left-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-sm bg-white/90 hover:bg-white text-gray-800 ring-1 ring-gray-300 transition-colors">
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <button onClick={() => go(1)} aria-label="Next vacancy" className="absolute right-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-full bg-black/35 hover:bg-black/55 text-white transition-colors">
+              <button onClick={() => go(1)} aria-label="Next vacancy" className="absolute right-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-sm bg-white/90 hover:bg-white text-gray-800 ring-1 ring-gray-300 transition-colors">
                 <ChevronRight className="w-5 h-5" />
               </button>
             </>
           )}
+        </div>
+
+        <ol className="flex-1 min-w-[240px] max-w-md border border-gray-300 rounded-md bg-white divide-y divide-gray-200 overflow-hidden" aria-label="All vacancies">
+          {vacancies.map((v, i) => (
+            <li key={v.id}>
+              <button
+                onClick={() => setIndex(i)}
+                aria-current={i === index}
+                className={`w-full text-left flex items-start gap-3 px-4 py-3 border-l-2 transition-colors ${
+                  i === index ? 'border-green-600 bg-green-50' : 'border-transparent hover:bg-gray-50'
+                }`}
+              >
+                <span className="text-xs font-semibold text-gray-400 tabular-nums pt-0.5">{String(i + 1).padStart(2, '0')}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold text-gray-900 truncate">{v.title}</span>
+                  <span className="block text-xs text-gray-500 truncate">
+                    {[v.company, v.location].filter(Boolean).join(' · ') || 'Open position'}
+                  </span>
+                  {v.closingDate && (
+                    <span className="block text-[11px] text-gray-400 mt-0.5">Apply by {mounted ? fmt(v.closingDate) : ''}</span>
+                  )}
+                </span>
+                {isNewV(v) && <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-300 text-amber-900 px-1.5 py-0.5 rounded-sm shrink-0">New</span>}
+                {isAdmin && v.expired && <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-800 text-white px-1.5 py-0.5 rounded-sm shrink-0">Expired</span>}
+              </button>
+            </li>
+          ))}
+        </ol>
         </div>
       )}
 
@@ -242,17 +275,19 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
   )
 }
 
-function VacancyMeta({ v, mounted, compact = false }: { v: Vacancy; mounted: boolean; compact?: boolean }) {
+function VacancyMeta({ v, mounted, compact = false, tone = 'dark' }: { v: Vacancy; mounted: boolean; compact?: boolean; tone?: 'dark' | 'light' }) {
+  const main = tone === 'light' ? 'text-gray-700' : 'text-white/90'
+  const sub = tone === 'light' ? 'text-gray-500' : 'text-white/80'
   const item = 'inline-flex items-center gap-1'
   const icon = compact ? 'w-3 h-3' : 'w-3.5 h-3.5'
   return (
-    <div className={`text-white/90 ${compact ? 'text-[11px] mt-0.5' : 'text-xs mt-2.5 space-y-1.5'}`}>
+    <div className={`${main} ${compact ? 'text-[11px] mt-0.5' : 'text-xs mt-2.5 space-y-1.5'}`}>
       <div className="flex flex-wrap gap-x-3 gap-y-0.5">
         {v.company && <span className={item}><Building2 className={icon} />{v.company}</span>}
         {v.location && <span className={item}><MapPin className={icon} />{v.location}</span>}
         {v.openings && <span className={item}><Users className={icon} />{v.openings} {v.openings === 1 ? 'opening' : 'openings'}</span>}
       </div>
-      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-white/80">
+      <div className={`flex flex-wrap gap-x-3 gap-y-0.5 ${sub}`}>
         <span className={item}><CalendarDays className={icon} />Posted {mounted ? fmt(v.postedAt) : ''}</span>
         {v.closingDate && <span className={item}><CalendarClock className={icon} />Apply by {mounted ? fmt(v.closingDate) : ''}</span>}
       </div>
