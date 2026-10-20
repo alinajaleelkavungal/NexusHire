@@ -115,8 +115,10 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   }, [candidates, manualSectors, savedSectors])
 
   const filteredCandidates = candidates.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
-                          (c.skills && c.skills.toLowerCase().includes(search.toLowerCase()))
+    // Matches name, skills, category, sub category and the saved CV file name(s)
+    const q = search.trim().toLowerCase()
+    const matchesSearch = !q || [c.name, c.skills, c.sector, c.category, ...(c.resumes ?? []).map((r: any) => r.fileName)]
+      .some(v => v && String(v).toLowerCase().includes(q))
     
     // Filter by activeCategory (which maps to sector now)
     const matchesCategory = activeCategory ? (c.sector === activeCategory || c.category === activeCategory) : true
@@ -420,7 +422,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <input
             type="search"
             aria-label="Search candidates"
-            placeholder="Search by name or skill"
+            placeholder="Search by name, skill, file name or sub category"
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-12 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition-all [&::-webkit-search-cancel-button]:hidden"
@@ -570,6 +572,8 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           const date = new Date(candidate.createdAt)
           const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true })}`
           const isSelected = selectedIds.has(candidate.id)
+          const searchQ = search.trim().toLowerCase()
+          const fileHit = searchQ ? (candidate.resumes ?? []).find((r: any) => r.fileName?.toLowerCase().includes(searchQ)) : null
           
           return (
             <div 
@@ -613,12 +617,17 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                       {candidate.name}
                     </Link>
                   </h3>
+                  {fileHit && (
+                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5 break-all">
+                      <FileText className="w-3 h-3 shrink-0" /> {fileHit.fileName}
+                    </p>
+                  )}
                   <div className="flex items-center flex-wrap gap-2 mt-1">
                     {candidate.sector && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.sector}</span>
+                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600"><span className="text-gray-400">Category:</span> {candidate.sector}</span>
                     )}
                     {candidate.category && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.category}</span>
+                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600"><span className="text-gray-400">Sub category:</span> {candidate.category}</span>
                     )}
                     {candidate.yearsOfExperience && (
                       <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.yearsOfExperience}</span>
