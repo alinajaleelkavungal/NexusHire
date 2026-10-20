@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
-  Home, Users, FolderTree, Briefcase, LogOut, KeyRound, ShieldCheck, Store, LayoutGrid, Calendar, Search, MessageSquare, Building2, Sparkles,
+  Home, Users, Briefcase, LogOut, KeyRound, ShieldCheck, Store, LayoutGrid, Calendar, Search, MessageSquare, Building2, Sparkles,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -26,7 +26,6 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Browse by',
     items: [
-      { name: 'Category', href: '/categories', icon: FolderTree },
       { name: 'Sectors', href: '/sectors', icon: LayoutGrid },
       { name: 'Age', href: '/age', icon: Calendar },
       { name: 'Experience', href: '/experience', icon: Briefcase },
