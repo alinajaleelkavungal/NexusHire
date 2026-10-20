@@ -15,6 +15,28 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
   const [expandedSector, setExpandedSector] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState(initialQuery)
   const searching = searchQuery.trim() !== ''
+  // Per-sector search boxes (file name / candidate name inside that sector only)
+  const [barSearch, setBarSearch] = useState<Record<string, string>>({})
+  const localQ = (key: string) => (barSearch[key] ?? '').trim().toLowerCase()
+  const inBar = (list: any[], key: string) => {
+    const lq = localQ(key)
+    if (!lq) return list
+    return list.filter(c => c.name.toLowerCase().includes(lq) || hasFileMatch(c, lq))
+  }
+  // Called as a plain function (not <Component/>) so typing never remounts the input
+  const barSearchBox = (k: string, label: string) => (
+    <div className="relative px-6 pb-4">
+      <Search className="absolute left-9 top-1/2 -translate-y-1/2 -mt-2 w-4 h-4 text-gray-400" aria-hidden />
+      <input
+        type="search"
+        aria-label={`Search file names in ${label}`}
+        placeholder={`Search file name in ${label}`}
+        value={barSearch[k] ?? ''}
+        onChange={e => setBarSearch(prev => ({ ...prev, [k]: e.target.value }))}
+        className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all [&::-webkit-search-cancel-button]:hidden"
+      />
+    </div>
+  )
 
   const allSectors = Object.keys(SECTOR_CATEGORY_MAP)
 
@@ -90,7 +112,10 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
       </div>
 
       <div className="space-y-6">
-        {sectorGroups.filter(g => !searching || g.candidates.length > 0).map(group => (
+        {sectorGroups.filter(g => !searching || g.candidates.length > 0).map(group => {
+          const shown = inBar(group.candidates, group.sector)
+          const open = searching || !!localQ(group.sector) || expandedSector === group.sector
+          return (
           <div key={group.sector} className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
             <div 
               onClick={() => setExpandedSector(expandedSector === group.sector ? null : group.sector)}
@@ -107,10 +132,11 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
               </div>
               <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedSector === group.sector) ? 'rotate-90' : ''}`} />
             </div>
+            {barSearchBox(group.sector, group.sector)}
 
-            {(searching || expandedSector === group.sector) && (
+            {open && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
-                {group.candidates.map(candidate => (
+                {shown.map(candidate => (
                   <div 
                     key={candidate.id}
                     onClick={() => router.push(`/candidates/${candidate.id}`)}
@@ -122,7 +148,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-green-600">{candidate.name}</h4>
-                        <FileHit candidate={candidate} query={searchQuery} />
+                        <FileHit candidate={candidate} query={localQ(group.sector) || searchQuery} />
                         <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>
@@ -135,15 +161,16 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                   </div>
                 ))}
                 
-                {group.candidates.length === 0 && (
+                {shown.length === 0 && (
                   <div className="text-center py-8 text-gray-400 text-sm">
-                    No candidates in this sector yet.
+                    {localQ(group.sector) ? `No file name in ${group.sector} matches “${barSearch[group.sector].trim()}”.` : 'No candidates in this sector yet.'}
                   </div>
                 )}
               </div>
             )}
           </div>
-        ))}
+          )
+        })}
 
         {unassigned.length > 0 && (
           <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
@@ -162,10 +189,11 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
               </div>
               <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedSector === 'unassigned') ? 'rotate-90' : ''}`} />
             </div>
+            {barSearchBox('unassigned', 'Uncategorized')}
 
-            {(searching || expandedSector === 'unassigned') && (
+            {(searching || !!localQ('unassigned') || expandedSector === 'unassigned') && (
               <div className="border-t border-gray-100 bg-gray-50/50 p-4 space-y-2">
-                {unassigned.map(candidate => (
+                {inBar(unassigned, 'unassigned').map(candidate => (
                   <div 
                     key={candidate.id}
                     onClick={() => router.push(`/candidates/${candidate.id}`)}
@@ -177,7 +205,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 group-hover:text-gray-600">{candidate.name}</h4>
-                        <FileHit candidate={candidate} query={searchQuery} />
+                        <FileHit candidate={candidate} query={localQ('unassigned') || searchQuery} />
                         <p className="text-xs text-gray-500">Uncategorized</p>
                       </div>
                     </div>
