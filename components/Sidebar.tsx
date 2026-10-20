@@ -24,10 +24,6 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
     ],
   },
   {
-    label: 'Recruitment',
-    items: [{ name: 'Jobs', href: '/recruitment/jobs', icon: Building2 }],
-  },
-  {
     label: 'Browse by',
     items: [
       { name: 'Category', href: '/categories', icon: FolderTree },
@@ -35,6 +31,10 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
       { name: 'Age', href: '/age', icon: Calendar },
       { name: 'Experience', href: '/experience', icon: Briefcase },
     ],
+  },
+  {
+    label: 'Recruitment',
+    items: [{ name: 'Jobs', href: '/recruitment/jobs', icon: Building2 }],
   },
 ]
 
