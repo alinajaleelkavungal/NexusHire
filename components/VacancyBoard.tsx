@@ -55,9 +55,20 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
 
   const remove = async (v: Vacancy) => {
     if (!confirm(`Take down the vacancy "${v.title}"?`)) return
-    const res = await fetch(`/api/vacancies/${v.id}`, { method: 'DELETE' })
-    if (res.ok) router.refresh()
-    else alert('Could not remove the vacancy')
+    try {
+      const res = await fetch(`/api/vacancies/${v.id}`, { method: 'DELETE' })
+      // 404 = it was already removed (e.g. this page was out of date): just refresh the list
+      if (res.ok || res.status === 404) return router.refresh()
+
+      const data = await res.json().catch(() => ({}))
+      alert(
+        res.status === 401 ? 'Your session has expired. Please sign in again.'
+        : res.status === 403 ? 'Only an admin can remove vacancies.'
+        : `Could not remove the vacancy${data.error ? `: ${data.error}` : ''}`
+      )
+    } catch {
+      alert('Could not reach the server. Check your connection and try again.')
+    }
   }
 
   if (count === 0 && !isAdmin) return null
@@ -324,6 +335,7 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
         body,
       })
       const data = await res.json().catch(() => ({}))
+      if (isEdit && res.status === 404) return onSaved() // already removed: refresh the list
       if (!res.ok) throw new Error(data.error || (isEdit ? 'Could not save changes' : 'Could not post vacancy'))
       onSaved()
     } catch (err: any) {
