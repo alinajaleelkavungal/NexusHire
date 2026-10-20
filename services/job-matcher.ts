@@ -14,14 +14,20 @@ export interface CandidateMatch {
 /**
  * Searches Qdrant for the best candidate matches using the Job Description vector.
  */
-export async function matchCandidatesToJob(jobVector: number[], topK: number = 10): Promise<CandidateMatch[]> {
+export async function matchCandidatesToJob(
+  jobVector: number[],
+  topK: number = 10,
+  allowedIds?: string[] // undefined = unrestricted; otherwise only these candidates
+): Promise<CandidateMatch[]> {
+  if (allowedIds && allowedIds.length === 0) return []
   await initQdrantCollection()
 
   // We search for top chunks, maybe a larger number since multiple chunks belong to the same candidate
   const searchResults = await qdrantClient.search(COLLECTION_NAME, {
     vector: jobVector,
     limit: topK * 3, // over-fetch to ensure we get enough unique candidates
-    with_payload: true
+    with_payload: true,
+    filter: allowedIds ? { must: [{ key: 'candidateId', match: { any: allowedIds } }] } : undefined
   })
 
   // Group by candidateId to find their highest matching chunk

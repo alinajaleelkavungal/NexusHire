@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardSession, allowedCandidateIds } from '@/lib/auth'
 import { matchCandidatesToJob } from '@/services/job-matcher'
 import { generateRecommendations } from '@/services/recommendation-engine'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const g = await guardSession()
+    if (g.response) return g.response
+
     const { id } = await params
     const job = await prisma.jobDescription.findUnique({
       where: { id }
@@ -21,7 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const jobVector = JSON.parse(job.vector) as number[]
 
     // 1. Semantic Match via Qdrant
-    const topMatches = await matchCandidatesToJob(jobVector, 10)
+    const topMatches = await matchCandidatesToJob(jobVector, 10, await allowedCandidateIds(g.session))
 
     if (topMatches.length === 0) {
       return NextResponse.json({ success: true, results: [] })

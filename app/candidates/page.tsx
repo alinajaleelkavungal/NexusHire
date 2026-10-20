@@ -1,20 +1,25 @@
 import prisma from '@/lib/prisma'
+import { redirect } from 'next/navigation'
+import { getSession, listCandidatesFor } from '@/lib/auth'
 import CandidateDatabase from '@/components/CandidateDatabase'
 
 export const dynamic = 'force-dynamic'
 
 export default async function CandidatesPage() {
-  // Use raw SQL to bypass the outdated Prisma Client which drops newly added columns
-  const candidatesRaw = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM Candidate ORDER BY createdAt DESC`)
-  const allResumes = await prisma.resume.findMany()
-  
+  const session = await getSession()
+  if (!session) redirect('/login')
+
+  // Admin: every branch's CVs. Branch: only the CVs it uploaded.
+  const candidatesRaw = await listCandidatesFor(session)
+  const allResumes = await prisma.resume.findMany({
+    where: { candidateId: { in: candidatesRaw.map(c => c.id) } }
+  })
+
   const candidates = candidatesRaw.map(c => ({
     ...c,
-    createdAt: new Date(c.createdAt),
-    updatedAt: new Date(c.updatedAt),
     resumes: allResumes.filter(r => r.candidateId === c.id)
   }))
-  
+
   const jobs = await prisma.jobDescription.findMany({
     select: { company: true },
     distinct: ['company']
@@ -40,6 +45,7 @@ export default async function CandidatesPage() {
         initialCandidates={candidates} 
         availableCompanies={availableCompanies} 
         savedSectors={dbSectors}
+        isAdmin={session.role === 'ADMIN'}
       />
     </div>
   )

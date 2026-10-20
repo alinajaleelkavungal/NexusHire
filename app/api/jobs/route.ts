@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardSession } from '@/lib/auth'
 import { analyzeJobDescription } from '@/services/job-analyzer'
 import { generateEmbedding } from '@/services/embedding-service'
 
 export async function GET() {
   try {
+    const g = await guardSession()
+    if (g.response) return g.response
+
     const jobs = await prisma.jobDescription.findMany({
       orderBy: { createdAt: 'desc' }
     })
@@ -17,6 +21,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const g = await guardSession()
+    if (g.response) return g.response
+
     const { rawText } = await request.json()
 
     if (!rawText) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate, allowedCandidateIds } from '@/lib/auth'
 import { qdrantClient, COLLECTION_NAME, initQdrantCollection } from '@/lib/qdrant'
 import { generateEmbedding } from '@/services/embedding-service'
 
@@ -10,6 +11,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (!candidateId) {
       return NextResponse.json({ error: 'candidateId is required' }, { status: 400 })
     }
+
+    const g = await guardCandidate(candidateId)
+    if (g.response) return g.response
+    const allowed = await allowedCandidateIds(g.session) // undefined = admin
 
     const candidate = await prisma.candidate.findUnique({
       where: { id: candidateId }
@@ -37,6 +42,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       limit: 10,
       with_payload: true,
       filter: {
+        ...(allowed ? { must: [{ key: 'candidateId', match: { any: allowed } }] } : {}),
         // Exclude the current candidate from results
         must_not: [
           {

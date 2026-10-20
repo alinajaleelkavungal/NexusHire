@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardSession, filterAccessibleIds } from '@/lib/auth'
 import { deleteResumeFiles } from '@/services/resumeStorage'
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, candidateIds, status } = await request.json()
+    const { action, candidateIds: requestedIds, status } = await request.json()
 
-    if (!Array.isArray(candidateIds) || candidateIds.length === 0) {
+    if (!Array.isArray(requestedIds) || requestedIds.length === 0) {
       return NextResponse.json({ error: 'candidateIds must be a non-empty array' }, { status: 400 })
+    }
+
+    const g = await guardSession()
+    if (g.response) return g.response
+
+    // Branches can only act on their own candidates; anything else is silently ignored
+    const candidateIds = await filterAccessibleIds(g.session, requestedIds)
+    if (candidateIds.length === 0) {
+      return NextResponse.json({ error: 'No matching candidates' }, { status: 404 })
     }
 
     if (action === 'delete') {

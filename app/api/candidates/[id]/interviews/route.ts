@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
+    const g = await guardCandidate(id)
+    if (g.response) return g.response
     const interviews = await prisma.interview.findMany({
       where: { candidateId: id },
       orderBy: { date: 'asc' }
@@ -17,6 +20,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
+    const g = await guardCandidate(id)
+    if (g.response) return g.response
     const data = await request.json()
     const { interviewer, date, time, type, location, meetingLink } = data
 

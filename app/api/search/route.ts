@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { guardSession, allowedCandidateIds } from '@/lib/auth'
 import { qdrantClient, COLLECTION_NAME, initQdrantCollection } from '@/lib/qdrant'
 import { generateEmbedding } from '@/services/embedding-service'
 
 export async function GET(request: NextRequest) {
   try {
+    const g = await guardSession()
+    if (g.response) return g.response
+    const allowed = await allowedCandidateIds(g.session) // undefined = admin
+    if (allowed && allowed.length === 0) {
+      return NextResponse.json({ success: true, results: [] })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const query = searchParams.get('q')
 
@@ -21,7 +29,8 @@ export async function GET(request: NextRequest) {
     const searchResults = await qdrantClient.search(COLLECTION_NAME, {
       vector: queryVector,
       limit: 10,
-      with_payload: true
+      with_payload: true,
+      filter: allowed ? { must: [{ key: 'candidateId', match: { any: allowed } }] } : undefined
     })
 
     // Group chunks by candidateId to avoid returning the same candidate multiple times

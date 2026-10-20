@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 import { qdrantClient, COLLECTION_NAME, initQdrantCollection } from '@/lib/qdrant'
 import { generateEmbedding } from '@/services/embedding-service'
 import { chunkResumeText } from '@/services/text-chunker'
@@ -21,6 +22,9 @@ export async function POST(request: NextRequest) {
     if (!resume || !resume.extractedText) {
       return NextResponse.json({ error: 'Resume or extracted text not found' }, { status: 404 })
     }
+
+    const g = await guardCandidate(resume.candidateId)
+    if (g.response) return g.response
 
     // Initialize collection if it doesn't exist
     await initQdrantCollection()

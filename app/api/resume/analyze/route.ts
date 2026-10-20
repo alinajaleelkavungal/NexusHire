@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 import { analyzeResumeText } from '@/services/resume-analyzer'
 
 export async function POST(request: NextRequest) {
@@ -18,6 +19,9 @@ export async function POST(request: NextRequest) {
     if (!resume) {
       return NextResponse.json({ error: 'Resume not found' }, { status: 404 })
     }
+
+    const g = await guardCandidate(resume.candidateId)
+    if (g.response) return g.response
 
     if (!resume.extractedText) {
       return NextResponse.json({ error: 'No extracted text found for this resume' }, { status: 400 })

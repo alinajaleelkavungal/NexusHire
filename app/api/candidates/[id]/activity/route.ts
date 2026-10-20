@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
@@ -7,6 +8,8 @@ export async function GET(
 ) {
   try {
     const { id } = await params
+    const g = await guardCandidate(id)
+    if (g.response) return g.response
     const activities = await prisma.activityLog.findMany({
       where: { candidateId: id },
       orderBy: { createdAt: 'desc' }

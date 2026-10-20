@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardAdmin } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
+    const g = await guardAdmin()
+    if (g.response) return g.response
+
     const { sectorName } = await request.json()
 
     if (!sectorName) {

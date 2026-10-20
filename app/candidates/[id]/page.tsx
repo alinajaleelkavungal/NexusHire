@@ -1,9 +1,15 @@
 import prisma from '@/lib/prisma'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { getSession, canAccessCandidate } from '@/lib/auth'
 import { Mail, Phone, MapPin, ClipboardList, FileText, ExternalLink, Calendar, Briefcase, LayoutGrid } from 'lucide-react'
 
 export default async function CandidateProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await getSession()
+  if (!session) redirect('/login')
+  // Other branches' candidates look exactly like missing ones
+  if (!(await canAccessCandidate(session, id))) notFound()
+
   // Use raw SQL to bypass the outdated Prisma Client which drops newly added columns
   const candidatesRaw = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM Candidate WHERE id = ?`, id)
   

@@ -16,6 +16,7 @@ interface CandidateDatabaseProps {
   initialCandidates: any[]
   availableCompanies?: string[]
   savedSectors?: string[]
+  isAdmin?: boolean
 }
 
 function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
@@ -40,7 +41,7 @@ const STAGE_OPTIONS = [
   'Technical Interview', 'HR Interview', 'Selected', 'Rejected',
 ]
 
-export default function CandidateDatabase({ initialCandidates, availableCompanies = [], savedSectors = [] }: CandidateDatabaseProps) {
+export default function CandidateDatabase({ initialCandidates, availableCompanies = [], savedSectors = [], isAdmin = false }: CandidateDatabaseProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const urlSector = searchParams.get('sector')
@@ -49,6 +50,11 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(urlSector || null)
   const [stageFilter, setStageFilter] = useState<string | null>(null)
+  const [branchFilter, setBranchFilter] = useState<string | null>(null)
+
+  // Admin only: which branch uploaded each CV. Legacy CVs (before logins existed) have no owner.
+  const UNASSIGNED = 'Unassigned'
+  const branchOf = (c: any): string => c.branchName || UNASSIGNED
   
   // Upload Modal State
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
@@ -115,7 +121,8 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
     // Filter by activeCategory (which maps to sector now)
     const matchesCategory = activeCategory ? (c.sector === activeCategory || c.category === activeCategory) : true
     const matchesStage = stageFilter ? (c.recruitmentStage || 'Applied') === stageFilter : true
-    return matchesSearch && matchesCategory && matchesStage
+    const matchesBranch = branchFilter ? branchOf(c) === branchFilter : true
+    return matchesSearch && matchesCategory && matchesStage && matchesBranch
   })
 
   const allFilteredSelected =
@@ -453,6 +460,21 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
             </FilterChip>
           ))}
         </div>
+        {isAdmin && (
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by branch">
+            <FilterChip active={!branchFilter} onClick={() => setBranchFilter(null)}>All branches</FilterChip>
+            {Array.from(new Set(candidates.map(branchOf))).sort().map(branch => (
+              <FilterChip
+                key={branch}
+                active={branchFilter === branch}
+                onClick={() => setBranchFilter(branchFilter === branch ? null : branch)}
+              >
+                {branch}
+                <span className="text-xs opacity-70">{candidates.filter(c => branchOf(c) === branch).length}</span>
+              </FilterChip>
+            ))}
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by stage">
           <FilterChip active={!stageFilter} onClick={() => setStageFilter(null)}>Any stage</FilterChip>
           {STAGE_OPTIONS.map(stage => (
@@ -604,6 +626,14 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                     {candidate.age && (
                       <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.age} yrs</span>
                     )}
+                    {candidate.agent && (
+                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">Agent: {candidate.agent}</span>
+                    )}
+                    {isAdmin && (
+                      <span className="bg-blue-50 border border-blue-200 px-2 py-0.5 rounded text-xs text-blue-700 font-medium" title="Uploaded by">
+                        {branchOf(candidate)}
+                      </span>
+                    )}
                     
                     <button 
                       onClick={(e) => {
@@ -678,7 +708,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               </button>
             ) : (
               <button
-                onClick={() => { setSearch(''); setActiveCategory(null); setStageFilter(null) }}
+                onClick={() => { setSearch(''); setActiveCategory(null); setStageFilter(null); setBranchFilter(null) }}
                 className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors"
               >
                 Clear filters

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 import { getResumeDownloadUrl, isB2Key } from '@/services/resumeStorage'
 
 // Redirects to a short-lived signed Backblaze URL (or the legacy local path)
@@ -12,6 +13,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     if (!resume) {
       return NextResponse.json({ error: 'Resume not found' }, { status: 404 })
     }
+
+    const g = await guardCandidate(resume.candidateId)
+    if (g.response) return g.response
 
     if (!isB2Key(resume.fileUrl)) {
       return NextResponse.redirect(new URL(resume.fileUrl, _request.url))

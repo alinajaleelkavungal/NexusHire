@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardSession, canAccessCandidate, allowedCandidateIds } from '@/lib/auth'
 
 /**
  * Normalise a name for loose comparison:
@@ -41,11 +42,17 @@ function similarity(a: string, b: string): number {
 
 export async function POST(request: NextRequest) {
   try {
+    const g = await guardSession()
+    if (g.response) return g.response
+
     const body = await request.json()
     const candidateId: string | undefined = body.candidateId
     let newCandidate: { id: string | null; name: string; email: string | null } | null = null
 
     if (candidateId) {
+      if (!(await canAccessCandidate(g.session, candidateId))) {
+        return NextResponse.json({ error: 'Candidate not found' }, { status: 404 })
+      }
       newCandidate = await prisma.candidate.findUnique({
         where: { id: candidateId },
         select: { id: true, name: true, email: true }
@@ -61,10 +68,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch all *other* candidates (exclude the new one, if it exists)
-    const others = await prisma.candidate.findMany({
+    const visibleIds = await allowedCandidateIds(g.session) // undefined = admin (everything)
+    const allOthers = await prisma.candidate.findMany({
       where: candidateId ? { id: { not: candidateId } } : {},
       select: { id: true, name: true, email: true }
     })
+    const others = visibleIds ? allOthers.filter(o => visibleIds.includes(o.id)) : allOthers
 
     // ── Priority 1: Email match ──────────────────────────────────────────
     if (newCandidate.email) {

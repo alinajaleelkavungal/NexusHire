@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "account": "tsx scripts/create-account.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1126.0",

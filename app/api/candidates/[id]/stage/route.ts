@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
+    const g = await guardCandidate(id)
+    if (g.response) return g.response
     const { stage } = await request.json()
 
     if (!stage) {

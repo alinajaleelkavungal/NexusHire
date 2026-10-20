@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardSession } from '@/lib/auth'
 import { uploadResume, deleteResumeFiles } from '@/services/resumeStorage'
 import { processResumeFile } from '@/services/resume-parser'
 
 export async function POST(request: NextRequest) {
   try {
+    const g = await guardSession()
+    if (g.response) return g.response
+
     const formData = await request.formData()
     const file = formData.get('file') as File | null
 
@@ -77,8 +81,8 @@ export async function POST(request: NextRequest) {
 
       // Raw SQL: the generated Prisma Client can drop the newer intake columns
       await prisma.$executeRawUnsafe(
-        `UPDATE Candidate SET age = ?, sector = ?, category = ?, yearsOfExperience = ?, agent = ? WHERE id = ?`,
-        age, details.sector, details.category, details.yearsOfExperience, details.agent, candidate.id
+        `UPDATE Candidate SET age = ?, sector = ?, category = ?, yearsOfExperience = ?, agent = ?, ownerId = ? WHERE id = ?`,
+        age, details.sector, details.category, details.yearsOfExperience, details.agent, g.session.sub, candidate.id
       )
 
       // Create the Resume record

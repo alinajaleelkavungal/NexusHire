@@ -36,6 +36,7 @@ model Candidate {
   sector              String?
   yearsOfExperience   String?
   agent               String?
+  ownerId             String?  // Account that uploaded this candidate (null = legacy, admin-only)
   resumes             Resume[]
   chatHistory         ChatHistory[]
   recruiterNotes      RecruiterNote[]
@@ -119,6 +120,17 @@ model ActivityLog {
   action      String
   description String?
   createdAt   DateTime  @default(now())
+}
+
+// Login accounts: one ADMIN (sees everything) and one BRANCH account per branch
+model Account {
+  id           String   @id @default(cuid())
+  loginId      String   @unique
+  name         String
+  role         String   // "ADMIN" | "BRANCH"
+  passwordHash String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
 }
 
 model Sector {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { guardCandidate } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,6 +9,9 @@ export async function POST(request: NextRequest) {
     if (!candidateId) {
       return NextResponse.json({ error: 'Missing candidateId' }, { status: 400 })
     }
+
+    const g = await guardCandidate(candidateId)
+    if (g.response) return g.response
 
     const parsedAge = age ? parseInt(age, 10) : null
     
