@@ -1,67 +1,90 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { guardSession, allowedCandidateIds } from '@/lib/auth'
-import { qdrantClient, COLLECTION_NAME, initQdrantCollection } from '@/lib/qdrant'
-import { generateEmbedding } from '@/services/embedding-service'
+import { guardSession, listCandidatesWithResumesFor } from '@/lib/auth'
+
+// Search runs on exactly what is entered in the upload form, plus the saved file name:
+//   Name · Age · Category · Sub category · Experience · Agent · File name (· Branch, for admins)
+// Every word typed must match at least one of those fields, so "nurse 25" narrows rather than widens.
+
+interface Field {
+  key: string
+  label: string
+  value: string
+  weight: number
+  exact?: boolean // numbers: whole-value match (age 25 must not match 125)
+}
 
 export async function GET(request: NextRequest) {
   try {
     const g = await guardSession()
     if (g.response) return g.response
-    const allowed = await allowedCandidateIds(g.session) // undefined = admin
-    if (allowed && allowed.length === 0) {
-      return NextResponse.json({ success: true, results: [] })
-    }
 
-    const searchParams = request.nextUrl.searchParams
-    const query = searchParams.get('q')
+    const q = (request.nextUrl.searchParams.get('q') ?? '').trim().toLowerCase()
+    if (!q) return NextResponse.json({ error: 'Search query (q) is required' }, { status: 400 })
 
-    if (!query) {
-      return NextResponse.json({ error: 'Search query (q) is required' }, { status: 400 })
-    }
+    const words = q.split(/\s+/).filter(Boolean)
+    const isAdmin = g.session.role === 'ADMIN'
+    const candidates = await listCandidatesWithResumesFor(g.session)
 
-    // Ensure collection is ready
-    await initQdrantCollection()
+    const results: any[] = []
+    for (const c of candidates) {
+      const files: { id: string; fileName: string }[] = (c.resumes ?? []).map((r: any) => ({ id: r.id, fileName: r.fileName }))
+      const fields: Field[] = [
+        { key: 'name', label: 'Name', value: c.name ?? '', weight: 5 },
+        ...files.map((f, i) => ({ key: `file${i}`, label: 'File name', value: f.fileName ?? '', weight: 5 })),
+        { key: 'age', label: 'Age', value: c.age != null ? String(c.age) : '', weight: 4, exact: true },
+        { key: 'sector', label: 'Category', value: c.sector ?? '', weight: 4 },
+        { key: 'category', label: 'Sub category', value: c.category ?? '', weight: 4 },
+        { key: 'exp', label: 'Experience', value: c.yearsOfExperience ?? '', weight: 3 },
+        { key: 'agent', label: 'Agent', value: c.agent ?? '', weight: 3 },
+        ...(isAdmin ? [{ key: 'branch', label: 'Branch', value: c.branchName ?? '', weight: 1 }] : []),
+      ]
 
-    // Generate embedding for the search query
-    const queryVector = await generateEmbedding(query)
+      let score = 0
+      const matched = new Set<string>()
+      const matchedFiles = new Set<number>()
+      let allWordsHit = true
 
-    // Search Qdrant
-    const searchResults = await qdrantClient.search(COLLECTION_NAME, {
-      vector: queryVector,
-      limit: 10,
-      with_payload: true,
-      filter: allowed ? { must: [{ key: 'candidateId', match: { any: allowed } }] } : undefined
-    })
-
-    // Group chunks by candidateId to avoid returning the same candidate multiple times
-    const candidatesMap = new Map()
-
-    for (const result of searchResults) {
-      const payload = result.payload as any
-      if (!payload || !payload.candidateId) continue
-
-      if (!candidatesMap.has(payload.candidateId)) {
-        candidatesMap.set(payload.candidateId, {
-          candidateId: payload.candidateId,
-          name: payload.name,
-          skills: payload.skills || [],
-          category: payload.category,
-          experienceLevel: payload.experienceLevel,
-          matchScore: result.score // score from Qdrant, cosine similarity
-        })
-      } else {
-        // If a candidate matches on multiple chunks, keep the highest score
-        const existing = candidatesMap.get(payload.candidateId)
-        if (result.score > existing.matchScore) {
-          existing.matchScore = result.score
+      for (const w of words) {
+        let hit = false
+        for (const f of fields) {
+          const v = f.value.toLowerCase()
+          if (!v) continue
+          const ok = f.exact ? v === w : v.includes(w)
+          if (!ok) continue
+          hit = true
+          score += f.weight + (v === w ? 2 : 0)
+          matched.add(f.label)
+          if (f.key.startsWith('file')) matchedFiles.add(Number(f.key.slice(4)))
         }
+        if (!hit) { allWordsHit = false; break }
       }
+      if (!allWordsHit) continue
+
+      // The file(s) that matched go first so the right CV is the one opened
+      const ordered = [
+        ...files.filter((_, i) => matchedFiles.has(i)),
+        ...files.filter((_, i) => !matchedFiles.has(i)),
+      ]
+
+      results.push({
+        candidateId: c.id,
+        name: c.name,
+        age: c.age ?? null,
+        sector: c.sector ?? null,
+        category: c.category ?? null,
+        yearsOfExperience: c.yearsOfExperience ?? null,
+        agent: c.agent ?? null,
+        branchName: isAdmin ? c.branchName ?? null : null,
+        stage: c.recruitmentStage || 'Applied',
+        files: ordered,
+        matchedFileIds: files.filter((_, i) => matchedFiles.has(i)).map(f => f.id),
+        matchedFields: Array.from(matched),
+        score,
+      })
     }
 
-    const matchedCandidates = Array.from(candidatesMap.values()).sort((a, b) => b.matchScore - a.matchScore)
-
-    return NextResponse.json({ success: true, results: matchedCandidates })
-
+    results.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+    return NextResponse.json({ success: true, results })
   } catch (error: any) {
     console.error('Search API Error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
