@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ChevronLeft, ChevronRight, Megaphone, MapPin, Building2, Users, CalendarDays, CalendarClock,
@@ -12,6 +12,11 @@ const SLIDE_MS = 6000
 const PER_VIEW = 2 // posters shown side by side in the carousel
 const LIST_PREVIEW = 8 // cards shown in the list below before "Show all"
 const CAROUSEL_ID = 'vacancy-carousel'
+// Icon-only buttons with no box around them. Over posters a soft shadow keeps the icon readable on any image.
+const FLOATING_ICON_BTN = 'pointer-events-auto p-0.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)] hover:scale-110 transition-[transform,color] focus-visible:outline-2 focus-visible:outline-green-500 rounded-sm'
+// On the light text-only cards the icon is simply dark
+const PLAIN_ICON_BTN = 'pointer-events-auto p-0.5 text-gray-600 hover:scale-110 transition-[transform,color] focus-visible:outline-2 focus-visible:outline-green-500 rounded-sm'
+const BARE_ICON_BTN = 'p-0.5 text-gray-500 hover:text-green-700 transition-colors focus-visible:outline-2 focus-visible:outline-green-500 rounded-sm'
 const NEW_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
 const POSTER_TYPES = ['image/png', 'image/jpeg', 'image/webp']
 const POSTER_MAX_BYTES = 5 * 1024 * 1024
@@ -95,11 +100,11 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
               <span className="text-xs text-gray-500 tabular-nums mr-1">
                 {index + 1}–{index + perView} of {count}
               </span>
-              <button onClick={() => go(-1)} aria-label="Previous vacancies" className="h-8 w-8 inline-flex items-center justify-center rounded-sm bg-white text-gray-700 ring-1 ring-gray-300 hover:bg-gray-50">
-                <ChevronLeft className="w-4 h-4" />
+              <button onClick={() => go(-1)} aria-label="Previous vacancies" title="Previous" className={BARE_ICON_BTN}>
+                <ChevronLeft weight="bold" className="w-5 h-5" />
               </button>
-              <button onClick={() => go(1)} aria-label="Next vacancies" className="h-8 w-8 inline-flex items-center justify-center rounded-sm bg-white text-gray-700 ring-1 ring-gray-300 hover:bg-gray-50">
-                <ChevronRight className="w-4 h-4" />
+              <button onClick={() => go(1)} aria-label="Next vacancies" title="Next" className={BARE_ICON_BTN}>
+                <ChevronRight weight="bold" className="w-5 h-5" />
               </button>
             </div>
           )}
@@ -193,24 +198,24 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                       )}
                     </div>
                     {isAdmin && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <button
                           onClick={() => setEditing(v)}
                           tabIndex={inView(i) ? 0 : -1}
                           aria-label={`Edit vacancy ${v.title}`}
                           title="Edit vacancy"
-                          className="pointer-events-auto h-8 px-2.5 inline-flex items-center gap-1.5 rounded-sm bg-white text-gray-800 text-sm font-semibold ring-1 ring-gray-300 hover:bg-green-50 hover:text-green-700 transition-colors"
+                          className={`${v.hasImage ? FLOATING_ICON_BTN : PLAIN_ICON_BTN} ${v.hasImage ? 'hover:text-green-300' : 'hover:text-green-700'}`}
                         >
-                          <Pencil className="w-4 h-4" /> Edit
+                          <Pencil weight="fill" className="w-6 h-6" />
                         </button>
                         <button
                           onClick={() => remove(v)}
                           tabIndex={inView(i) ? 0 : -1}
                           aria-label={`Remove vacancy ${v.title}`}
                           title="Remove vacancy"
-                          className="pointer-events-auto h-8 w-8 inline-flex items-center justify-center rounded-sm bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className={`${v.hasImage ? FLOATING_ICON_BTN : PLAIN_ICON_BTN} ${v.hasImage ? 'hover:text-red-400' : 'hover:text-red-600'}`}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 weight="fill" className="w-6 h-6" />
                         </button>
                       </div>
                     )}
@@ -221,11 +226,11 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
 
             {positions > 1 && (
               <>
-                <button onClick={() => go(-1)} aria-label="Previous vacancies" className="absolute left-3 top-[45%] -translate-y-1/2 z-20 h-10 w-10 inline-flex items-center justify-center rounded-full bg-white/95 hover:bg-white text-gray-800 ring-1 ring-gray-300 shadow-sm transition-colors">
-                  <ChevronLeft className="w-5 h-5" />
+                <button onClick={() => go(-1)} aria-label="Previous vacancies" title="Previous" className={`absolute left-2 top-[45%] -translate-y-1/2 z-20 ${FLOATING_ICON_BTN}`}>
+                  <ChevronLeft weight="bold" className="w-9 h-9" />
                 </button>
-                <button onClick={() => go(1)} aria-label="Next vacancies" className="absolute right-3 top-[45%] -translate-y-1/2 z-20 h-10 w-10 inline-flex items-center justify-center rounded-full bg-white/95 hover:bg-white text-gray-800 ring-1 ring-gray-300 shadow-sm transition-colors">
-                  <ChevronRight className="w-5 h-5" />
+                <button onClick={() => go(1)} aria-label="Next vacancies" title="Next" className={`absolute right-2 top-[45%] -translate-y-1/2 z-20 ${FLOATING_ICON_BTN}`}>
+                  <ChevronRight weight="bold" className="w-9 h-9" />
                 </button>
               </>
             )}
@@ -425,15 +430,9 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
-  const [preview, setPreview] = useState<string | null>(null)
-
   // Local preview of the chosen image, released when it changes or the form closes
-  useEffect(() => {
-    if (!image) return setPreview(null)
-    const url = URL.createObjectURL(image)
-    setPreview(url)
-    return () => URL.revokeObjectURL(url)
-  }, [image])
+  const preview = useMemo(() => (image ? URL.createObjectURL(image) : null), [image])
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview) }, [preview])
 
   // Shared by the file picker, drag-and-drop and paste
   const pickImage = useCallback((file: File | null | undefined) => {
