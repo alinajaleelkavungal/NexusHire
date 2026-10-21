@@ -26,7 +26,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: 'Browse by',
     items: [
-      { name: 'Sectors', href: '/sectors', icon: LayoutGrid },
+      { name: 'Category', href: '/sectors', icon: LayoutGrid },
       { name: 'Age', href: '/age', icon: Calendar },
       { name: 'Experience', href: '/experience', icon: Briefcase },
     ],
