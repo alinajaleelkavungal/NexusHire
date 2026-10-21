@@ -4,12 +4,17 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ChevronLeft, ChevronRight, Megaphone, MapPin, Building2, Users, CalendarDays, CalendarClock,
-  Plus, Trash2, X, Loader2, AlertCircle, ImagePlus, ZoomIn, Pencil,
+  Plus, Trash2, X, Loader2, AlertCircle, ImagePlus, ZoomIn, Pencil, Search, ChevronDown, ChevronUp,
 } from '@/components/icons'
 import type { Vacancy } from '@/lib/vacancies'
 
 const SLIDE_MS = 6000
+const PER_VIEW = 2 // posters shown side by side in the carousel
+const LIST_PREVIEW = 8 // cards shown in the list below before "Show all"
+const CAROUSEL_ID = 'vacancy-carousel'
 const NEW_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
+const POSTER_TYPES = ['image/png', 'image/jpeg', 'image/webp']
+const POSTER_MAX_BYTES = 5 * 1024 * 1024
 
 // Flat rotating backgrounds for posters without an image
 const THEMES = [
@@ -24,7 +29,7 @@ const fmt = (iso: string) =>
 
 export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacancy[]; isAdmin: boolean }) {
   const router = useRouter()
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0) // first of the posters currently in view
   const [paused, setPaused] = useState(false)
   const [mounted, setMounted] = useState(false) // dates/NEW badge render client-side only (timezone-safe)
   const [reducedMotion, setReducedMotion] = useState(false)
@@ -32,6 +37,8 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
   const [editing, setEditing] = useState<Vacancy | null>(null)
   const [lightbox, setLightbox] = useState<Vacancy | null>(null)
   const count = vacancies.length
+  const perView = Math.max(1, Math.min(PER_VIEW, count))
+  const positions = Math.max(1, count - perView + 1) // how many distinct starting points the carousel has
 
   useEffect(() => {
     setMounted(true)
@@ -40,18 +47,20 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
 
   // Keep the index valid when vacancies are removed
   useEffect(() => {
-    if (index >= count) setIndex(0)
-  }, [count, index])
+    if (index >= positions) setIndex(0)
+  }, [positions, index])
 
   useEffect(() => {
-    if (count < 2 || paused || reducedMotion || showForm || editing || lightbox) return
-    const t = setInterval(() => setIndex(i => (i + 1) % count), SLIDE_MS)
+    if (positions < 2 || paused || reducedMotion || showForm || editing || lightbox) return
+    const t = setInterval(() => setIndex(i => (i + 1) % positions), SLIDE_MS)
     return () => clearInterval(t)
-  }, [count, paused, reducedMotion, showForm, editing, lightbox])
+  }, [positions, paused, reducedMotion, showForm, editing, lightbox])
 
-  const go = (delta: number) => setIndex(i => (i + delta + count) % count)
+  const go = (delta: number) => setIndex(i => (i + delta + positions) % positions)
+  // Bring a vacancy into view (it lands in the left slot unless it's one of the last ones)
+  const show = (i: number) => setIndex(Math.min(i, positions - 1))
+  const inView = (i: number) => i >= index && i < index + perView
   const isNewV = (v: Vacancy) => mounted && Date.now() - new Date(v.postedAt).getTime() < NEW_WINDOW_MS
-  const current = vacancies[index] ?? vacancies[0]
 
   const remove = async (v: Vacancy) => {
     if (!confirm(`Take down the vacancy "${v.title}"?`)) return
@@ -75,65 +84,83 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
 
   return (
     <section aria-label="Vacancies" className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">
           <Megaphone className="w-4 h-4 text-green-600" /> Current vacancies
           {count > 0 && <span className="text-gray-700 bg-gray-100 border border-gray-200 rounded-sm px-1.5 py-px tabular-nums">{count}</span>}
         </h2>
-        {isAdmin && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" /> Post vacancy
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {count > perView && (
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-gray-500 tabular-nums mr-1">
+                {index + 1}–{index + perView} of {count}
+              </span>
+              <button onClick={() => go(-1)} aria-label="Previous vacancies" className="h-8 w-8 inline-flex items-center justify-center rounded-sm bg-white text-gray-700 ring-1 ring-gray-300 hover:bg-gray-50">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button onClick={() => go(1)} aria-label="Next vacancies" className="h-8 w-8 inline-flex items-center justify-center rounded-sm bg-white text-gray-700 ring-1 ring-gray-300 hover:bg-gray-50">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+          {isAdmin && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-sm transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Post vacancy
+            </button>
+          )}
+        </div>
       </div>
 
       {count === 0 ? (
         <button
           onClick={() => setShowForm(true)}
-          className="w-full max-w-[520px] border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-md py-10 text-center text-gray-500 transition-colors"
+          className="w-full h-[390px] border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-md text-center text-gray-500 transition-colors"
         >
           <Megaphone className="w-8 h-8 mx-auto text-gray-300 mb-2" />
           No vacancies posted yet. Click to post the first one.
         </button>
       ) : (
-        <div className="flex flex-wrap items-start gap-5">
-        <div
-          className="relative w-full max-w-[520px] aspect-[4/3] rounded-md overflow-hidden border border-gray-300 bg-white"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
-          aria-roledescription="carousel"
-        >
+        <>
+          {/* Same height as before, now full width: two posters side by side */}
           <div
-            className="absolute inset-0 flex transition-transform duration-700 ease-in-out"
-            style={{ transform: `translateX(-${index * 100}%)` }}
+            id={CAROUSEL_ID}
+            className="relative w-full h-[390px] rounded-md overflow-hidden border border-gray-300 bg-white"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={() => setPaused(false)}
+            aria-roledescription="carousel"
           >
-            {vacancies.map((v, i) => {
-              return (
+            <div
+              className="absolute inset-0 flex transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${index * (100 / perView)}%)` }}
+            >
+              {vacancies.map((v, i) => (
                 <article
                   key={v.id}
-                  className="w-full h-full shrink-0 flex flex-col relative overflow-hidden"
-                  aria-hidden={i !== index}
+                  style={{ width: `${100 / perView}%` }}
+                  className="h-full shrink-0 flex flex-col relative overflow-hidden border-r border-gray-200 last:border-r-0"
+                  aria-hidden={!inView(i)}
                   aria-roledescription="slide"
                   aria-label={`${i + 1} of ${count}`}
                 >
                   {v.hasImage ? (
                     <>
-                      {/* The 4:3 box never changes: any poster shape is scaled to fit inside it, never cropped */}
+                      {/* Any poster shape is scaled to fit inside its slot, never cropped */}
                       <button
                         type="button"
                         onClick={() => setLightbox(v)}
+                        tabIndex={inView(i) ? 0 : -1}
                         aria-label={`View poster for ${v.title} full size`}
                         title="Click to enlarge"
                         className="group relative flex-1 min-h-0 bg-gray-100 cursor-zoom-in overflow-hidden"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={`/api/vacancies/${v.id}/image`} alt={`Poster for ${v.title}`} className="absolute inset-0 w-full h-full object-contain" />
-                        <span className="absolute bottom-2 right-2 flex items-center gap-1 text-[11px] font-medium bg-black/55 text-white px-2 py-1 rounded-full opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                        <img src={v.imageUrl!} alt={`Poster for ${v.title}`} className="absolute inset-0 w-full h-full object-contain" />
+                        <span className="absolute bottom-2 right-2 flex items-center gap-1 text-[11px] font-medium bg-black/55 text-white px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                           <ZoomIn className="w-3 h-3" /> Enlarge
                         </span>
                       </button>
@@ -143,118 +170,69 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
                       </div>
                     </>
                   ) : (
-                    <div className="flex-1 min-h-0 overflow-hidden bg-green-50 flex flex-col pt-14 pb-4 px-12">
+                    <div className="flex-1 min-h-0 overflow-hidden bg-green-50 flex flex-col pt-14 pb-4 px-8">
                       <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-green-700 flex items-center gap-2">
                         <span className={`w-6 h-0.5 ${THEMES[i % THEMES.length]}`} /> We&apos;re hiring
                       </p>
                       <h3 className="mt-2 text-2xl font-extrabold tracking-tight leading-tight text-gray-900 line-clamp-2">{v.title}</h3>
-                      {v.details && <p className="mt-2 text-[13px] text-gray-600 leading-relaxed line-clamp-3 whitespace-pre-line">{v.details}</p>}
+                      {v.details && <p className="mt-2 text-[13px] text-gray-600 leading-relaxed line-clamp-4 whitespace-pre-line">{v.details}</p>}
                       <div className="mt-auto pt-3 border-t border-green-200">
                         <VacancyMeta v={v} mounted={mounted} tone="light" />
                       </div>
                     </div>
                   )}
 
+                  {/* Each poster carries its own badges (left) and admin actions (right) */}
+                  <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none">
+                    <div className="flex items-center gap-2">
+                      {isNewV(v) && (
+                        <span className="text-[11px] font-bold uppercase tracking-widest bg-amber-300 text-amber-900 px-2.5 py-1 rounded-sm">New</span>
+                      )}
+                      {isAdmin && v.expired && (
+                        <span className="text-[11px] font-bold uppercase tracking-widest bg-gray-800 text-white px-2.5 py-1 rounded-sm">Expired</span>
+                      )}
+                    </div>
+                    {isAdmin && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setEditing(v)}
+                          tabIndex={inView(i) ? 0 : -1}
+                          aria-label={`Edit vacancy ${v.title}`}
+                          title="Edit vacancy"
+                          className="pointer-events-auto h-8 px-2.5 inline-flex items-center gap-1.5 rounded-sm bg-white text-gray-800 text-sm font-semibold ring-1 ring-gray-300 hover:bg-green-50 hover:text-green-700 transition-colors"
+                        >
+                          <Pencil className="w-4 h-4" /> Edit
+                        </button>
+                        <button
+                          onClick={() => remove(v)}
+                          tabIndex={inView(i) ? 0 : -1}
+                          aria-label={`Remove vacancy ${v.title}`}
+                          title="Remove vacancy"
+                          className="pointer-events-auto h-8 w-8 inline-flex items-center justify-center rounded-sm bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-red-50 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </article>
-              )
-            })}
+              ))}
+            </div>
+
+            {positions > 1 && (
+              <>
+                <button onClick={() => go(-1)} aria-label="Previous vacancies" className="absolute left-3 top-[45%] -translate-y-1/2 z-20 h-10 w-10 inline-flex items-center justify-center rounded-full bg-white/95 hover:bg-white text-gray-800 ring-1 ring-gray-300 shadow-sm transition-colors">
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button onClick={() => go(1)} aria-label="Next vacancies" className="absolute right-3 top-[45%] -translate-y-1/2 z-20 h-10 w-10 inline-flex items-center justify-center rounded-full bg-white/95 hover:bg-white text-gray-800 ring-1 ring-gray-300 shadow-sm transition-colors">
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
           </div>
 
-          {/* One shared top bar keeps everything aligned: badges left · dots centre · actions right */}
-          <div className="absolute top-3 inset-x-3 z-10 grid grid-cols-3 items-center pointer-events-none">
-            <div className="flex items-center gap-2 justify-self-start">
-              {isNewV(current) && (
-                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-amber-300 text-amber-900 px-2.5 py-1 rounded-sm">
-                  New
-                </span>
-              )}
-              {isAdmin && current.expired && !isNewV(current) && (
-                <span className="pointer-events-auto text-[11px] font-bold uppercase tracking-widest bg-gray-800 text-white px-2.5 py-1 rounded-sm">
-                  Expired
-                </span>
-              )}
-            </div>
-
-            <div className="justify-self-center">
-              {count > 1 && (
-                <div className="pointer-events-auto flex items-center gap-1.5 bg-white/90 border border-gray-200 px-2.5 py-1.5 rounded-full">
-                  <span className="text-[11px] font-semibold text-gray-600 tabular-nums mr-1">{index + 1}/{count}</span>
-                  {vacancies.map((v, i) => (
-                    <button
-                      key={v.id}
-                      onClick={() => setIndex(i)}
-                      aria-label={`Show vacancy ${i + 1}`}
-                      aria-current={i === index}
-                      className={`h-2 rounded-full transition-all ${i === index ? 'w-5 bg-green-600' : 'w-2 bg-gray-300 hover:bg-gray-400'}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2 justify-self-end">
-              {isAdmin && (
-                <>
-                  <button
-                    onClick={() => setEditing(current)}
-                    aria-label={`Edit vacancy ${current.title}`}
-                    title="Edit vacancy"
-                    className="pointer-events-auto h-9 px-3 inline-flex items-center gap-1.5 rounded-sm bg-white text-gray-800 text-sm font-semibold ring-1 ring-gray-300 hover:bg-green-50 hover:text-green-700 transition-colors"
-                  >
-                    <Pencil className="w-4 h-4" /> Edit
-                  </button>
-                  <button
-                    onClick={() => remove(current)}
-                    aria-label={`Remove vacancy ${current.title}`}
-                    title="Remove vacancy"
-                    className="pointer-events-auto h-9 w-9 inline-flex items-center justify-center rounded-sm bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-red-50 hover:text-red-600 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {count > 1 && (
-            <>
-              <button onClick={() => go(-1)} aria-label="Previous vacancy" className="absolute left-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-sm bg-white/90 hover:bg-white text-gray-800 ring-1 ring-gray-300 transition-colors">
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button onClick={() => go(1)} aria-label="Next vacancy" className="absolute right-3 top-[42%] -translate-y-1/2 z-10 h-9 w-9 inline-flex items-center justify-center rounded-sm bg-white/90 hover:bg-white text-gray-800 ring-1 ring-gray-300 transition-colors">
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </>
-          )}
-        </div>
-
-        <ol className="flex-1 min-w-[240px] max-w-md border border-gray-300 rounded-md bg-white divide-y divide-gray-200 overflow-hidden" aria-label="All vacancies">
-          {vacancies.map((v, i) => (
-            <li key={v.id}>
-              <button
-                onClick={() => setIndex(i)}
-                aria-current={i === index}
-                className={`w-full text-left flex items-start gap-3 px-4 py-3 border-l-2 transition-colors ${
-                  i === index ? 'border-green-600 bg-green-50' : 'border-transparent hover:bg-gray-50'
-                }`}
-              >
-                <span className="text-xs font-semibold text-gray-400 tabular-nums pt-0.5">{String(i + 1).padStart(2, '0')}</span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold text-gray-900 truncate">{v.title}</span>
-                  <span className="block text-xs text-gray-500 truncate">
-                    {[v.company, v.location].filter(Boolean).join(' · ') || 'Open position'}
-                  </span>
-                  {v.closingDate && (
-                    <span className="block text-[11px] text-gray-400 mt-0.5">Apply by {mounted ? fmt(v.closingDate) : ''}</span>
-                  )}
-                </span>
-                {isNewV(v) && <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-300 text-amber-900 px-1.5 py-0.5 rounded-sm shrink-0">New</span>}
-                {isAdmin && v.expired && <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-800 text-white px-1.5 py-0.5 rounded-sm shrink-0">Expired</span>}
-              </button>
-            </li>
-          ))}
-        </ol>
-        </div>
+          <VacancyList vacancies={vacancies} mounted={mounted} isAdmin={isAdmin} isNew={isNewV} inView={inView} onSelect={show} />
+        </>
       )}
 
       {lightbox && <PosterLightbox vacancy={lightbox} onClose={() => setLightbox(null)} />}
@@ -272,6 +250,100 @@ export default function VacancyBoard({ vacancies, isAdmin }: { vacancies: Vacanc
         />
       )}
     </section>
+  )
+}
+
+// Every vacancy as a compact card grid under the carousel: searchable, and collapsed when there are many
+function VacancyList({ vacancies, mounted, isAdmin, isNew, inView, onSelect }: {
+  vacancies: Vacancy[]
+  mounted: boolean
+  isAdmin: boolean
+  isNew: (v: Vacancy) => boolean
+  inView: (i: number) => boolean
+  onSelect: (i: number) => void
+}) {
+  const [query, setQuery] = useState('')
+  const [expanded, setExpanded] = useState(false)
+
+  const q = query.trim().toLowerCase()
+  const matches = vacancies
+    .map((v, i) => ({ v, i }))
+    .filter(({ v }) => !q || [v.title, v.company, v.location].some(s => s?.toLowerCase().includes(q)))
+  const visible = expanded || q ? matches : matches.slice(0, LIST_PREVIEW)
+
+  const pick = (i: number) => {
+    onSelect(i)
+    document.getElementById(CAROUSEL_ID)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) // it sits above the list
+  }
+
+  return (
+    <div className="border border-gray-300 rounded-md bg-white">
+      <div className="flex items-center justify-between gap-4 px-4 py-3 border-b border-gray-200">
+        <p className="text-sm font-semibold text-gray-900">
+          All vacancies <span className="font-normal text-gray-500">· {q ? `${matches.length} of ${vacancies.length}` : vacancies.length}</span>
+        </p>
+        <label className="relative w-72">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search title, company or location"
+            aria-label="Search vacancies"
+            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          />
+        </label>
+      </div>
+
+      {matches.length === 0 ? (
+        <p className="px-4 py-8 text-center text-sm text-gray-500">No vacancies match &ldquo;{query}&rdquo;.</p>
+      ) : (
+        <ul className="grid grid-cols-3 xl:grid-cols-4 gap-3 p-4">
+          {visible.map(({ v, i }) => (
+            <li key={v.id}>
+              <button
+                onClick={() => pick(i)}
+                aria-current={inView(i)}
+                className={`w-full h-full text-left flex gap-3 p-2.5 rounded-md border transition-colors ${
+                  inView(i) ? 'border-green-500 bg-green-50 ring-1 ring-green-500' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <span className="w-14 h-14 shrink-0 rounded-sm overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+                  {v.hasImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={v.imageUrl!} alt="" loading="lazy" className="w-full h-full object-cover" />
+                  ) : (
+                    <Megaphone className="w-5 h-5 text-green-600" />
+                  )}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-start gap-1.5">
+                    <span className="flex-1 min-w-0 text-sm font-semibold text-gray-900 leading-snug line-clamp-2">{v.title}</span>
+                    {isNew(v) && <span className="text-[9px] font-bold uppercase tracking-wider bg-amber-300 text-amber-900 px-1 py-0.5 rounded-sm shrink-0">New</span>}
+                    {isAdmin && v.expired && <span className="text-[9px] font-bold uppercase tracking-wider bg-gray-800 text-white px-1 py-0.5 rounded-sm shrink-0">Expired</span>}
+                  </span>
+                  <span className="block text-xs text-gray-500 truncate mt-0.5">
+                    {[v.company, v.location].filter(Boolean).join(' · ') || 'Open position'}
+                  </span>
+                  {v.closingDate && (
+                    <span className="flex items-center gap-1 text-[11px] text-gray-400 mt-0.5">
+                      <CalendarClock className="w-3 h-3" /> Apply by {mounted ? fmt(v.closingDate) : ''}
+                    </span>
+                  )}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {!q && matches.length > LIST_PREVIEW && (
+        <div className="border-t border-gray-200 px-4 py-2.5 text-center">
+          <button onClick={() => setExpanded(e => !e)} className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800">
+            {expanded ? <>Show fewer <ChevronUp className="w-4 h-4" /></> : <>Show all {matches.length} vacancies <ChevronDown className="w-4 h-4" /></>}
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -321,7 +393,7 @@ function PosterLightbox({ vacancy, onClose }: { vacancy: Vacancy; onClose: () =>
       </button>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/api/vacancies/${vacancy.id}/image`}
+        src={vacancy.imageUrl!}
         alt={`Poster for ${vacancy.title}`}
         className="max-w-[95vw] max-h-[85vh] object-contain rounded-lg shadow-2xl"
         onClick={e => e.stopPropagation()}
@@ -352,8 +424,40 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+  const [dragging, setDragging] = useState(false)
+  const [preview, setPreview] = useState<string | null>(null)
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  // Local preview of the chosen image, released when it changes or the form closes
+  useEffect(() => {
+    if (!image) return setPreview(null)
+    const url = URL.createObjectURL(image)
+    setPreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [image])
+
+  // Shared by the file picker, drag-and-drop and paste
+  const pickImage = useCallback((file: File | null | undefined) => {
+    if (!file) return
+    if (!POSTER_TYPES.includes(file.type)) return setError('Poster must be a PNG, JPG or WEBP image.')
+    if (file.size > POSTER_MAX_BYTES) return setError('Poster image must be 5 MB or smaller.')
+    setError('')
+    // Pasted screenshots often arrive without a useful name
+    setImage(file.name && file.name !== 'image.png' ? file : new File([file], `pasted-poster.${file.type.split('/')[1]}`, { type: file.type }))
+  }, [])
+
+  // Paste an image anywhere in the form (text pastes into fields are left alone)
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const file = Array.from(e.clipboardData?.files ?? []).find(f => f.type.startsWith('image/'))
+      if (!file) return
+      e.preventDefault()
+      pickImage(file)
+    }
+    document.addEventListener('paste', onPaste)
+    return () => document.removeEventListener('paste', onPaste)
+  }, [pickImage])
+
+  const set =(k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
 
   const submit = useCallback(async (e: React.FormEvent) => {
@@ -437,7 +541,7 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
             {hasExistingImage && (
               <div className="flex items-center gap-3 mb-2 p-2 border border-gray-200 rounded-lg bg-gray-50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {!removeImage && <img src={`/api/vacancies/${vacancy!.id}/image`} alt="Current poster" className="w-16 h-12 object-contain bg-white rounded border" />}
+                {!removeImage && <img src={vacancy!.imageUrl!} alt="Current poster" className="w-16 h-12 object-contain bg-white rounded border" />}
                 <p className="flex-1 text-xs text-gray-600">
                   {removeImage ? 'The current poster will be removed.' : image ? 'The current poster will be replaced by the new image.' : 'Current poster is kept unless you replace or remove it.'}
                 </p>
@@ -446,10 +550,58 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
                 </label>
               </div>
             )}
-            <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={e => setImage(e.target.files?.[0] ?? null)} />
-            <button type="button" onClick={() => fileRef.current?.click()} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/40 rounded-lg w-full">
-              <ImagePlus className="w-4 h-4 text-gray-400" />
-              {image ? `${image.name} (${(image.size / 1024).toFixed(0)} KB)` : hasExistingImage ? 'Choose a new poster to replace it' : 'Add a poster image — PNG, JPG or WEBP, up to 5 MB'}
+            <input
+              ref={fileRef}
+              type="file"
+              accept={POSTER_TYPES.join(',')}
+              className="hidden"
+              onChange={e => { pickImage(e.target.files?.[0]); e.target.value = '' }}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setDragging(true) }}
+              onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragging(false) }}
+              onDrop={e => { e.preventDefault(); setDragging(false); pickImage(e.dataTransfer.files?.[0]) }}
+              className={`relative flex flex-col items-center justify-center gap-2 px-4 py-6 min-h-[150px] text-sm text-gray-700 border-2 border-dashed rounded-lg w-full text-center transition-colors ${
+                dragging ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50 hover:border-green-400 hover:bg-green-50/40'
+              }`}
+            >
+              {preview && !dragging ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={preview} alt="Selected poster preview" className="max-h-40 max-w-full object-contain bg-white rounded border" />
+                  <span className="max-w-full truncate text-xs text-gray-600">
+                    {image!.name} ({(image!.size / 1024).toFixed(0)} KB) · click, drop or paste to change
+                  </span>
+                </>
+              ) : (
+                <>
+                  <ImagePlus className={`w-8 h-8 ${dragging ? 'text-green-600' : 'text-gray-400'}`} />
+                  <span className="font-medium text-gray-800">
+                    {dragging ? 'Drop the image here'
+                      : hasExistingImage ? 'Drag & drop a new poster here, or click to browse'
+                      : 'Drag & drop a poster here, or click to browse'}
+                  </span>
+                  {!dragging && (
+                    <span className="text-xs text-gray-500">
+                      You can also paste an image with <kbd className="px-1.5 py-0.5 rounded border border-gray-300 bg-white font-mono text-[11px]">Ctrl</kbd>+<kbd className="px-1.5 py-0.5 rounded border border-gray-300 bg-white font-mono text-[11px]">V</kbd> · PNG, JPG or WEBP, up to 5 MB
+                    </span>
+                  )}
+                </>
+              )}
+              {image && (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Clear selected image"
+                  onClick={e => { e.stopPropagation(); setImage(null) }}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setImage(null) } }}
+                  className="absolute top-2 right-2 p-1 bg-white border border-gray-200 text-gray-500 hover:text-red-600 rounded-full"
+                >
+                  <X className="w-4 h-4" />
+                </span>
+              )}
             </button>
           </div>
         </div>

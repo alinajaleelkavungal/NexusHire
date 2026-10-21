@@ -1,3 +1,4 @@
+import { createHash } from 'crypto'
 import prisma from '@/lib/prisma'
 
 // Raw SQL on purpose: the generated Prisma Client in this project is often stale.
@@ -10,6 +11,7 @@ export interface Vacancy {
   openings: number | null
   details: string | null
   hasImage: boolean
+  imageUrl: string | null // changes whenever the poster is replaced, so browsers don't show a cached old one
   closingDate: string | null // YYYY-MM-DD
   postedAt: string // ISO
   expired: boolean
@@ -35,6 +37,9 @@ export async function listVacancies(includeExpired: boolean): Promise<Vacancy[]>
       openings: r.openings == null ? null : Number(r.openings),
       details: r.details ?? null,
       hasImage: !!r.imageKey,
+      imageUrl: r.imageKey
+        ? `/api/vacancies/${r.id}/image?v=${createHash('sha1').update(r.imageKey).digest('hex').slice(0, 10)}`
+        : null,
       closingDate: r.closingDate ?? null,
       postedAt: new Date(r.createdAt).toISOString(),
       expired: isExpired(r.closingDate ?? null),
@@ -90,10 +95,12 @@ export function parseVacancyForm(form: FormData): { error: string } | { values: 
   const file = form.get('image')
   if (file instanceof File && file.size > 0) {
     const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
-    if (!IMAGE_TYPES[ext]) return { error: 'Poster must be a PNG, JPG or WEBP image' }
+    // Pasted / dropped files can have odd or missing extensions (e.g. .jfif), so fall back to the MIME type
+    const contentType = IMAGE_TYPES[ext] ?? (Object.values(IMAGE_TYPES).includes(file.type) ? file.type : null)
+    if (!contentType) return { error: 'Poster must be a PNG, JPG or WEBP image' }
     if (file.size > MAX_IMAGE_BYTES) return { error: 'Poster image must be under 5 MB' }
     image = file
-    imageContentType = IMAGE_TYPES[ext]
+    imageContentType = contentType
   }
 
   return {
