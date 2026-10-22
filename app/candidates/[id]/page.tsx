@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 import { notFound, redirect } from 'next/navigation'
 import { getSession, canAccessCandidate } from '@/lib/auth'
-import { Mail, Phone, MapPin, ClipboardList, FileText, ExternalLink, Calendar, Briefcase, LayoutGrid } from '@/components/icons'
+import { Envelope, Phone, MapPin, ClipboardText, FileText, ArrowSquareOut, CalendarBlank, Briefcase, SquaresFour } from '@/components/icons'
 
 export default async function CandidateProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -34,37 +34,37 @@ export default async function CandidateProfilePage({ params }: { params: Promise
   })
 
   return (
-    <div className="w-full h-full p-8 bg-gray-50 min-h-screen text-gray-900 font-sans">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="w-full h-full p-4 sm:p-8 min-h-screen text-gray-950 font-sans select-none">
+      <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex justify-between items-start">
+        <div className="vertix-card bg-white rounded-3xl shadow-[0_2px_14px_-3px_rgba(0,0,0,0.04)] border border-gray-200/80 p-6 sm:p-8 flex flex-wrap justify-between items-start gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{candidate.name}</h1>
-            <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
+            <h1 className="text-3xl font-black text-gray-950 tracking-tight">{candidate.name}</h1>
+            <div className="mt-2.5 flex flex-wrap gap-4 text-xs font-semibold text-gray-500">
               {candidate.email && (
                 <div className="flex items-center">
-                  <Mail className="w-4 h-4 mr-1.5 text-gray-400" />
+                  <Envelope weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                   {candidate.email}
                 </div>
               )}
               {candidate.phone && (
                 <div className="flex items-center">
-                  <Phone className="w-4 h-4 mr-1.5 text-gray-400" />
+                  <Phone weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                   {candidate.phone}
                 </div>
               )}
               {candidate.location && (
                 <div className="flex items-center">
-                  <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
+                  <MapPin weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                   {candidate.location}
                 </div>
               )}
             </div>
           </div>
-          <div className="text-right">
-            <div className="inline-flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200">
-              <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+          <div>
+            <div className="inline-flex items-center bg-gray-50 text-gray-700 px-4 py-1.5 rounded-full text-xs font-semibold border border-gray-200/90 shadow-2xs">
+              <CalendarBlank weight="bold" className="w-3.5 h-3.5 mr-2 text-gray-400" />
               Uploaded: {uploadDate}
             </div>
           </div>
@@ -75,43 +75,43 @@ export default async function CandidateProfilePage({ params }: { params: Promise
           
           {/* Left Column: Intake Details */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center pb-4 border-b border-gray-100">
-                <ClipboardList className="w-5 h-5 mr-2 text-green-600" />
+            <div className="vertix-card bg-white rounded-3xl shadow-[0_2px_14px_-3px_rgba(0,0,0,0.04)] border border-gray-200/80 p-6 sm:p-7">
+              <h2 className="text-sm font-bold text-gray-950 mb-6 flex items-center pb-4 border-b border-gray-150">
+                <ClipboardText weight="bold" className="w-4 h-4 mr-2 text-emerald-600" />
                 Intake Details
               </h2>
               
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                    <Calendar className="w-4 h-4 mr-1.5 text-gray-400" />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 flex items-center">
+                    <CalendarBlank weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                     Age
                   </p>
-                  <p className="text-base text-gray-900 font-medium">{candidate.age ? `${candidate.age} Years Old` : 'Not Specified'}</p>
+                  <p className="text-sm text-gray-950 font-bold">{candidate.age ? `${candidate.age} Years Old` : 'Not Specified'}</p>
                 </div>
                 
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                    <LayoutGrid className="w-4 h-4 mr-1.5 text-gray-400" />
-                    Sector
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 flex items-center">
+                    <SquaresFour weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                    Category
                   </p>
-                  <p className="text-base text-gray-900 font-medium">{candidate.sector || 'Not Specified'}</p>
+                  <p className="text-sm text-gray-950 font-bold">{candidate.sector || 'Not Specified'}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                    <FileText className="w-4 h-4 mr-1.5 text-gray-400" />
-                    Job Category
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 flex items-center">
+                    <FileText weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                    Sub Category
                   </p>
-                  <p className="text-base text-gray-900 font-medium">{candidate.category || 'Not Specified'}</p>
+                  <p className="text-sm text-gray-950 font-bold">{candidate.category || 'Not Specified'}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                    <Briefcase className="w-4 h-4 mr-1.5 text-gray-400" />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 flex items-center">
+                    <Briefcase weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                     Experience
                   </p>
-                  <p className="text-base text-gray-900 font-medium">{candidate.yearsOfExperience || 'Not Specified'}</p>
+                  <p className="text-sm text-gray-950 font-bold">{candidate.yearsOfExperience || 'Not Specified'}</p>
                 </div>
               </div>
             </div>
@@ -119,10 +119,10 @@ export default async function CandidateProfilePage({ params }: { params: Promise
 
           {/* Right Column: Embedded CV */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full flex flex-col">
-              <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
-                <h2 className="text-lg font-bold text-gray-900 flex items-center">
-                  <FileText className="w-5 h-5 mr-2 text-green-600" />
+            <div className="vertix-card bg-white rounded-3xl shadow-[0_2px_14px_-3px_rgba(0,0,0,0.04)] border border-gray-200/80 p-6 sm:p-7 h-full flex flex-col">
+              <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-150">
+                <h2 className="text-sm font-bold text-gray-950 flex items-center">
+                  <FileText weight="bold" className="w-4 h-4 mr-2 text-emerald-600" />
                   Candidate CV
                 </h2>
                 {candidate.resumes.length > 0 && (
@@ -130,15 +130,15 @@ export default async function CandidateProfilePage({ params }: { params: Promise
                     href={`/api/resume/file/${candidate.resumes[0].id}`}
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="flex items-center px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg transition-colors text-sm font-medium border border-green-200"
+                    className="flex items-center px-4 py-1.5 bg-gray-950 hover:bg-black text-white rounded-full transition-colors text-xs font-semibold shadow-xs"
                   >
-                    <ExternalLink className="w-4 h-4 mr-2" />
+                    <ArrowSquareOut weight="bold" className="w-3.5 h-3.5 mr-1.5" />
                     Open in New Tab
                   </a>
                 )}
               </div>
               
-              <div className="flex-1 min-h-[800px] bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+              <div className="flex-1 min-h-[800px] bg-gray-50 rounded-2xl border border-gray-200/80 overflow-hidden">
                 {candidate.resumes.length > 0 ? (
                   <iframe 
                     src={`/api/resume/file/${candidate.resumes[0].id}#toolbar=0`} 
@@ -148,7 +148,7 @@ export default async function CandidateProfilePage({ params }: { params: Promise
                 ) : (
                   <div className="w-full h-full min-h-[800px] flex flex-col items-center justify-center text-gray-400">
                     <FileText className="w-16 h-16 mb-4 text-gray-300" />
-                    <p className="text-lg font-medium">No CV Document Uploaded</p>
+                    <p className="text-sm font-medium">No CV Document Uploaded</p>
                   </div>
                 )}
               </div>

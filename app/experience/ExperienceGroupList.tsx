@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Briefcase, ChevronRight, FileText, Search } from '@/components/icons'
+import { Briefcase, CaretRight, FileText, MagnifyingGlass } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import FileHit from '@/components/FileHit'
 
@@ -66,12 +66,12 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-8 font-sans">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Candidates by Experience</h1>
-        <p className="text-gray-500 mt-2">Browse and manage your candidates grouped by their years of experience.</p>
+        <h1 className="text-3xl font-extrabold text-gray-950 tracking-tight">Candidates by Experience</h1>
+        <p className="text-gray-700 font-medium mt-2">Browse and manage your candidates grouped by their years of experience.</p>
       </div>
 
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <MagnifyingGlass weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input 
           type="text" 
           placeholder="Search by name, skill, file name or sub category..." 
@@ -89,15 +89,15 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
               className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
-                  <Briefcase className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-700 flex items-center justify-center">
+                  <Briefcase weight="bold" className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{group.exp}</h3>
-                  <p className="text-sm text-gray-500">{group.candidates.length} candidate{group.candidates.length !== 1 ? 's' : ''}</p>
+                  <h3 className="text-lg font-bold text-gray-950">{group.exp}</h3>
+                  <p className="text-sm font-semibold text-gray-700">{group.candidates.length} candidate{group.candidates.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedExp === group.exp) ? 'rotate-90' : ''}`} />
+              <CaretRight weight="bold" className={`w-5 h-5 text-gray-700 transition-transform ${(searching || expandedExp === group.exp) ? 'rotate-90' : ''}`} />
             </div>
 
             {(searching || expandedExp === group.exp) && (
@@ -109,25 +109,25 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                     className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-orange-300 hover:shadow-sm transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-sm flex items-center justify-center text-orange-700 font-semibold bg-orange-100 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-sm flex items-center justify-center text-orange-800 font-bold bg-orange-100 flex-shrink-0">
                         {getInitials(candidate.name)}
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 group-hover:text-orange-600">{candidate.name}</h4>
+                        <h4 className="font-bold text-gray-950 group-hover:text-orange-700">{candidate.name}</h4>
                         <FileHit candidate={candidate} query={searchQuery} />
-                        <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
+                        <p className="text-xs font-medium text-gray-700">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                       <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                       <span className="px-3 py-1 bg-gray-100 border border-gray-200 text-gray-800 rounded-full text-xs font-semibold">
                          {candidate.recruitmentStage}
                        </span>
-                       <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-orange-500" />
+                       <CaretRight weight="bold" className="w-4 h-4 text-gray-700 group-hover:text-orange-600" />
                     </div>
                   </div>
                 ))}
                 {group.candidates.length === 0 && (
-                  <div className="text-center py-8 text-gray-400 text-sm">
+                  <div className="text-center py-8 text-gray-600 text-sm font-medium">
                     No candidates with this experience level yet.
                   </div>
                 )}
@@ -143,15 +143,15 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
               className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center">
-                  <FileText className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center">
+                  <FileText weight="bold" className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Experience Not Specified</h3>
-                  <p className="text-sm text-gray-500">{unassigned.length} candidate{unassigned.length !== 1 ? 's' : ''}</p>
+                  <h3 className="text-lg font-bold text-gray-950">Experience Not Specified</h3>
+                  <p className="text-sm font-semibold text-gray-700">{unassigned.length} candidate{unassigned.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${(searching || expandedExp === 'unassigned') ? 'rotate-90' : ''}`} />
+              <CaretRight weight="bold" className={`w-5 h-5 text-gray-700 transition-transform ${(searching || expandedExp === 'unassigned') ? 'rotate-90' : ''}`} />
             </div>
 
             {(searching || expandedExp === 'unassigned') && (
@@ -160,23 +160,23 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                   <div 
                     key={candidate.id}
                     onClick={() => router.push(`/candidates/${candidate.id}`)}
-                    className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-400 hover:shadow-sm transition-all cursor-pointer group"
+                    className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-orange-300 hover:shadow-sm transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-sm flex items-center justify-center text-gray-600 font-semibold bg-gray-200 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-sm flex items-center justify-center text-gray-800 font-bold bg-gray-200 flex-shrink-0">
                         {getInitials(candidate.name)}
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 group-hover:text-gray-600">{candidate.name}</h4>
+                        <h4 className="font-bold text-gray-950 group-hover:text-gray-800">{candidate.name}</h4>
                         <FileHit candidate={candidate} query={searchQuery} />
-                        <p className="text-xs text-gray-500">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
+                        <p className="text-xs font-medium text-gray-700">{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                       <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                       <span className="px-3 py-1 bg-gray-100 border border-gray-200 text-gray-800 rounded-full text-xs font-semibold">
                          {candidate.recruitmentStage}
                        </span>
-                       <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                       <CaretRight weight="bold" className="w-4 h-4 text-gray-700 group-hover:text-gray-900" />
                     </div>
                   </div>
                 ))}

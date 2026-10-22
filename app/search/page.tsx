@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Search, Loader2, FileText, X, ArrowRight } from '@/components/icons'
+import { MagnifyingGlass, CircleNotch, FileText, X, ArrowRight } from '@/components/icons'
 
 interface SearchResult {
   candidateId: string
@@ -79,62 +79,62 @@ export default function SearchPage() {
   const detail = (label: string, value: string | number | null, hit: boolean) =>
     value === null || value === '' ? null : (
       <div className="min-w-0">
-        <dt className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-gray-400">{label}</dt>
-        <dd className={`text-sm truncate ${hit ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
+        <dt className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-gray-700">{label}</dt>
+        <dd className={`text-sm truncate ${hit ? 'text-gray-950 font-bold' : 'text-gray-800 font-medium'}`}>
           <Mark text={String(value)} words={words} />
         </dd>
       </div>
     )
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-8 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 select-none font-sans">
       <div>
-        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Search</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-3xl font-black text-gray-950 tracking-tight">Search</h1>
+        <p className="text-xs font-medium text-gray-500 mt-1">
           Find a CV by anything entered when it was uploaded: name, age, category, sub category, experience, agent, or the saved file name.
         </p>
       </div>
 
       <form onSubmit={e => { e.preventDefault(); run(query) }} className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden />
+        <MagnifyingGlass weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden />
         <input
           type="search"
           autoFocus
           value={query}
           onChange={e => setQuery(e.target.value)}
           aria-label="Search CVs"
-          placeholder='e.g. "nurse 25", "software developer 3 years", an agent name or a file name'
-          className="w-full pl-12 pr-11 py-3.5 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 [&::-webkit-search-cancel-button]:hidden"
+          placeholder='e.g. "nurse 25", "software developer 3 years", an agent name or a file name...'
+          className="w-full pl-11 pr-11 py-3 bg-white border border-gray-200/90 rounded-full text-xs text-gray-950 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 shadow-2xs [&::-webkit-search-cancel-button]:hidden"
         />
         {searching ? (
-          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-green-600" aria-label="Searching" />
+          <CircleNotch weight="bold" className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-gray-900" aria-label="Searching" />
         ) : query && (
-          <button type="button" onClick={() => setQuery('')} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700">
-            <X className="w-4 h-4" />
+          <button type="button" onClick={() => setQuery('')} aria-label="Clear search" className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-950 rounded-full">
+            <X weight="bold" className="w-4 h-4" />
           </button>
         )}
       </form>
 
       {error && (
-        <div role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-sm px-3 py-2">{error}</div>
+        <div role="alert" className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-2xl px-4 py-3">{error}</div>
       )}
 
       {!query.trim() && !error && (
-        <div className="border border-dashed border-gray-300 rounded-md bg-white px-6 py-10 text-center text-sm text-gray-500">
+        <div className="vertix-card border border-dashed border-gray-300 rounded-3xl bg-white px-6 py-12 text-center text-xs font-medium text-gray-500">
           Type to search. Every word you enter has to match something on the CV, so adding words narrows the list.
         </div>
       )}
 
       {searched && query.trim() && !error && (
-        <p className="text-sm font-medium text-gray-700" aria-live="polite">
+        <p className="text-xs font-bold text-gray-800" aria-live="polite">
           {results.length} {results.length === 1 ? 'CV' : 'CVs'} found for “{searched}”
         </p>
       )}
 
       {searched && !searching && !error && results.length === 0 && query.trim() === searched && (
-        <div className="border border-gray-300 rounded-md bg-white px-6 py-10 text-center">
-          <p className="font-medium text-gray-900">No CV matches “{searched}”</p>
-          <p className="text-sm text-gray-500 mt-1">Check the spelling or try fewer words.</p>
+        <div className="vertix-card border border-gray-200/80 rounded-3xl bg-white px-6 py-12 text-center shadow-xs">
+          <p className="font-bold text-gray-950 text-sm">No CV matches “{searched}”</p>
+          <p className="text-xs font-medium text-gray-400 mt-1">Check the spelling or try fewer words.</p>
         </div>
       )}
 
@@ -142,16 +142,16 @@ export default function SearchPage() {
         {results.map(r => {
           const hit = (label: string) => r.matchedFields.includes(label)
           return (
-            <li key={r.candidateId} className="bg-white border border-gray-300 rounded-md">
+            <li key={r.candidateId} className="vertix-card bg-white border border-gray-200/80 rounded-2xl shadow-[0_2px_14px_-3px_rgba(0,0,0,0.04)] hover:shadow-md transition-all">
               <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-4">
                 <div className="min-w-0">
-                  <h2 className="text-lg font-bold text-gray-900 truncate"><Mark text={r.name} words={words} /></h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <h2 className="text-base font-bold text-gray-950 truncate"><Mark text={r.name} words={words} /></h2>
+                  <p className="text-xs font-semibold text-gray-400 mt-0.5">
                     {r.stage}{r.branchName && <> · <Mark text={r.branchName} words={words} /></>}
                   </p>
                 </div>
-                <Link href={`/candidates/${r.candidateId}`} className="inline-flex items-center gap-1 text-sm font-medium text-green-700 underline underline-offset-4 decoration-green-300 hover:decoration-green-700">
-                  View profile <ArrowRight className="w-4 h-4" />
+                <Link href={`/candidates/${r.candidateId}`} className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gray-950 hover:bg-black text-white text-xs font-semibold rounded-full shadow-2xs transition-colors">
+                  View profile <ArrowRight weight="bold" className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
@@ -175,7 +175,7 @@ export default function SearchPage() {
                         rel="noreferrer"
                         className={`flex items-center gap-2 text-sm rounded-sm px-2 py-1.5 -mx-2 hover:bg-green-50 ${isHit ? 'text-gray-900 font-medium' : 'text-gray-600'}`}
                       >
-                        <FileText className="w-4 h-4 shrink-0 text-green-600" />
+                        <FileText weight="bold" className="w-4 h-4 shrink-0 text-green-600" />
                         <span className="break-all flex-1"><Mark text={f.fileName} words={words} /></span>
                         <span className="text-xs text-green-700 shrink-0">Open CV</span>
                       </a>

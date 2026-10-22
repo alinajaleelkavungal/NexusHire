@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight } from '@/components/icons'
+import {
+  ArrowRight, FileText, CalendarBlank, ChatText, CheckCircle,
+  ArrowUpRight, Users, Sparkle
+} from '@/components/icons'
 import { getSession, listCandidatesFor } from '@/lib/auth'
 import { listVacancies } from '@/lib/vacancies'
 import VacancyBoard from '@/components/VacancyBoard'
@@ -14,6 +17,24 @@ const STAGES = [
   'Technical Interview', 'HR Interview', 'Selected', 'Rejected',
 ]
 
+const AVATAR_PALETTES = [
+  { bg: 'bg-[#fdf3f0]', text: 'text-[#e85d3f]', border: 'border-[#fbe4de]' }, // Burnt Coral
+  { bg: 'bg-[#fefcf3]', text: 'text-[#b58933]', border: 'border-[#fbedb8]' }, // Butter Yellow
+  { bg: 'bg-[#f5f3f1]', text: 'text-[#24211f]', border: 'border-[#e8e4e0]' }, // Espresso
+  { bg: 'bg-[#fdf6f0]', text: 'text-[#c85a32]', border: 'border-[#fce9dd]' }, // Terracotta
+  { bg: 'bg-[#f3f6f1]', text: 'text-[#467335]', border: 'border-[#e2ebdc]' }, // Sage Olive
+  { bg: 'bg-[#f4f6fa]', text: 'text-[#225178]', border: 'border-[#dde7f1]' }, // Warm Slate
+]
+
+function getAvatarPalette(id: string) {
+  let hash = 0
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash << 5) - hash + id.charCodeAt(i)
+    hash |= 0
+  }
+  return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length]
+}
+
 export default async function HomePage() {
   const session = await getSession()
   if (!session) redirect('/login')
@@ -21,17 +42,41 @@ export default async function HomePage() {
   // Admin: every branch. Branch: only its own CVs.
   const candidates = await listCandidatesFor(session)
   const isAdmin = session.role === 'ADMIN'
-  const vacancies = await listVacancies(isAdmin) // expired ones are admin-only
+  const vacancies = await listVacancies(isAdmin)
 
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
   const stageOf = (c: any) => c.recruitmentStage || 'Applied'
   const countStage = (stage: string) => candidates.filter(c => stageOf(c) === stage).length
 
   const stats = [
-    { label: 'Total CVs', value: candidates.length },
-    { label: 'Added this week', value: candidates.filter(c => c.createdAt.getTime() >= weekAgo).length },
-    { label: 'In interviews', value: candidates.filter(c => stageOf(c).includes('Interview')).length },
-    { label: 'Selected', value: countStage('Selected') },
+    {
+      label: 'Total CVs',
+      value: candidates.length,
+      icon: Users,
+      palette: { bg: 'bg-[#f5f3f1]', text: 'text-[#24211f]', border: 'border-[#e8e4e0]' },
+      subtitle: 'Candidate profiles'
+    },
+    {
+      label: 'Added this week',
+      value: candidates.filter(c => c.createdAt.getTime() >= weekAgo).length,
+      icon: CalendarBlank,
+      palette: { bg: 'bg-[#fdf3f0]', text: 'text-[#e85d3f]', border: 'border-[#fbe4de]' },
+      subtitle: 'New resumes'
+    },
+    {
+      label: 'In interviews',
+      value: candidates.filter(c => stageOf(c).includes('Interview')).length,
+      icon: ChatText,
+      palette: { bg: 'bg-[#fefcf3]', text: 'text-[#b58933]', border: 'border-[#fbedb8]' },
+      subtitle: 'Active rounds'
+    },
+    {
+      label: 'Selected',
+      value: countStage('Selected'),
+      icon: CheckCircle,
+      palette: { bg: 'bg-[#f3f6f1]', text: 'text-[#467335]', border: 'border-[#e2ebdc]' },
+      subtitle: 'Final placement'
+    },
   ]
 
   const recent = candidates.slice(0, 6)
@@ -49,77 +94,143 @@ export default async function HomePage() {
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 select-none">
+      {/* Header Row */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">{greeting}, {session.name}</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {isAdmin ? "Here's everything across all branches." : "Here's an overview of the CVs your branch has uploaded."}
+          <h1 className="text-3xl font-black text-[#24211f] tracking-tight">
+            {greeting}, {session.name}
+          </h1>
+          <p className="text-sm font-medium text-[#7e715f] mt-1">
+            {isAdmin
+              ? "Here's the centralized recruitment overview across all branches."
+              : "Here's an overview of the CVs your branch has uploaded."}
           </p>
         </div>
+
         <Link
           href="/candidates"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-sm transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#24211f] hover:bg-black text-white text-xs font-semibold rounded-full shadow-sm hover:shadow-md transition-all active:scale-98"
         >
-          View candidates <ArrowRight className="w-4 h-4" />
+          <span>View candidates</span>
+          <ArrowRight weight="bold" className="w-3.5 h-3.5" />
         </Link>
       </div>
 
+      {/* Modern Stats Cards (matching Vertix StatsCard snippet) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map(s => {
+          const IconComponent = s.icon
+          return (
+            <div
+              key={s.label}
+              className="vertix-card bg-white rounded-2xl p-5 border border-[#e2dcce] shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#7e715f]">{s.label}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${s.palette.bg} ${s.palette.text} border ${s.palette.border}`}>
+                  <IconComponent weight="bold" className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="text-3xl font-black text-[#24211f] tabular-nums">
+                  {s.value}
+                </div>
+                <div className="text-[11px] font-semibold text-[#a79a87] mt-0.5">
+                  {s.subtitle}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Vacancy Board */}
       <VacancyBoard vacancies={vacancies} isAdmin={isAdmin} candidates={candidates} />
 
-      <dl className="grid grid-cols-2 lg:grid-cols-4 bg-white border border-gray-300 rounded-md divide-x divide-gray-200 [&>div:nth-child(n+3)]:max-lg:border-t [&>div:nth-child(n+3)]:max-lg:border-gray-200">
-        {stats.map(s => (
-          <div key={s.label} className="px-5 py-4">
-            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">{s.label}</dt>
-            <dd className="text-4xl font-extrabold text-gray-900 mt-1 tabular-nums">{s.value}</dd>
-          </div>
-        ))}
-      </dl>
-
+      {/* Recent Uploads & Pipeline Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <section className="lg:col-span-3 bg-white border border-gray-300 rounded-md p-5">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-4 pb-3 border-b border-gray-200">Recent uploads</h2>
+        {/* Recent Uploads */}
+        <section className="lg:col-span-3 vertix-card bg-white rounded-3xl border border-[#e2dcce] p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1]">
+            <h2 className="text-sm font-bold text-[#24211f]">Recent candidate uploads</h2>
+            <Link
+              href="/candidates"
+              className="text-xs font-semibold text-[#7e715f] hover:text-[#24211f] flex items-center gap-1 transition-colors"
+            >
+              See all <ArrowUpRight weight="bold" className="w-3 h-3" />
+            </Link>
+          </div>
+
           {recent.length === 0 ? (
-            <p className="text-sm text-gray-500 py-6 text-center">No CVs yet. Upload your first one from the Candidates page.</p>
+            <p className="text-xs font-medium text-[#a79a87] py-8 text-center">
+              No CVs uploaded yet. Click &quot;Upload CV&quot; to add your first candidate.
+            </p>
           ) : (
-            <ul className="divide-y divide-gray-100">
-              {recent.map(c => (
-                <li key={c.id}>
-                  <Link href={`/candidates/${c.id}`} className="flex items-center gap-3 py-3 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors">
-                    <span className="w-9 h-9 shrink-0 rounded-sm bg-gray-100 text-gray-700 text-xs font-semibold flex items-center justify-center">
-                      {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{c.name}</p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {[c.sector, c.category].filter(Boolean).join(' · ') || 'No category'}
-                        {isAdmin && ` · ${c.branchName || 'Unassigned'}`}
-                      </p>
-                    </div>
-                    <span className="text-xs text-gray-400 shrink-0">
-                      {c.createdAt.toLocaleDateString('default', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </Link>
-                </li>
-              ))}
+            <ul className="divide-y divide-[#f0ece1]">
+              {recent.map(c => {
+                const palette = getAvatarPalette(c.id)
+                return (
+                  <li key={c.id}>
+                    <Link
+                      href={`/candidates/${c.id}`}
+                      className="flex items-center gap-3.5 py-3 hover:bg-[#faf8f5] -mx-2 px-3 rounded-2xl transition-colors group"
+                    >
+                      <span className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center font-bold text-xs border ${palette.bg} ${palette.text} ${palette.border}`}>
+                        {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-[#24211f] truncate group-hover:text-[#e85d3f] transition-colors">
+                          {c.name}
+                        </p>
+                        <p className="text-[11px] font-medium text-[#7e715f] truncate mt-0.5">
+                          {[c.sector, c.category].filter(Boolean).join(' · ') || 'No category'}
+                          {isAdmin && ` · ${c.branchName || 'Unassigned'}`}
+                        </p>
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#a79a87] shrink-0">
+                        {c.createdAt.toLocaleDateString('default', { month: 'short', day: 'numeric' })}
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
             </ul>
           )}
         </section>
 
-        <section className="lg:col-span-2 bg-white border border-gray-300 rounded-md p-5">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 mb-4 pb-3 border-b border-gray-200">Pipeline</h2>
-          <ul className="space-y-3">
+        {/* Pipeline Summary */}
+        <section className="lg:col-span-2 vertix-card bg-white rounded-3xl border border-[#e2dcce] p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1]">
+            <h2 className="text-sm font-bold text-[#24211f]">Recruitment pipeline</h2>
+            <span className="text-[11px] font-semibold text-[#a79a87]">
+              {candidates.length} total
+            </span>
+          </div>
+
+          <ul className="space-y-3.5">
             {STAGES.map(stage => {
               const n = countStage(stage)
+              const isSelected = stage === 'Selected'
+              const isRejected = stage === 'Rejected'
+              const isInterview = stage.includes('Interview')
+              const barColor = isRejected
+                ? 'bg-[#aa2c1e]'
+                : isSelected
+                ? 'bg-[#e85d3f]'
+                : isInterview
+                ? 'bg-[#f4d06f]'
+                : 'bg-[#24211f]'
+
               return (
                 <li key={stage}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">{stage}</span>
-                    <span className="font-semibold text-gray-900 tabular-nums">{n}</span>
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="font-semibold text-[#423a30]">{stage}</span>
+                    <span className="font-bold text-[#24211f] tabular-nums">{n}</span>
                   </div>
-                  <div className="h-1.5 bg-gray-100 overflow-hidden">
+                  <div className="h-2 bg-[#f0ece1] overflow-hidden rounded-full">
                     <div
-                      className={`h-full ${stage === 'Rejected' ? 'bg-red-500' : 'bg-green-600'}`}
+                      className={`h-full rounded-full transition-all duration-300 ${barColor}`}
                       style={{ width: `${(n / maxStage) * 100}%` }}
                     />
                   </div>
@@ -130,19 +241,30 @@ export default async function HomePage() {
         </section>
       </div>
 
+      {/* Admin: CVs by Branch */}
       {isAdmin && byBranch.size > 0 && (
-        <section className="bg-white border border-gray-300 rounded-md p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">CVs by branch</h2>
-            <Link href="/admin/branches" className="text-sm text-green-700 underline underline-offset-4 decoration-green-300 hover:decoration-green-700">Manage branches</Link>
+        <section className="vertix-card bg-white rounded-3xl border border-[#e2dcce] p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1]">
+            <h2 className="text-sm font-bold text-[#24211f]">CVs by Branch</h2>
+            <Link
+              href="/admin/branches"
+              className="text-xs font-semibold text-[#7e715f] hover:text-[#24211f] flex items-center gap-1 transition-colors"
+            >
+              Manage branches <ArrowUpRight weight="bold" className="w-3 h-3" />
+            </Link>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {Array.from(byBranch.entries()).sort((a, b) => b[1] - a[1]).map(([name, n]) => (
-              <li key={name} className="border border-gray-200 rounded-sm px-4 py-3">
-                <p className="text-xl font-extrabold text-gray-900 tabular-nums">{n}</p>
-                <p className="text-sm text-gray-500 truncate">{name}</p>
-              </li>
-            ))}
+            {Array.from(byBranch.entries())
+              .sort((a, b) => b[1] - a[1])
+              .map(([name, n]) => (
+                <li
+                  key={name}
+                  className="border border-[#e2dcce] rounded-2xl p-4 bg-[#faf8f5] hover:bg-white transition-colors"
+                >
+                  <p className="text-2xl font-black text-[#24211f] tabular-nums">{n}</p>
+                  <p className="text-xs font-semibold text-[#423a30] truncate mt-0.5">{name}</p>
+                </li>
+              ))}
           </ul>
         </section>
       )}

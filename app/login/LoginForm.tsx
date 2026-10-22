@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2, Eye, EyeOff, AlertCircle } from '@/components/icons'
+import { CircleNotch, Eye, EyeSlash, WarningCircle } from '@/components/icons'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -37,21 +37,21 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="w-full max-w-sm bg-white border border-gray-300 rounded-md p-8 space-y-5">
-      <div className="border-b border-gray-200 pb-5">
-        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Resume<span className="text-green-600">IQ</span></h1>
-        <p className="text-sm text-gray-500 mt-1">Sign in with your branch or admin ID</p>
+    <form onSubmit={submit} className="w-full max-w-sm bg-white border border-[#e2dcce] rounded-3xl p-8 space-y-5 shadow-sm">
+      <div className="border-b border-[#f0ece1] pb-5">
+        <h1 className="text-2xl font-black text-[#24211f] tracking-tight">Resume<span className="text-[#e85d3f]">IQ</span></h1>
+        <p className="text-sm font-medium text-[#7e715f] mt-1">Sign in with your branch or admin ID</p>
       </div>
 
       {error && (
-        <div role="alert" className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-sm">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div role="alert" className="flex items-center gap-2 bg-[#fdf1ef] border border-[#f9dcd8] text-[#aa2c1e] text-sm px-3.5 py-2 rounded-xl">
+          <WarningCircle weight="fill" className="w-4 h-4 shrink-0" />
           {error}
         </div>
       )}
 
       <div>
-        <label htmlFor="loginId" className="block text-sm font-medium text-gray-700 mb-1">ID</label>
+        <label htmlFor="loginId" className="block text-xs font-bold text-[#423a30] mb-1.5 uppercase tracking-wider">ID</label>
         <input
           id="loginId"
           type="text"
@@ -60,12 +60,12 @@ export default function LoginForm() {
           required
           value={loginId}
           onChange={e => setLoginId(e.target.value)}
-          className="w-full px-3 py-2.5 border border-gray-300 rounded-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          className="w-full px-3.5 py-2.5 border border-[#e2dcce] rounded-xl text-[#24211f] focus:outline-none focus:ring-2 focus:ring-[#e85d3f]/40 focus:border-[#e85d3f] transition-all"
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <label htmlFor="password" className="block text-xs font-bold text-[#423a30] mb-1.5 uppercase tracking-wider">Password</label>
         <div className="relative">
           <input
             id="password"
@@ -74,15 +74,15 @@ export default function LoginForm() {
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            className="w-full px-3.5 py-2.5 pr-10 border border-[#e2dcce] rounded-xl text-[#24211f] focus:outline-none focus:ring-2 focus:ring-[#e85d3f]/40 focus:border-[#e85d3f] transition-all"
           />
           <button
             type="button"
             onClick={() => setShowPassword(s => !s)}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#a79a87] hover:text-[#24211f]"
           >
-            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showPassword ? <EyeSlash weight="bold" className="w-4 h-4" /> : <Eye weight="bold" className="w-4 h-4" />}
           </button>
         </div>
       </div>
@@ -90,9 +90,9 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-medium py-2.5 rounded-sm transition-colors"
+        className="w-full flex items-center justify-center gap-2 bg-[#24211f] hover:bg-black disabled:opacity-60 text-white font-bold py-3 rounded-full shadow-xs transition-colors"
       >
-        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+        {loading && <CircleNotch weight="bold" className="w-4 h-4 animate-spin" />}
         {loading ? 'Signing in…' : 'Sign in'}
       </button>
     </form>

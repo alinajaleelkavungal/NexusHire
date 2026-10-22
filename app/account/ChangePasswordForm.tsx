@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, AlertCircle, CheckCircle } from '@/components/icons'
+import { CircleNotch, WarningCircle, CheckCircle } from '@/components/icons'
 
 export default function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState('')
@@ -27,30 +27,30 @@ export default function ChangePasswordForm() {
     setCurrentPassword(''); setNewPassword(''); setConfirm('')
   }
 
-  const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500'
+  const inputClass = 'w-full px-3.5 py-2.5 border border-[#e2dcce] rounded-xl text-sm text-[#24211f] focus:outline-none focus:ring-2 focus:ring-[#e85d3f]/40 focus:border-[#e85d3f] transition-all'
 
   return (
-    <form onSubmit={submit} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-      <h2 className="font-semibold text-gray-900">Change password</h2>
+    <form onSubmit={submit} className="bg-white border border-[#e2dcce] rounded-3xl p-6 shadow-sm space-y-4">
+      <h2 className="text-base font-bold text-[#24211f]">Change password</h2>
       <div>
-        <label className="block text-xs font-medium text-gray-700 mb-1">Current password</label>
+        <label className="block text-xs font-bold text-[#423a30] mb-1.5 uppercase tracking-wider">Current password</label>
         <input required type="password" autoComplete="current-password" className={inputClass} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
       </div>
       <div>
-        <label className="block text-xs font-medium text-gray-700 mb-1">New password (at least 8 characters)</label>
+        <label className="block text-xs font-bold text-[#423a30] mb-1.5 uppercase tracking-wider">New password (at least 8 characters)</label>
         <input required type="password" minLength={8} autoComplete="new-password" className={inputClass} value={newPassword} onChange={e => setNewPassword(e.target.value)} />
       </div>
       <div>
-        <label className="block text-xs font-medium text-gray-700 mb-1">Confirm new password</label>
+        <label className="block text-xs font-bold text-[#423a30] mb-1.5 uppercase tracking-wider">Confirm new password</label>
         <input required type="password" minLength={8} autoComplete="new-password" className={inputClass} value={confirm} onChange={e => setConfirm(e.target.value)} />
       </div>
-      <div className="flex items-center gap-3">
-        <button disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-medium rounded-lg transition-colors">
-          {saving && <Loader2 className="w-4 h-4 animate-spin" />} Update password
+      <div className="flex items-center gap-3 pt-2">
+        <button disabled={saving} className="flex items-center gap-2 px-5 py-2.5 bg-[#24211f] hover:bg-black disabled:opacity-60 text-white text-xs font-semibold rounded-full shadow-xs transition-colors">
+          {saving && <CircleNotch weight="bold" className="w-4 h-4 animate-spin" />} Update password
         </button>
         {message && (
-          <p role="status" className={`flex items-center gap-1.5 text-sm ${message.type === 'ok' ? 'text-green-700' : 'text-red-600'}`}>
-            {message.type === 'ok' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          <p role="status" className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full ${message.type === 'ok' ? 'bg-[#fefcf3] text-[#b58933] border border-[#fbedb8]' : 'bg-[#fdf1ef] text-[#aa2c1e] border border-[#f9dcd8]'}`}>
+            {message.type === 'ok' ? <CheckCircle weight="fill" className="w-4 h-4 text-[#b58933]" /> : <WarningCircle weight="fill" className="w-4 h-4 text-[#aa2c1e]" />}
             {message.text}
           </p>
         )}

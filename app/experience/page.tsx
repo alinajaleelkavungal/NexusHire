@@ -13,7 +13,7 @@ export default async function ExperiencePage({ searchParams }: { searchParams: P
   const candidates = await listCandidatesWithResumesFor(session)
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen">
       <ExperienceGroupList initialCandidates={candidates} initialQuery={q ?? ''} />
     </div>
   )

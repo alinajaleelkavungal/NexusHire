@@ -64,7 +64,7 @@ export interface VacancyInput {
   removeImage: boolean
 }
 
-export function parseVacancyForm(form: FormData): { error: string } | { values: VacancyInput } {
+export function parseVacancyForm(form: FormData, options?: { allowExpiredDate?: boolean }): { error: string } | { values: VacancyInput } {
   const text = (key: string) => String(form.get(key) ?? '').trim()
 
   const title = text('title')
@@ -85,7 +85,7 @@ export function parseVacancyForm(form: FormData): { error: string } | { values: 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(closingDate) || Number.isNaN(Date.parse(closingDate))) {
       return { error: 'Closing date is not valid' }
     }
-    if (isExpired(closingDate)) {
+    if (!options?.allowExpiredDate && isExpired(closingDate)) {
       return { error: 'Last date to apply cannot be in the past' }
     }
   }

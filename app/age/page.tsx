@@ -13,7 +13,7 @@ export default async function AgePage({ searchParams }: { searchParams: Promise<
   const candidates = await listCandidatesWithResumesFor(session)
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen">
       <AgeGroupList initialCandidates={candidates} initialQuery={q ?? ''} />
     </div>
   )

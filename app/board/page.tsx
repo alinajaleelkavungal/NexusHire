@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { UserCircle, Loader2, GripVertical } from '@/components/icons'
+import { UserCircle, CircleNotch, DotsSixVertical } from '@/components/icons'
 import Link from 'next/link'
 
 const STAGES = [
@@ -82,7 +82,7 @@ export default function KanbanBoard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <CircleNotch weight="bold" className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     )
   }
@@ -129,7 +129,7 @@ export default function KanbanBoard() {
                                       {...provided.dragHandleProps} 
                                       className="text-gray-500 hover:text-gray-300 cursor-grab active:cursor-grabbing p-1 -ml-1 rounded flex-shrink-0"
                                     >
-                                      <GripVertical className="w-4 h-4" />
+                                      <DotsSixVertical weight="bold" className="w-4 h-4" />
                                     </div>
                                     <div className="min-w-0 flex-1">
                                       <Link href={`/candidates/${candidate.id}`} className="font-semibold text-white hover:text-blue-400 line-clamp-1 break-all">

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { UploadCloud, File as FileIcon, X, CheckCircle, AlertCircle, Loader2, AlertTriangle } from '@/components/icons'
+import { UploadSimple, FileText, X, CheckCircle, WarningCircle, CircleNotch, Warning } from '@/components/icons'
 import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'
 import Link from 'next/link'
 
@@ -198,34 +198,36 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl flex flex-col">
-        <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
+      <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col border border-gray-200">
+        <div className="flex justify-between items-center p-6 border-b border-gray-150 sticky top-0 bg-white/95 backdrop-blur-md z-10">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Upload CVs</h2>
-            <p className="text-sm text-gray-500 mt-1">The CV is saved only after you fill in the details and submit.</p>
+            <h2 className="text-2xl font-black text-gray-950 tracking-tight">Upload CVs</h2>
+            <p className="text-xs font-medium text-gray-500 mt-1">The CV is saved only after you fill in the details and submit.</p>
           </div>
-          <button onClick={handleClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
-            <X className="w-6 h-6" />
+          <button onClick={handleClose} className="p-2 text-gray-400 hover:text-gray-950 rounded-full hover:bg-gray-100 transition-colors">
+            <X weight="bold" className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           <div 
             {...getRootProps()} 
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
-              isDragActive ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-green-400 bg-gray-50'
+            className={`border-2 border-dashed rounded-3xl p-8 text-center cursor-pointer transition-all ${
+              isDragActive ? 'border-gray-950 bg-gray-100/70 scale-99' : 'border-gray-300 hover:border-gray-900 bg-gray-50/60'
             }`}
           >
             <input {...getInputProps()} />
-            <UploadCloud className="mx-auto h-10 w-10 text-gray-400 mb-3" />
-            <h3 className="text-base font-semibold text-gray-700">Drag & drop files here</h3>
-            <p className="text-xs text-gray-500 mt-1">or click to browse from your computer</p>
-            <p className="text-[11px] text-gray-400 mt-3">Supported formats: PDF, DOCX</p>
+            <div className="w-12 h-12 rounded-full bg-white shadow-2xs border border-gray-200 flex items-center justify-center mx-auto mb-3 text-gray-600">
+              <UploadSimple weight="bold" className="h-5 w-5" />
+            </div>
+            <h3 className="text-sm font-bold text-gray-950">Drag & drop files here</h3>
+            <p className="text-xs font-medium text-gray-500 mt-1">or click to browse from your computer</p>
+            <p className="text-[11px] font-semibold text-gray-400 mt-3">Supported formats: PDF, DOCX</p>
           </div>
 
           {items.length > 0 && (
             <div className="space-y-4">
-              <h4 className="font-semibold text-gray-700">Uploaded Files ({items.length})</h4>
+              <h4 className="font-bold text-gray-950">Uploaded Files ({items.length})</h4>
               
               {items.map((item) => {
                 const isProcessing = ['PENDING', 'UPLOADING'].includes(item.status)
@@ -233,44 +235,44 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                 const errors = validateForm(item.formData)
                 const isFormValid = Object.keys(errors).length === 0
                 const inputClass = (field: keyof FormErrors) =>
-                  `w-full p-2 border rounded-md text-sm bg-white text-gray-900 outline-none focus:ring-1 ${
+                  `w-full p-2 border rounded-md text-sm bg-white text-[#24211f] outline-none focus:ring-2 ${
                     item.showErrors && errors[field]
-                      ? 'border-red-400 focus:ring-red-400'
-                      : 'focus:ring-green-500'
+                      ? 'border-[#f9dcd8] focus:ring-[#aa2c1e]/40'
+                      : 'border-[#e2dcce] focus:ring-[#e85d3f]/40 focus:border-[#e85d3f]'
                   } disabled:bg-gray-100 disabled:text-gray-400`
                 const fieldError = (field: keyof FormErrors) =>
                   item.showErrors && errors[field] ? (
-                    <p className="text-xs text-red-600 mt-1">{errors[field]}</p>
+                    <p className="text-xs text-[#aa2c1e] mt-1">{errors[field]}</p>
                   ) : null
 
                 return (
-                  <div key={item.id} className="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                  <div key={item.id} className="bg-white border border-[#e2dcce] rounded-xl p-5 shadow-sm space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <FileIcon className="h-6 w-6 text-green-500" />
+                        <FileText weight="fill" className="h-6 w-6 text-[#e85d3f]" />
                         <div>
-                          <p className="text-sm font-medium text-gray-800">{item.file.name}</p>
-                          <p className="text-xs text-gray-500">{(item.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                          <p className="text-sm font-medium text-[#24211f]">{item.file.name}</p>
+                          <p className="text-xs text-[#7e715f]">{(item.file.size / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center space-x-3">
                         {isProcessing && (
-                          <div className="flex items-center text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full font-medium">
-                            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                          <div className="flex items-center text-xs text-[#225178] bg-[#f0f4f8] px-3 py-1 rounded-full font-medium">
+                            <CircleNotch weight="bold" className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                             {item.status === 'PENDING' && 'Waiting...'}
                             {item.status === 'UPLOADING' && 'Uploading...'}
                           </div>
                         )}
                         {item.status === 'COMPLETED' && (
-                          <div className="flex items-center text-xs text-green-700 bg-green-50 px-3 py-1 rounded-full font-medium">
-                            <CheckCircle className="w-3.5 h-3.5 mr-1.5" />
+                          <div className="flex items-center text-xs text-[#24211f] bg-[#fefcf3] border border-[#fbedb8] px-3 py-1 rounded-full font-medium">
+                            <CheckCircle weight="fill" className="w-3.5 h-3.5 mr-1.5 text-[#b58933]" />
                             Completed
                           </div>
                         )}
                         {item.status === 'ERROR' && (
-                          <div className="flex items-center text-xs text-red-700 bg-red-50 px-3 py-1 rounded-full font-medium" title={item.error}>
-                            <AlertCircle className="w-3.5 h-3.5 mr-1.5" />
+                          <div className="flex items-center text-xs text-[#aa2c1e] bg-[#fdf1ef] px-3 py-1 rounded-full font-medium" title={item.error}>
+                            <WarningCircle weight="fill" className="w-3.5 h-3.5 mr-1.5" />
                             Error
                           </div>
                         )}
@@ -280,7 +282,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                             onClick={() => removeFile(item.id)}
                             className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
                           >
-                            <X className="h-4 w-4" />
+                            <X weight="bold" className="h-4 w-4" />
                           </button>
                         )}
                       </div>
@@ -288,7 +290,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
 
                     {item.error && (
                       <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2 rounded-lg">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
+                        <WarningCircle weight="fill" className="w-4 h-4 flex-shrink-0 text-red-500" />
                         <span>{item.error}</span>
                       </div>
                     )}
@@ -296,7 +298,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                     {/* ── Duplicate Warning Banner ── */}
                     {item.duplicateWarning && !item.duplicateWarning.dismissed && (
                       <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-                        <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <Warning weight="fill" className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-amber-800">Possible duplicate detected</p>
                           <p className="text-xs text-amber-700 mt-0.5">
@@ -320,7 +322,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                           className="text-amber-400 hover:text-amber-600 flex-shrink-0"
                           title="Dismiss warning"
                         >
-                          <X className="w-4 h-4" />
+                          <X weight="bold" className="w-4 h-4" />
                         </button>
                       </div>
                     )}
@@ -330,11 +332,11 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x border-gray-200 h-[500px]">
                           {/* Left Side: Form */}
                           <div className="p-5 flex flex-col h-full overflow-y-auto">
-                            <h5 className="text-sm font-semibold text-gray-800 mb-4 border-b pb-2">Candidate Details <span className="text-xs font-normal text-gray-500">(all fields required)</span></h5>
+                            <h5 className="text-sm font-bold text-gray-950 mb-4 border-b pb-2">Candidate Details <span className="text-xs font-semibold text-gray-700">(all fields required)</span></h5>
                             
                             <div className="space-y-4 flex-1">
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Name <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-gray-800 mb-1">Name <span className="text-red-500">*</span></label>
                                 <input
                                   type="text"
                                   required
@@ -348,7 +350,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Age <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-gray-800 mb-1">Age <span className="text-red-500">*</span></label>
                                 <input
                                   type="number"
                                   required
@@ -363,7 +365,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Category <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-gray-800 mb-1">Category <span className="text-red-500">*</span></label>
                                 <select
                                   required
                                   className={inputClass('sector')}
@@ -380,7 +382,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-gray-800 mb-1">Sub Category <span className="text-red-500">*</span></label>
                                 <select
                                   required
                                   className={inputClass('category')}
@@ -398,7 +400,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Experience <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-gray-800 mb-1">Experience <span className="text-red-500">*</span></label>
                                 <select
                                   required
                                   className={inputClass('yearsOfExperience')}
@@ -415,7 +417,7 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
 
                               <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Agent <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-gray-800 mb-1">Agent <span className="text-red-500">*</span></label>
                                 <input
                                   type="text"
                                   required
@@ -428,11 +430,11 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                               </div>
                             </div>
 
-                            <div className="mt-5 pt-4 border-t flex justify-end">
+                            <div className="mt-5 pt-4 border-t border-gray-150 flex justify-end">
                               <button
                                 onClick={() => submitForm(item)}
                                 aria-disabled={!isFormValid}
-                                className={`w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-5 text-sm rounded shadow-sm transition-colors ${isFormValid ? '' : 'opacity-60'}`}
+                                className={`w-full bg-[#24211f] hover:bg-black text-white font-bold py-2.5 px-6 text-xs rounded-full shadow-xs transition-all ${isFormValid ? '' : 'opacity-60'}`}
                               >
                                 Submit & Save CV
                               </button>
@@ -452,8 +454,8 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
                     )}
                     
                     {item.status === 'FINALIZING' && (
-                      <div className="bg-gray-50 border rounded-lg p-5 mt-4 flex items-center justify-center space-x-2 text-gray-600">
-                        <Loader2 className="w-4 h-4 animate-spin text-green-500" />
+                      <div className="bg-[#faf8f5] border border-[#e2dcce] rounded-lg p-5 mt-4 flex items-center justify-center space-x-2 text-[#7e715f]">
+                        <CircleNotch weight="bold" className="w-4 h-4 animate-spin text-[#e85d3f]" />
                         <span className="text-sm">Saving candidate details...</span>
                       </div>
                     )}
@@ -464,18 +466,18 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
           )}
         </div>
         
-        <div className="p-4 border-t bg-gray-50 flex justify-end sticky bottom-0 rounded-b-2xl z-10">
+        <div className="p-4 border-t border-[#f0ece1] bg-[#faf8f5] flex justify-end sticky bottom-0 rounded-b-2xl z-10">
            {allCompleted ? (
              <button
                onClick={handleClose}
-               className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors"
+               className="bg-[#24211f] hover:bg-black text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors"
              >
                Done
              </button>
            ) : (
              <button
                onClick={handleClose}
-               className="bg-white border hover:bg-gray-50 text-gray-700 font-medium py-2 px-6 rounded-lg shadow-sm transition-colors"
+               className="bg-white border border-[#e2dcce] hover:bg-gray-50 text-[#24211f] font-medium py-2 px-6 rounded-lg shadow-sm transition-colors"
              >
                Close
              </button>

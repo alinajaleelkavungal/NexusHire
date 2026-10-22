@@ -25,8 +25,8 @@ export default async function CategoriesPage({ searchParams }: { searchParams: P
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto flex flex-col gap-6 min-h-screen">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Category</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-extrabold text-gray-950 tracking-tight">Category</h1>
+        <p className="text-sm font-medium text-gray-700 mt-1">
           Find out which category and sub category a CV belongs to, or see every CV under a sub category.
         </p>
       </div>

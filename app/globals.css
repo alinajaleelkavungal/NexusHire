@@ -1,146 +1,137 @@
 @import "tailwindcss";
 
 /*
-  ResumeIQ visual system
-  ----------------------
-  Warm paper neutrals, one pine-green accent, brick for danger, ochre for warnings.
-  Corners are tight and surfaces are flat (hairline borders instead of soft shadows).
-  Every page uses the stock Tailwind color names (gray / green / blue / red ...), so the
-  palette is re-pointed here once and the whole app follows.
+  ResumeIQ "Earthy Energy" Design System
+  ---------------------------------------
+  Palette:
+  • Burnt Coral:    #E85D3F (Energetic terracotta/coral accent)
+  • Butter Yellow:  #F4D06F (Warm golden butter secondary)
+  • Espresso:       #24211F (Deep rich dark roast charcoal)
+  • Warm Cream:     #F7F5F0 (Linen/paper dashboard canvas)
+  • Card Surface:   #FFFFFF (Pure white floating surfaces)
 */
 
 :root {
-  --background: #faf8f4;
-  --foreground: #1c1a17;
-  --ink: #1c1a17;
+  --background: #f7f5f0;
+  --foreground: #24211f;
   --paper: #ffffff;
-  --accent: #3a8570;
+  --espresso: #24211f;
+  --coral: #e85d3f;
+  --butter: #f4d06f;
+  --accent: #e85d3f;
 }
 
 @theme {
-  /* Neutrals: warm stone instead of cold blue-grey */
+  /* Earthy Warm Neutrals (based on Espresso & Paper) */
   --color-white: #ffffff;
-  --color-gray-50: #faf8f4;
-  --color-gray-100: #f3f0ea;
-  --color-gray-200: #e7e3da;
-  --color-gray-300: #d3cebf;
-  --color-gray-400: #aaa595;
-  --color-gray-500: #85806f;
-  --color-gray-600: #635f52;
-  --color-gray-700: #48443b;
-  --color-gray-800: #322f29;
-  --color-gray-900: #24211d;
-  --color-gray-950: #171512;
+  --color-gray-50: #faf8f5;
+  --color-gray-100: #f3efe9;
+  --color-gray-150: #ece6dd;
+  --color-gray-200: #e2dcce;
+  --color-gray-300: #cdc3b2;
+  --color-gray-400: #a79a87;
+  --color-gray-500: #7e715f;
+  --color-gray-600: #5d5244;
+  --color-gray-700: #423a30;
+  --color-gray-800: #2d2822;
+  --color-gray-900: #24211f;
+  --color-gray-950: #181615;
 
-  /* Accent: pine. green / emerald / teal / blue / indigo / violet / purple all resolve to it,
-     so there is one brand colour instead of a rainbow of Tailwind defaults. */
-  --color-green-50: #f1f8f5;
-  --color-green-100: #e0f0e8;
-  --color-green-200: #c3e1d3;
-  --color-green-300: #9accb7;
-  --color-green-400: #6fb399;
-  --color-green-500: #4a9a82;
-  --color-green-600: #3a8570;
-  --color-green-700: #2f6e5c;
-  --color-green-800: #27584a;
-  --color-green-900: #1f453b;
-  --color-green-950: #112a23;
+  /* Espresso Scale */
+  --color-espresso: #24211f;
+  --color-espresso-50: #f5f3f1;
+  --color-espresso-100: #e8e4e0;
+  --color-espresso-200: #d4cdc7;
+  --color-espresso-500: #4a4542;
+  --color-espresso-700: #35312e;
+  --color-espresso-800: #2c2826;
+  --color-espresso-900: #24211f;
+  --color-espresso-950: #181615;
 
-  --color-emerald-50: #f1f8f5;
-  --color-emerald-100: #e0f0e8;
-  --color-emerald-200: #c3e1d3;
-  --color-emerald-300: #9accb7;
-  --color-emerald-400: #6fb399;
-  --color-emerald-500: #4a9a82;
-  --color-emerald-600: #3a8570;
-  --color-emerald-700: #2f6e5c;
-  --color-emerald-800: #27584a;
-  --color-emerald-900: #1f453b;
+  /* Burnt Coral (#E85D3F) */
+  --color-coral: #e85d3f;
+  --color-coral-50: #fdf3f0;
+  --color-coral-100: #fbe4de;
+  --color-coral-200: #f7cbbf;
+  --color-coral-300: #f2a796;
+  --color-coral-400: #ed7e66;
+  --color-coral-500: #e85d3f;
+  --color-coral-600: #d64425;
+  --color-coral-700: #b3341a;
+  --color-coral-800: #932d19;
+  --color-coral-900: #7b2a1a;
+  --color-coral-950: #441309;
 
-  --color-blue-50: #f1f8f5;
-  --color-blue-100: #e0f0e8;
-  --color-blue-200: #c3e1d3;
-  --color-blue-300: #9accb7;
-  --color-blue-400: #6fb399;
-  --color-blue-500: #4a9a82;
-  --color-blue-600: #3a8570;
-  --color-blue-700: #2f6e5c;
-  --color-blue-800: #27584a;
-  --color-blue-900: #1f453b;
+  /* Butter Yellow (#F4D06F) */
+  --color-butter: #f4d06f;
+  --color-butter-50: #fefcf3;
+  --color-butter-100: #fdf7df;
+  --color-butter-200: #fbedb8;
+  --color-butter-300: #f8df8d;
+  --color-butter-400: #f6d87e;
+  --color-butter-500: #f4d06f;
+  --color-butter-600: #d9ad4b;
+  --color-butter-700: #b58933;
+  --color-butter-800: #936d2d;
+  --color-butter-900: #795927;
+  --color-butter-950: #432e0e;
 
-  --color-indigo-50: #f1f8f5;
-  --color-indigo-100: #e0f0e8;
-  --color-indigo-500: #4a9a82;
-  --color-indigo-600: #3a8570;
-  --color-indigo-700: #2f6e5c;
-  --color-violet-50: #f1f8f5;
-  --color-violet-100: #e0f0e8;
-  --color-violet-500: #4a9a82;
-  --color-violet-600: #3a8570;
-  --color-violet-700: #2f6e5c;
-  --color-purple-50: #f1f8f5;
-  --color-purple-100: #e0f0e8;
-  --color-purple-500: #4a9a82;
-  --color-purple-600: #3a8570;
-  --color-purple-700: #2f6e5c;
+  /* Warm Accent Greens & Sage */
+  --color-green-50: #f3f6f1;
+  --color-green-100: #e2ebdc;
+  --color-green-200: #c6d9bb;
+  --color-green-500: #5a8a47;
+  --color-green-600: #467335;
+  --color-green-700: #365b28;
 
-  /* Danger: brick */
-  --color-red-50: #fbefec;
-  --color-red-100: #f6dcd6;
-  --color-red-200: #ecb9ae;
-  --color-red-300: #de8f7f;
-  --color-red-400: #cc6552;
-  --color-red-500: #b44a37;
-  --color-red-600: #983a2b;
-  --color-red-700: #7b2f24;
-  --color-red-800: #5f261e;
-  --color-red-900: #451c17;
+  --color-emerald-50: #f3f6f1;
+  --color-emerald-100: #e2ebdc;
+  --color-emerald-200: #c6d9bb;
+  --color-emerald-500: #5a8a47;
+  --color-emerald-600: #467335;
+  --color-emerald-700: #365b28;
 
-  /* Warning / highlight: ochre */
-  --color-amber-50: #fbf3df;
-  --color-amber-100: #f6e5b8;
-  --color-amber-200: #ecd088;
-  --color-amber-300: #dfb85a;
-  --color-amber-400: #cf9f34;
-  --color-amber-500: #b88624;
-  --color-amber-600: #976b1c;
-  --color-amber-700: #75521a;
-  --color-amber-800: #5a4018;
-  --color-amber-900: #3f2c12;
-  --color-yellow-50: #fbf3df;
-  --color-yellow-100: #f6e5b8;
-  --color-yellow-200: #ecd088;
-  --color-yellow-300: #dfb85a;
-  --color-yellow-400: #cf9f34;
-  --color-yellow-500: #b88624;
-  --color-yellow-600: #976b1c;
-  --color-yellow-700: #75521a;
-  --color-yellow-800: #5a4018;
-  --color-yellow-900: #3f2c12;
-  --color-orange-50: #fbf0e4;
-  --color-orange-100: #f5dcc0;
-  --color-orange-500: #b8672a;
-  --color-orange-600: #964f1d;
-  --color-orange-700: #763e19;
+  /* Blue / Slate */
+  --color-blue-50: #f0f4f8;
+  --color-blue-100: #dde7f1;
+  --color-blue-500: #2d6898;
+  --color-blue-600: #225178;
+  --color-blue-700: #1a3e5c;
 
-  /* Tight corners */
-  --radius-xs: 2px;
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 6px;
-  --radius-2xl: 8px;
-  --radius-3xl: 10px;
+  /* Red / Terracotta */
+  --color-red-50: #fdf1ef;
+  --color-red-100: #f9dcd8;
+  --color-red-500: #c93b2b;
+  --color-red-600: #aa2c1e;
+  --color-red-700: #8c2317;
 
-  /* Flat surfaces: a hairline instead of a floating card */
-  --shadow-2xs: 0 0 #0000;
-  --shadow-xs: 0 0 #0000;
-  --shadow-sm: 0 1px 0 rgb(28 26 23 / 0.04);
-  --shadow: 0 1px 0 rgb(28 26 23 / 0.05);
-  --shadow-md: 0 2px 6px -2px rgb(28 26 23 / 0.14);
-  --shadow-lg: 0 10px 28px -10px rgb(28 26 23 / 0.28);
-  --shadow-xl: 0 18px 44px -16px rgb(28 26 23 / 0.34);
-  --shadow-2xl: 0 24px 60px -20px rgb(28 26 23 / 0.4);
+  /* Amber (Warm Earth) */
+  --color-amber-50: #fef9eb;
+  --color-amber-100: #fdf0ce;
+  --color-amber-200: #fbe09a;
+  --color-amber-500: #e59c1c;
+  --color-amber-600: #c47c11;
+  --color-amber-700: #9d5d0e;
+
+  /* Generous modern rounded corners */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
+  --radius-full: 9999px;
+
+  /* Soft warm ambient shadows */
+  --shadow-2xs: 0 1px 2px rgba(36, 33, 31, 0.02);
+  --shadow-xs: 0 1px 3px rgba(36, 33, 31, 0.03);
+  --shadow-sm: 0 2px 4px rgba(36, 33, 31, 0.03), 0 1px 2px rgba(36, 33, 31, 0.02);
+  --shadow: 0 3px 8px -1px rgba(36, 33, 31, 0.04), 0 1px 3px -1px rgba(36, 33, 31, 0.02);
+  --shadow-md: 0 6px 18px -2px rgba(36, 33, 31, 0.05), 0 2px 6px -1px rgba(36, 33, 31, 0.02);
+  --shadow-lg: 0 12px 28px -4px rgba(36, 33, 31, 0.07), 0 4px 10px -2px rgba(36, 33, 31, 0.03);
+  --shadow-xl: 0 20px 40px -6px rgba(36, 33, 31, 0.09), 0 8px 16px -4px rgba(36, 33, 31, 0.03);
+  --shadow-2xl: 0 25px 50px -12px rgba(36, 33, 31, 0.16);
 }
 
 @theme inline {
@@ -157,31 +148,50 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-jakarta-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
-  letter-spacing: -0.005em;
+  font-family: var(--font-jakarta-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  color: #24211f;
 }
 
 ::selection {
-  background: #c3e1d3;
-  color: var(--ink);
+  background: #e85d3f;
+  color: #ffffff;
 }
 
-/* Inputs read as part of the page, not as glowing widgets */
-input, select, textarea {
-  accent-color: var(--accent);
+/* Floating Vertix Card with Warm Ambient Glow */
+.vertix-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(226, 220, 206, 0.75);
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 14px -3px rgba(36, 33, 31, 0.04), 0 1px 3px rgba(36, 33, 31, 0.02);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Visible keyboard focus everywhere, without affecting mouse clicks */
+.vertix-card:hover {
+  box-shadow: 0 12px 30px -6px rgba(36, 33, 31, 0.09), 0 4px 12px -2px rgba(36, 33, 31, 0.03);
+  transform: translateY(-2px);
+}
+
+/* Floating Glass Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(247, 245, 240, 0.85);
+  box-shadow: 0 8px 24px -4px rgba(36, 33, 31, 0.05);
+}
+
+/* Smooth Focus visible with Burnt Coral ring */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #e85d3f;
   outline-offset: 2px;
-  border-radius: 3px;
+  border-radius: 9999px;
 }
 
 button:not(:disabled),
@@ -193,10 +203,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Quiet, warm scrollbars */
+/* Clean sleek scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #d3cebf transparent;
+  scrollbar-color: #cdc3b2 transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {

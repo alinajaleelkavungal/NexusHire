@@ -19,49 +19,6 @@ function formatDate(isoOrDateStr: string | null | undefined): string {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-function getBranchInfo(location: string | null) {
-  const loc = (location || '').toLowerCase().trim()
-  if (loc.includes('jeddah')) {
-    return {
-      name: location?.toLowerCase().includes('branch') ? location : `${location || 'Jeddah'} branch`,
-      dotColor: 'bg-[#b85d38]',
-      isJeddah: true,
-      cardBorder: 'border-2 border-[#b85d38]',
-    }
-  }
-  if (loc.includes('dubai')) {
-    return {
-      name: location?.toLowerCase().includes('branch') ? location : `${location || 'Dubai'} branch`,
-      dotColor: 'bg-[#2563eb]',
-      isJeddah: false,
-      cardBorder: 'border border-gray-200 hover:border-gray-300',
-    }
-  }
-  if (loc.includes('kochi')) {
-    return {
-      name: location?.toLowerCase().includes('branch') ? location : `${location || 'Kochi'} branch`,
-      dotColor: 'bg-[#7c3aed]',
-      isJeddah: false,
-      cardBorder: 'border border-gray-200 hover:border-gray-300',
-    }
-  }
-  if (loc.includes('riyadh')) {
-    return {
-      name: location?.toLowerCase().includes('branch') ? location : `${location || 'Riyadh'} branch`,
-      dotColor: 'bg-[#0d9488]',
-      isJeddah: false,
-      cardBorder: 'border border-gray-200 hover:border-gray-300',
-    }
-  }
-  const name = location ? (location.toLowerCase().includes('branch') ? location : `${location} branch`) : 'Head Office'
-  return {
-    name,
-    dotColor: 'bg-stone-500',
-    isJeddah: false,
-    cardBorder: 'border border-gray-200 hover:border-gray-300',
-  }
-}
-
 type VacancyStatus = 'NEW' | 'CLOSING SOON' | 'OPEN' | 'CLOSED'
 
 function getVacancyStatus(v: Vacancy, mounted: boolean): VacancyStatus {
@@ -81,43 +38,6 @@ function getVacancyStatus(v: Vacancy, mounted: boolean): VacancyStatus {
   if (daysSincePosted <= 5) return 'NEW'
 
   return 'OPEN'
-}
-
-function getApplicantsCount(v: Vacancy, candidates?: any[]): number {
-  if (candidates && candidates.length > 0) {
-    const titleLower = (v.title || '').toLowerCase().trim()
-    const titleTokens = titleLower.split(/[\s,/]+/).filter(t => t.length > 2)
-    const matches = candidates.filter((c: any) => {
-      const text = [c.recommendedRole, c.category, c.sector, c.company, c.skills, c.name]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
-      return titleTokens.some(tok => text.includes(tok)) || (v.company && text.includes(v.company.toLowerCase()))
-    })
-    if (matches.length > 0) return matches.length
-  }
-
-  // Consistent deterministic count fallback matching mockup numbers
-  const preset: Record<string, number> = {
-    'nurse': 14,
-    'senior consultant doctor': 9,
-    'sales representative trainee': 21,
-    'lab technician': 7,
-    'pharmacist': 5,
-    'radiology technologist': 11,
-    'front desk executive': 18,
-    'staff nurse': 3,
-    'physiotherapist': 6,
-  }
-  const tKey = (v.title || '').toLowerCase().trim()
-  if (preset[tKey] !== undefined) return preset[tKey]
-
-  let hash = 0
-  const str = v.id || v.title
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash * 31 + str.charCodeAt(i)) & 0xfffff
-  }
-  return (hash % 16) + 4
 }
 
 interface VacancyBoardProps {
@@ -164,10 +84,8 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
     return vacancies.map(v => ({
       ...v,
       status: getVacancyStatus(v, mounted),
-      branch: getBranchInfo(v.location),
-      applicants: getApplicantsCount(v, candidates),
     }))
-  }, [vacancies, mounted, candidates])
+  }, [vacancies, mounted])
 
   // Tab counts
   const activeCount = vacanciesWithStatus.filter(v => v.status !== 'CLOSED').length
@@ -267,13 +185,15 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-lg transition-colors shadow-2xs"
-          >
-            <Plus className="w-3.5 h-3.5" /> Post vacancy
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-lg transition-colors shadow-2xs"
+            >
+              <Plus className="w-3.5 h-3.5" /> Post vacancy
+            </button>
+          )}
         </div>
       </div>
 
@@ -284,22 +204,24 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
           <p className="text-xs text-gray-500 mt-1">
             {query ? `No vacancies matched "${query}" in this category.` : 'There are currently no vacancies posted in this tab.'}
           </p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-lg"
-          >
-            <Plus className="w-3.5 h-3.5" /> Post a new vacancy
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-lg"
+            >
+              <Plus className="w-3.5 h-3.5" /> Post a new vacancy
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {pageVacancies.map(v => (
             <article
               key={v.id}
-              className={`bg-white rounded-2xl p-5 sm:p-6 transition-all duration-200 relative flex flex-col justify-between shadow-2xs hover:shadow-md ${v.branch.cardBorder}`}
+              className="bg-white rounded-2xl p-5 sm:p-6 transition-all duration-200 relative flex flex-col justify-between shadow-2xs hover:shadow-md border border-gray-200 hover:border-gray-300"
             >
               <div>
-                {/* Card Top Row: Status badge on left, Branch on right */}
+                {/* Card Top Row: Status badge */}
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     {v.status === 'NEW' && (
@@ -322,13 +244,6 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                         CLOSED
                       </span>
                     )}
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className={`w-2 h-2 rounded-full inline-block ${v.branch.dotColor}`} />
-                    <span className="text-xs font-semibold text-gray-700">
-                      {v.branch.name}
-                    </span>
                   </div>
                 </div>
 
@@ -376,40 +291,38 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                 </div>
               </div>
 
-              {/* Bottom Row: Applicants on left, Edit & Delete & View candidates on right */}
-              <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
-                <span className="text-xs font-semibold text-gray-700">
-                  {v.applicants} {v.applicants === 1 ? 'applicant' : 'applicants'}
-                </span>
+              {/* Bottom Row: Actions */}
+              <div className="flex items-center justify-end pt-4 mt-4 border-t border-gray-100 gap-2">
+                {isAdmin && (
+                  <>
+                    {/* Edit Option */}
+                    <button
+                      type="button"
+                      onClick={() => setEditing(v)}
+                      className="px-3 py-1 text-xs font-semibold text-gray-800 bg-white border border-gray-300 hover:bg-gray-100 rounded-full transition-all active:scale-95"
+                    >
+                      Edit
+                    </button>
 
-                <div className="flex items-center gap-2">
-                  {/* Edit Option */}
-                  <button
-                    type="button"
-                    onClick={() => setEditing(v)}
-                    className="px-3 py-1 text-xs font-semibold text-gray-800 bg-white border border-gray-300 hover:bg-gray-100 rounded-full transition-all active:scale-95"
-                  >
-                    Edit
-                  </button>
+                    {/* Delete Option */}
+                    <button
+                      type="button"
+                      disabled={deletingId === v.id}
+                      onClick={() => remove(v)}
+                      className="px-2.5 py-1 text-xs font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-full transition-all active:scale-95 disabled:opacity-50"
+                    >
+                      {deletingId === v.id ? '...' : 'Delete'}
+                    </button>
+                  </>
+                )}
 
-                  {/* Delete Option */}
-                  <button
-                    type="button"
-                    disabled={deletingId === v.id}
-                    onClick={() => remove(v)}
-                    className="px-2.5 py-1 text-xs font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-full transition-all active:scale-95 disabled:opacity-50"
-                  >
-                    {deletingId === v.id ? '...' : 'Delete'}
-                  </button>
-
-                  {/* View candidates Option */}
-                  <Link
-                    href={`/candidates?search=${encodeURIComponent(v.title)}`}
-                    className="px-3.5 py-1 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-full transition-all active:scale-95 shadow-2xs inline-block"
-                  >
-                    View candidates
-                  </Link>
-                </div>
+                {/* View candidates Option */}
+                <Link
+                  href={`/candidates?search=${encodeURIComponent(v.title)}`}
+                  className="px-3.5 py-1 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-full transition-all active:scale-95 shadow-2xs inline-block"
+                >
+                  View candidates
+                </Link>
               </div>
             </article>
           ))}
@@ -603,8 +516,8 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
               <input className={input} value={form.company} onChange={set('company')} placeholder="e.g. Al Noor Medical City" />
             </div>
             <div>
-              <label className={label}>Branch / Location</label>
-              <input className={input} value={form.location} onChange={set('location')} placeholder="e.g. Jeddah branch, Dubai" />
+              <label className={label}>Location</label>
+              <input className={input} value={form.location} onChange={set('location')} placeholder="e.g. Dubai, Riyadh" />
             </div>
             <div>
               <label className={label}>Number of openings</label>

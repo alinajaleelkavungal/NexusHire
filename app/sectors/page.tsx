@@ -13,7 +13,7 @@ export default async function SectorsPage({ searchParams }: { searchParams: Prom
   const candidates = await listCandidatesWithResumesFor(session)
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen">
       <SectorGroupList initialCandidates={candidates} initialQuery={q ?? ''} />
     </div>
   )

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { Calendar, MessageSquare, Clock, Plus, Trash2, Loader2 } from '@/components/icons'
+import { CalendarBlank, ChatText, Clock, Plus, Trash, CircleNotch } from '@/components/icons'
 
 interface WorkflowProps {
   candidateId: string
@@ -88,19 +88,19 @@ export default function CandidateWorkflow({ candidateId, currentStage }: Workflo
     <div className="bg-[#1C1C1C] rounded-xl shadow-sm border border-[#333] overflow-hidden mt-8 text-gray-200">
       <div className="flex border-b border-[#333]">
         <button onClick={() => setActiveTab('timeline')} className={`flex-1 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'timeline' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
-          <Clock className="w-4 h-4 inline-block mr-2" /> Timeline
+          <Clock weight="bold" className="w-4 h-4 inline-block mr-2" /> Timeline
         </button>
         <button onClick={() => setActiveTab('notes')} className={`flex-1 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'notes' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
-          <MessageSquare className="w-4 h-4 inline-block mr-2" /> Notes
+          <ChatText weight="bold" className="w-4 h-4 inline-block mr-2" /> Notes
         </button>
         <button onClick={() => setActiveTab('interviews')} className={`flex-1 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'interviews' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
-          <Calendar className="w-4 h-4 inline-block mr-2" /> Interviews
+          <CalendarBlank weight="bold" className="w-4 h-4 inline-block mr-2" /> Interviews
         </button>
       </div>
 
       <div className="p-6">
         {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>
+          <div className="flex justify-center py-12"><CircleNotch weight="bold" className="w-8 h-8 animate-spin text-blue-500" /></div>
         ) : (
           <>
             {/* Timeline Tab */}
@@ -133,7 +133,7 @@ export default function CandidateWorkflow({ candidateId, currentStage }: Workflo
                     className="flex-1 bg-[#2A2A2A] border border-[#444] rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none placeholder-gray-500"
                   />
                   <button type="submit" disabled={!newNote.trim()} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
-                    <Plus className="w-4 h-4" />
+                    <Plus weight="bold" className="w-4 h-4" />
                   </button>
                 </form>
                 
@@ -145,7 +145,7 @@ export default function CandidateWorkflow({ candidateId, currentStage }: Workflo
                         <p className="text-xs text-gray-500 mt-2">{format(new Date(note.createdAt), 'MMM d, yyyy h:mm a')}</p>
                       </div>
                       <button onClick={() => handleDeleteNote(note.id)} className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Trash2 className="w-4 h-4" />
+                        <Trash weight="bold" className="w-4 h-4" />
                       </button>
                     </div>
                   ))}

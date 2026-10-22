@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, ArrowLeft, Building2, MapPin, Briefcase, ChevronDown, ChevronUp, UserCircle, Star, AlertCircle, CheckCircle2, XCircle } from '@/components/icons'
+import { CircleNotch, ArrowLeft, Buildings, MapPin, Briefcase, CaretDown, CaretUp, UserCircle, Star, WarningCircle, CheckCircle, XCircle } from '@/components/icons'
 
 export default function JobMatchDashboard() {
   const params = useParams()
@@ -48,7 +48,7 @@ export default function JobMatchDashboard() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <div className="relative">
           <div className="w-16 h-16 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
-          <Star className="w-6 h-6 text-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+          <Star weight="fill" className="w-6 h-6 text-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
         </div>
         <h2 className="text-xl font-bold text-gray-900">AI Match Engine Running</h2>
         <p className="text-gray-500">Calculating semantic similarity and analyzing skill gaps...</p>
@@ -69,50 +69,50 @@ export default function JobMatchDashboard() {
     <div className="max-w-7xl mx-auto p-6 space-y-8">
       {/* Header */}
       <div>
-        <Link href="/recruitment/jobs" className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center mb-4">
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Jobs
+        <Link href="/recruitment/jobs" className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center mb-4">
+          <ArrowLeft weight="bold" className="w-4 h-4 mr-1" /> Back to Jobs
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">AI Candidate Matcher</h1>
+        <h1 className="text-3xl font-extrabold text-gray-950 tracking-tight">AI Candidate Matcher</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Col: Job Profile */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-2xl border shadow-sm sticky top-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{job.jobTitle}</h2>
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm sticky top-6">
+            <h2 className="text-xl font-bold text-gray-950 mb-2">{job.jobTitle}</h2>
             
             <div className="space-y-3 mb-6">
               {job.company && (
-                <div className="flex items-center text-gray-600 text-sm">
-                  <Building2 className="w-4 h-4 mr-2 text-gray-400" /> {job.company}
+                <div className="flex items-center text-gray-700 text-sm font-medium">
+                  <Buildings weight="bold" className="w-4 h-4 mr-2 text-gray-500" /> {job.company}
                 </div>
               )}
               {job.location && (
-                <div className="flex items-center text-gray-600 text-sm">
-                  <MapPin className="w-4 h-4 mr-2 text-gray-400" /> {job.location}
+                <div className="flex items-center text-gray-700 text-sm font-medium">
+                  <MapPin weight="bold" className="w-4 h-4 mr-2 text-gray-500" /> {job.location}
                 </div>
               )}
               {job.employmentType && (
-                <div className="flex items-center text-gray-600 text-sm">
-                  <Briefcase className="w-4 h-4 mr-2 text-gray-400" /> {job.employmentType}
+                <div className="flex items-center text-gray-700 text-sm font-medium">
+                  <Briefcase weight="bold" className="w-4 h-4 mr-2 text-gray-500" /> {job.employmentType}
                 </div>
               )}
             </div>
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-2">Required Skills</h3>
+                <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Required Skills</h3>
                 <div className="flex flex-wrap gap-2">
                   {JSON.parse(job.requiredSkills || '[]').map((s: string, i: number) => (
-                    <span key={i} className="text-xs bg-blue-50 text-blue-700 font-medium px-2 py-1 rounded-md">{s}</span>
+                    <span key={i} className="text-xs bg-blue-50 border border-blue-200 text-blue-800 font-semibold px-2 py-1 rounded-md">{s}</span>
                   ))}
                 </div>
               </div>
               
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-2">Experience</h3>
-                <p className="text-sm text-gray-600">{job.minimumExperience || 'Not specified'}</p>
+                <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Experience</h3>
+                <p className="text-sm font-medium text-gray-800">{job.minimumExperience || 'Not specified'}</p>
               </div>
             </div>
           </div>
@@ -121,19 +121,19 @@ export default function JobMatchDashboard() {
         {/* Right Col: Matches */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Top Matches ({matches.length})</h2>
+            <h2 className="text-lg font-bold text-gray-950">Top Matches ({matches.length})</h2>
           </div>
 
           {matches.length === 0 ? (
-            <div className="bg-white p-12 text-center rounded-2xl border shadow-sm">
-              <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900">No Suitable Matches</h3>
-              <p className="text-gray-500 mt-1">Upload more resumes to build your candidate pool.</p>
+            <div className="bg-white p-12 text-center rounded-2xl border border-gray-200 shadow-sm">
+              <WarningCircle weight="bold" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-gray-950">No Suitable Matches</h3>
+              <p className="text-gray-600 font-medium mt-1">Upload more resumes to build your candidate pool.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {matches.map((match) => (
-                <div key={match.candidateId} className="bg-white rounded-2xl border shadow-sm overflow-hidden transition-all hover:shadow-md">
+                <div key={match.candidateId} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden transition-all hover:shadow-md">
                   {/* Collapsed Card */}
                   <div 
                     className="p-6 cursor-pointer flex items-start justify-between"
@@ -141,11 +141,11 @@ export default function JobMatchDashboard() {
                   >
                     <div className="flex items-start space-x-4">
                       <div className="bg-gray-100 p-3 rounded-full mt-1">
-                        <UserCircle className="w-6 h-6 text-gray-500" />
+                        <UserCircle weight="fill" className="w-6 h-6 text-gray-600" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">{match.candidateName}</h3>
-                        <div className="flex items-center space-x-3 mt-1 text-sm text-gray-500">
+                        <h3 className="text-lg font-bold text-gray-950">{match.candidateName}</h3>
+                        <div className="flex items-center space-x-3 mt-1 text-sm font-medium text-gray-700">
                           <span>{match.jobCategory || 'Uncategorized'}</span>
                           <span>•</span>
                           <span>{match.experienceLevel || 'Unknown Experience'}</span>
@@ -167,12 +167,12 @@ export default function JobMatchDashboard() {
 
                     <div className="flex items-center space-x-6">
                       <div className="text-right">
-                        <span className="block text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Match Score</span>
-                        <span className={`text-3xl font-bold ${match.matchScore >= 80 ? 'text-green-600' : match.matchScore >= 60 ? 'text-yellow-600' : 'text-gray-900'}`}>
+                        <span className="block text-xs text-gray-700 font-bold uppercase tracking-wider mb-1">Match Score</span>
+                        <span className={`text-3xl font-extrabold ${match.matchScore >= 80 ? 'text-green-700' : match.matchScore >= 60 ? 'text-amber-700' : 'text-gray-950'}`}>
                           {match.matchScore}%
                         </span>
                       </div>
-                      {expandedMatch === match.candidateId ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                      {expandedMatch === match.candidateId ? <CaretUp weight="bold" className="w-5 h-5 text-gray-700" /> : <CaretDown weight="bold" className="w-5 h-5 text-gray-700" />}
                     </div>
                   </div>
 
@@ -185,7 +185,7 @@ export default function JobMatchDashboard() {
                         <ul className="space-y-2">
                           {match.reasons.map((reason: string, i: number) => (
                             <li key={i} className="flex items-start text-sm text-gray-700">
-                              <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                              <CheckCircle weight="fill" className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                               {reason}
                             </li>
                           ))}
@@ -199,7 +199,7 @@ export default function JobMatchDashboard() {
                             <ul className="space-y-2">
                               {match.missingSkills.map((skill: string, i: number) => (
                                 <li key={i} className="flex items-center text-sm text-red-700">
-                                  <XCircle className="w-4 h-4 text-red-500 mr-2" />
+                                  <XCircle weight="fill" className="w-4 h-4 text-red-500 mr-2" />
                                   {skill}
                                 </li>
                               ))}

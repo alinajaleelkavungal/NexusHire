@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
+import TopHeader from "@/components/TopHeader";
 import { getSession } from "@/lib/auth";
 import "./globals.css";
 
@@ -31,13 +32,18 @@ export default async function RootLayout({
       lang="en"
       className={`${jakartaSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="h-full flex bg-gray-50 text-gray-900">
+      <body className="h-full flex bg-[#f7f5f0] text-[#24211f] font-sans">
         {session && (
           <Sidebar user={{ name: session.name, loginId: session.loginId, role: session.role }} />
         )}
-        <main className="flex-1 h-full overflow-y-auto overflow-x-hidden">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+          {session && (
+            <TopHeader user={{ name: session.name, loginId: session.loginId, role: session.role }} />
+          )}
+          <main className="flex-1 overflow-y-auto overflow-x-hidden">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

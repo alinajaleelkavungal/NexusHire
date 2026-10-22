@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Code, Stethoscope, Settings, Plus, FileText, Pencil, Trash2 } from '@/components/icons'
+import { Code, Stethoscope, Gear, Plus, FileText, PencilSimple, Trash } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 
 export default function SectorsManager({ initialCandidates, savedSectors = [] }: { initialCandidates: { category: string | null }[], savedSectors?: string[] }) {
@@ -35,7 +35,7 @@ export default function SectorsManager({ initialCandidates, savedSectors = [] }:
       count,
       icon: name.toLowerCase().includes('software') || name.toLowerCase().includes('developer') ? Code :
             name.toLowerCase().includes('health') || name.toLowerCase().includes('medical') ? Stethoscope :
-            name.toLowerCase().includes('mechanic') || name.toLowerCase().includes('engineer') ? Settings :
+            name.toLowerCase().includes('mechanic') || name.toLowerCase().includes('engineer') ? Gear :
             FileText
     }))
   }, [candidates, manualSectors])
@@ -106,8 +106,8 @@ export default function SectorsManager({ initialCandidates, savedSectors = [] }:
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-8 font-sans">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Sector Management</h1>
-        <p className="text-gray-500 mt-2">Create, rename, or delete sectors used to categorize candidates.</p>
+        <h1 className="text-3xl font-extrabold text-gray-950 tracking-tight">Category Management</h1>
+        <p className="text-gray-700 font-medium mt-2">Create, rename, or delete categories used to organize candidates.</p>
       </div>
 
       <div className="flex flex-wrap gap-4">
@@ -131,10 +131,10 @@ export default function SectorsManager({ initialCandidates, savedSectors = [] }:
             ) : (
               <>
                 <div className="flex justify-between items-start mb-4">
-                  <sector.icon className="w-8 h-8 text-green-600" />
-                  <span className="text-3xl font-bold text-gray-900">{sector.count}</span>
+                  <sector.icon weight="bold" className="w-8 h-8 text-green-700" />
+                  <span className="text-3xl font-black text-gray-950">{sector.count}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-700 leading-tight">
+                <h3 className="text-lg font-bold text-gray-950 leading-tight">
                   {sector.name}
                 </h3>
 
@@ -146,13 +146,13 @@ export default function SectorsManager({ initialCandidates, savedSectors = [] }:
                     }}
                     className="p-1.5 bg-gray-50 rounded-md shadow-sm border border-gray-200 text-gray-500 hover:text-blue-500"
                   >
-                    <Pencil className="w-4 h-4" />
+                    <PencilSimple weight="bold" className="w-4 h-4" />
                   </button>
                   <button 
                     onClick={() => handleDeleteSector(sector.name)}
                     className="p-1.5 bg-gray-50 rounded-md shadow-sm border border-gray-200 text-gray-500 hover:text-red-500"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash weight="bold" className="w-4 h-4" />
                   </button>
                 </div>
               </>
@@ -179,7 +179,7 @@ export default function SectorsManager({ initialCandidates, savedSectors = [] }:
             onClick={() => setIsAddingSector(true)}
             className="p-6 rounded-xl border border-dashed border-green-300 bg-white flex flex-col items-center justify-center cursor-pointer hover:bg-green-50 transition-colors w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] min-h-[120px]"
           >
-            <Plus className="w-8 h-8 text-green-500 mb-2" />
+            <Plus weight="bold" className="w-8 h-8 text-green-600 mb-2" />
             <span className="text-sm font-medium text-gray-500">Create New Sector</span>
           </div>
         )}
