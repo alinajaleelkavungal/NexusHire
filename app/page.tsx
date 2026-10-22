@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
   ArrowRight, FileText, CalendarBlank, ChatText, CheckCircle,
-  ArrowUpRight, Users, Sparkle
+  ArrowUpRight, Users
 } from '@/components/icons'
 import { getSession, listCandidatesFor } from '@/lib/auth'
 import { listVacancies } from '@/lib/vacancies'
