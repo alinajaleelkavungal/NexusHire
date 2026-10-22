@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { MagnifyingGlass, ShieldCheck, Storefront, Sparkle } from '@/components/icons'
+import { MagnifyingGlass, ShieldCheck, Storefront } from '@/components/icons'
 
 interface TopHeaderProps {
   user: {
@@ -80,14 +80,6 @@ export default function TopHeader({ user }: TopHeaderProps) {
             <MagnifyingGlass weight="bold" className="w-3.5 h-3.5" />
           </Link>
 
-          <Link
-            href="/chat"
-            className="w-8 h-8 rounded-full border border-[#e2dcce] flex items-center justify-center text-[#e85d3f] hover:bg-[#fdf3f0] transition-colors"
-            title="AI Recruitment Assistant"
-            aria-label="AI Assistant"
-          >
-            <Sparkle weight="fill" className="w-3.5 h-3.5 text-[#e85d3f]" />
-          </Link>
 
           {/* User Profile Badge */}
           <Link
