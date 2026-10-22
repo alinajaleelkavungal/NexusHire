@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import {
   Search, UploadCloud, ChevronRight, X, Loader2, Code, Stethoscope, Settings, Plus,
   FileText, ChevronDown, CheckCircle, AlertCircle, ArrowDownCircle, Pencil, Trash2,
@@ -45,12 +45,20 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   const router = useRouter()
   const searchParams = useSearchParams()
   const urlSector = searchParams.get('sector')
+  const urlSearch = searchParams.get('search') || searchParams.get('q') || ''
 
   const [candidates, setCandidates] = useState(initialCandidates)
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState(urlSearch)
   const [activeCategory, setActiveCategory] = useState<string | null>(urlSector || null)
   const [stageFilter, setStageFilter] = useState<string | null>(null)
   const [branchFilter, setBranchFilter] = useState<string | null>(null)
+
+  useEffect(() => {
+    const q = searchParams.get('search') || searchParams.get('q')
+    if (q !== null && q !== undefined) {
+      setSearch(q)
+    }
+  }, [searchParams])
 
   // Admin only: which branch uploaded each CV. Legacy CVs (before logins existed) have no owner.
   const UNASSIGNED = 'Unassigned'

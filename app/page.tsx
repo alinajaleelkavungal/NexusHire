@@ -65,7 +65,7 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      <VacancyBoard vacancies={vacancies} isAdmin={isAdmin} />
+      <VacancyBoard vacancies={vacancies} isAdmin={isAdmin} candidates={candidates} />
 
       <dl className="grid grid-cols-2 lg:grid-cols-4 bg-white border border-gray-300 rounded-md divide-x divide-gray-200 [&>div:nth-child(n+3)]:max-lg:border-t [&>div:nth-child(n+3)]:max-lg:border-gray-200">
         {stats.map(s => (

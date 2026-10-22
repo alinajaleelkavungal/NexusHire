@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { guardAdmin } from '@/lib/auth'
+import { guardSession } from '@/lib/auth'
 import { parseVacancyForm } from '@/lib/vacancies'
 import { deleteResume, uploadPoster } from '@/services/resumeStorage'
 
-// Admin only: edit a vacancy. The original posted date is kept.
+// Edit a vacancy. The original posted date is kept.
 // Multipart fields as when posting, plus optional `image` (replaces the poster) or `removeImage=1`.
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const g = await guardAdmin()
+  const g = await guardSession()
   if (g.response) return g.response
 
   try {
@@ -53,9 +53,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 }
 
-// Admin only: take a vacancy down (and remove its poster image)
+// Take a vacancy down (and remove its poster image)
 export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const g = await guardAdmin()
+  const g = await guardSession()
   if (g.response) return g.response
 
   const { id } = await params

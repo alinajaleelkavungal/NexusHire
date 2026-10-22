@@ -11,9 +11,9 @@ export async function GET() {
   return NextResponse.json({ vacancies: await listVacancies(g.session.role === 'ADMIN') })
 }
 
-// Admin only: post a new vacancy (multipart so an optional poster image can come along)
+// Post a new vacancy (multipart so an optional poster image can come along)
 export async function POST(request: NextRequest) {
-  const g = await guardAdmin()
+  const g = await guardSession()
   if (g.response) return g.response
 
   try {
