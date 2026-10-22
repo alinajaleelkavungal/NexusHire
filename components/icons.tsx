@@ -121,6 +121,7 @@ export {
   ListBullets,
   GridFour,
   Sparkle,
+  MagicWand,
   Bell,
   SlidersHorizontal,
 } from '@phosphor-icons/react/ssr'

@@ -1,12 +1,12 @@
 import ChatBox from '@/components/chat/ChatBox'
-import { ChatsCircle } from '@/components/icons'
+import { MagicWand } from '@/components/icons'
 
 export default function GlobalChatPage() {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="text-center space-y-4">
-        <div className="inline-flex items-center justify-center bg-blue-100 p-4 rounded-full mb-2">
-          <ChatsCircle weight="fill" className="w-8 h-8 text-blue-600" />
+        <div className="inline-flex items-center justify-center bg-[#fdf3f0] border border-[#fbe4de] p-4 rounded-full mb-2 shadow-2xs">
+          <MagicWand weight="fill" className="w-8 h-8 text-[#e85d3f]" />
         </div>
         <h1 className="text-4xl font-extrabold text-gray-950 tracking-tight">AI Assistant</h1>
         <p className="text-gray-700 font-medium max-w-xl mx-auto">

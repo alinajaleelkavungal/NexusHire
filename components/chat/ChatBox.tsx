@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PaperPlaneTilt, Robot, User, CircleNotch } from '@/components/icons'
+import { PaperPlaneTilt, MagicWand, User, CircleNotch } from '@/components/icons'
 
 interface ChatMessage {
   id: string
@@ -92,7 +92,7 @@ export default function ChatBox({ candidateId,  placeholder = "Ask about candida
           <div key={msg.id} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
             <div className={`flex items-start max-w-[85%] space-x-3 ${msg.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
               <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-[#e85d3f] text-white' : 'bg-[#faf8f5] border border-[#e2dcce] text-[#24211f]'}`}>
-                {msg.role === 'user' ? <User weight="bold" className="w-4 h-4" /> : <Robot weight="bold" className="w-4 h-4" />}
+                {msg.role === 'user' ? <User weight="bold" className="w-4 h-4" /> : <MagicWand weight="bold" className="w-4 h-4 text-[#e85d3f]" />}
               </div>
               <div className={`px-4 py-3 rounded-2xl ${msg.role === 'user' ? 'bg-[#24211f] text-white rounded-tr-sm' : 'bg-[#faf8f5] border border-[#e2dcce] text-[#24211f] rounded-tl-sm'}`}>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
@@ -116,7 +116,7 @@ export default function ChatBox({ candidateId,  placeholder = "Ask about candida
         {isLoading && (
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#faf8f5] border border-[#e2dcce] text-[#24211f] flex items-center justify-center">
-              <Robot weight="bold" className="w-4 h-4" />
+              <MagicWand weight="bold" className="w-4 h-4 text-[#e85d3f]" />
             </div>
             <div className="px-4 py-3 rounded-2xl bg-[#faf8f5] border border-[#e2dcce] rounded-tl-sm flex items-center space-x-2">
               <CircleNotch weight="bold" className="w-4 h-4 animate-spin text-[#e85d3f]" />
