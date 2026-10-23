@@ -3,7 +3,7 @@ import { getSession } from '@/lib/auth'
 import ChangePasswordForm from './ChangePasswordForm'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Account · ResumeIQ' }
+export const metadata = { title: 'Account · NexusHire' }
 
 export default async function AccountPage() {
   const session = await getSession()

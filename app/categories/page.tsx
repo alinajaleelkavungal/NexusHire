@@ -4,7 +4,7 @@ import { getSession, listCandidatesFor } from '@/lib/auth'
 import CategoryExplorer from '@/components/CategoryExplorer'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Category · ResumeIQ' }
+export const metadata = { title: 'Category · NexusHire' }
 
 export default async function CategoriesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const session = await getSession()

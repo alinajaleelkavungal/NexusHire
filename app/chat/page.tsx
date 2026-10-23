@@ -1,6 +1,8 @@
 import ChatBox from '@/components/chat/ChatBox'
 import { MagicWand } from '@/components/icons'
 
+export const metadata = { title: 'AI Assistant · NexusHire' }
+
 export default function GlobalChatPage() {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">

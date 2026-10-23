@@ -18,7 +18,7 @@ const STAGES = [
 ]
 
 export const ASSISTANT_HELP = [
-  'I can answer questions about everything in ResumeIQ. For example:',
+  'I can answer questions about everything in NexusHire. For example:',
   '• How many candidates are there in total?',
   '• How many vacancy posters are active?',
   '• How many nurses are there? / How many CVs in the IT category?',
@@ -532,14 +532,14 @@ export async function answerWithAppContext(session: Session, question: string): 
     const vac = ctx.vacancies.map(v =>
       `${v.title}; company=${v.company || '-'}; location=${v.location || '-'}; openings=${v.openings ?? '-'}; closing=${v.closingDate || 'none'}; posted=${v.postedAt.slice(0, 10)}; ${v.expired ? 'EXPIRED' : 'active'}`
     )
-    const prompt = `You are the assistant inside ResumeIQ, a recruitment CRM. Today is ${new Date().toISOString().slice(0, 10)}.
+    const prompt = `You are the assistant inside NexusHire, a recruitment CRM (The Global Hub for Cross-Border Manpower). Today is ${new Date().toISOString().slice(0, 10)}.
 The signed-in user is ${ctx.isAdmin ? 'the ADMIN (sees every branch)' : `branch "${session.name}" (sees only its own CVs)`}.
 
 Rules:
 - Answer ONLY from the APP GUIDE and LIVE DATA below. Never invent numbers, names or features.
 - Count and compute from LIVE DATA yourself, carefully. Be brief and direct, plain text, short bullet lines where helpful.
 - If the question is about what is written INSIDE a CV (skills, projects, education, work history), reply with exactly ${NEEDS_CV_TEXT} and nothing else.
-- If the answer is not in the guide or data, say you don't have that information in ResumeIQ. Do not guess.
+- If the answer is not in the guide or data, say you don't have that information in NexusHire. Do not guess.
 
 APP GUIDE:
 ${GUIDE_TEXT}

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { MagnifyingGlass, ShieldCheck, Storefront } from '@/components/icons'
 
@@ -39,13 +40,15 @@ export default function TopHeader({ user }: TopHeaderProps) {
     <header className="px-4 sm:px-8 pt-3 pb-1 select-none z-20 shrink-0">
       <div className="bg-white/95 backdrop-blur-md border border-[#e2dcce]/90 rounded-full shadow-[0_2px_14px_-2px_rgba(36,33,31,0.04)] px-3 sm:px-4 py-2 flex items-center justify-between gap-3">
         {/* Brand Left */}
-        <Link href="/" className="flex items-center gap-2 pl-1 group shrink-0">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#e85d3f] to-[#f4d06f] text-white flex items-center justify-center font-black text-xs shadow-xs">
-            IQ
-          </div>
-          <span className="font-extrabold text-[15px] text-[#24211f] tracking-tight">
-            Resume<span className="text-[#e85d3f]">IQ</span>
-          </span>
+        <Link href="/" className="flex items-center gap-2 pl-1 group shrink-0" title="NexusHire · The Global Hub for Cross-Border Manpower">
+          <Image
+            src="/logo.png"
+            alt="NexusHire · The Global Hub for Cross-Border Manpower"
+            width={170}
+            height={37}
+            priority
+            className="h-8 sm:h-8.5 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+          />
         </Link>
 
         {/* Center Pill Navigation */}

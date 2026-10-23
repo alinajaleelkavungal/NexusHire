@@ -1,4 +1,4 @@
-// Central Phosphor Icons library for ResumeIQ
+// Central Phosphor Icons library for NexusHire
 // Exporting canonical Phosphor icon names and compatibility aliases
 export {
   // Navigation & Core UI

@@ -16,8 +16,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ResumeIQ CRM",
-  description: "AI-powered Recruitment Management",
+  title: "NexusHire · The Global Hub for Cross-Border Manpower",
+  description: "NexusHire - The Global Hub for Cross-Border Manpower",
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+      { url: '/logo-mark.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-icon.png' },
+    ],
+    shortcut: '/logo-mark.png',
+  },
 };
 
 export default async function RootLayout({

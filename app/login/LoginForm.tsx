@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CircleNotch, Eye, EyeSlash, WarningCircle } from '@/components/icons'
 
@@ -37,10 +38,21 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="w-full max-w-sm bg-white border border-[#e2dcce] rounded-3xl p-8 space-y-5 shadow-sm">
-      <div className="border-b border-[#f0ece1] pb-5">
-        <h1 className="text-2xl font-black text-[#24211f] tracking-tight">Resume<span className="text-[#e85d3f]">IQ</span></h1>
-        <p className="text-sm font-medium text-[#7e715f] mt-1">Sign in with your branch or admin ID</p>
+    <form onSubmit={submit} className="w-full max-w-md bg-white border border-[#e2dcce] rounded-3xl p-8 sm:p-9 space-y-5 shadow-[0_4px_24px_-4px_rgba(36,33,31,0.06)]">
+      <div className="border-b border-[#f0ece1] pb-6 text-center sm:text-left">
+        <div className="flex items-center justify-center sm:justify-start mb-3">
+          <Image
+            src="/logo.png"
+            alt="NexusHire · The Global Hub for Cross-Border Manpower"
+            width={240}
+            height={52}
+            priority
+            className="h-11 w-auto object-contain"
+          />
+        </div>
+        <p className="text-xs font-medium text-[#7e715f] mt-1">
+          Sign in with your branch or admin ID
+        </p>
       </div>
 
       {error && (

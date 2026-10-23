@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { PaperPlaneTilt, MagicWand, User, CircleNotch } from '@/components/icons'
 
 interface ChatMessage {
@@ -30,7 +31,7 @@ export default function ChatBox({ candidateId,  placeholder = "Ask about candida
     role: 'ai',
     content: candidateId 
       ? "Hi! I've analyzed this candidate's resume. What would you like to know about them?"
-      : "Hi! Ask me anything about ResumeIQ: how many candidates or active vacancy posters there are, CVs by category, age or stage, a specific candidate, and more."
+      : "Hi! Ask me anything about NexusHire: how many candidates or active vacancy posters there are, CVs by category, age or stage, a specific candidate, and more."
   }])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -80,8 +81,11 @@ export default function ChatBox({ candidateId,  placeholder = "Ask about candida
     <div className="flex flex-col bg-white border border-[#e2dcce] rounded-2xl shadow-sm h-[600px] max-h-[80vh] overflow-hidden">
       {/* Header */}
       <div className="bg-[#faf8f5] px-6 py-4 border-b border-[#f0ece1] flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <h2 className="font-bold text-[#24211f] text-base">AI Resume Assistant</h2>
+        <div className="flex items-center space-x-2.5">
+          <div className="w-6 h-6 rounded-lg bg-white border border-[#e2dcce] flex items-center justify-center p-0.5 shadow-2xs">
+            <Image src="/logo-mark.png" alt="NexusHire" width={20} height={20} className="w-full h-full object-contain" />
+          </div>
+          <h2 className="font-bold text-[#24211f] text-base">NexusHire AI Assistant</h2>
         </div>
         <span className="text-xs bg-[#fefcf3] text-[#b58933] border border-[#fbedb8] px-2.5 py-1 rounded-full font-semibold">Live Knowledge</span>
       </div>

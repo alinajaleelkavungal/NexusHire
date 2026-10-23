@@ -9,7 +9,7 @@ import { listVacancies } from '@/lib/vacancies'
 import VacancyBoard from '@/components/VacancyBoard'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Home · ResumeIQ' }
+export const metadata = { title: 'Home · NexusHire' }
 
 // Keep in sync with STAGES in app/board/page.tsx
 const STAGES = [
@@ -98,6 +98,12 @@ export default async function HomePage() {
       {/* Header Row */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[11px] font-bold tracking-tight px-3 py-1 rounded-full bg-[#fdf3f0] text-[#e85d3f] border border-[#fbe4de] shadow-2xs inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#e85d3f]" />
+              The Global Hub for Cross-Border Manpower
+            </span>
+          </div>
           <h1 className="text-3xl font-black text-[#24211f] tracking-tight">
             {greeting}, {session.name}
           </h1>

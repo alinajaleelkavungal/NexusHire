@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   House, Users, Briefcase, SignOut, Key, Storefront, SquaresFour,
@@ -58,12 +59,17 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
       <div className="flex flex-col items-center gap-2">
         <Link
           href="/"
-          className="w-11 h-11 rounded-2xl bg-white border border-[#e2dcce] shadow-xs flex items-center justify-center hover:scale-105 transition-transform group"
-          title="ResumeIQ Home"
+          className="w-11 h-11 rounded-2xl bg-white border border-[#e2dcce] shadow-xs flex items-center justify-center hover:scale-105 transition-transform group p-2"
+          title="NexusHire · The Global Hub for Cross-Border Manpower"
         >
-          <span className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#e85d3f] to-[#f4d06f] text-white font-black text-xs flex items-center justify-center shadow-xs">
-            R
-          </span>
+          <Image
+            src="/logo-mark.png"
+            alt="NexusHire"
+            width={32}
+            height={32}
+            priority
+            className="w-full h-full object-contain"
+          />
         </Link>
 
         {/* Theme pill button */}

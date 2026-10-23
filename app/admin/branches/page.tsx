@@ -3,7 +3,7 @@ import { getSession } from '@/lib/auth'
 import BranchesManager from './BranchesManager'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Branches · ResumeIQ' }
+export const metadata = { title: 'Branches · NexusHire' }
 
 export default async function BranchesPage() {
   const session = await getSession()

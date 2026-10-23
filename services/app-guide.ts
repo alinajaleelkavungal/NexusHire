@@ -27,7 +27,7 @@ const GUIDE: Entry[] = [
     topic: 'duplicate',
     all: [/duplicate|already (exists|uploaded)|same (cv|name|person)/],
     answer:
-      'When you type a name in the upload form, ResumeIQ checks it when you leave the field and warns you if a CV with that name already exists. A branch login is only warned about duplicates among its own CVs.',
+      'When you type a name in the upload form, NexusHire checks it when you leave the field and warns you if a CV with that name already exists. A branch login is only warned about duplicates among its own CVs.',
   },
   {
     topic: 'status',
@@ -188,10 +188,10 @@ const GUIDE: Entry[] = [
       'Left menu: Talent (Home, Candidates, Search, AI Assistant), Browse by (Sectors, Age, Experience), Recruitment (Jobs), and for admins Administration (Branches). At the bottom: Change password and Sign out.',
   },
   {
-    topic: 'what is resumeiq',
-    all: [/(what is|what's|about|purpose|explain)/, /(resumeiq|this app|this application|the app|this system|this tool)/],
+    topic: 'what is nexushire',
+    all: [/(what is|what's|about|purpose|explain)/, /(nexushire|resumeiq|this app|this application|the app|this system|this tool)/],
     answer:
-      'ResumeIQ is a recruitment CRM. Branches upload CVs with a few mandatory details, the admin sees everything from every branch, and everyone can search, filter, track candidates through hiring stages, view vacancy posters and ask the assistant questions.',
+      'NexusHire is The Global Hub for Cross-Border Manpower — a specialized recruitment CRM. Branches upload CVs with mandatory candidate details, the admin oversees everything across branches, and recruiters can search, filter, track candidates through hiring stages, view vacancy posters, and ask the AI assistant questions.',
   },
 ]
 
