@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import TopHeader from "@/components/TopHeader";
+import SplashScreen from "@/components/SplashScreen";
 import { getSession } from "@/lib/auth";
 import "./globals.css";
 
@@ -54,6 +55,7 @@ export default async function RootLayout({
             {children}
           </main>
         </div>
+        <SplashScreen />
       </body>
     </html>
   );
