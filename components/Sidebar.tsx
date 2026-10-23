@@ -53,7 +53,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   }
 
   return (
-    <aside className="w-18 shrink-0 h-full flex flex-col items-center justify-between py-4 px-2 select-none z-30">
+    <aside className="w-18 shrink-0 h-full flex flex-col items-center justify-between py-4 px-2 select-none z-30 overflow-x-hidden">
       {/* Top Capsule: Theme / Brand toggle */}
       <div className="flex flex-col items-center gap-2">
         <Link
@@ -85,13 +85,13 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
       {/* Middle Capsule: Main Navigation Dock */}
       <nav
         aria-label="Main Navigation"
-        className="bg-white border border-[#e2dcce] rounded-full shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] py-3 px-1.5 flex flex-col items-center gap-1.5 max-h-[calc(100vh-210px)] overflow-y-auto no-scrollbar"
+        className="bg-white border border-[#e2dcce] rounded-full shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] py-3 px-1.5 flex flex-col items-center gap-1.5 max-h-[calc(100vh-210px)] overflow-y-auto overflow-x-hidden no-scrollbar"
       >
         {navItems.map((item) => {
           const active = isActive(item.href)
           const IconComponent = item.icon
           return (
-            <div key={item.href} className="relative group">
+            <div key={item.href} className="relative group shrink-0">
               <Link
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
