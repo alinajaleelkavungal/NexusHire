@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -14,7 +15,7 @@ interface NavItem {
   name: string
   href: string
   icon: Icon
-  section: string
+  section: 'Workspace' | 'Operations'
 }
 
 interface SidebarUser {
@@ -23,23 +24,68 @@ interface SidebarUser {
   role: 'ADMIN' | 'BRANCH'
 }
 
+function SidebarToggleIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="transition-transform duration-200"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M9 3v18" />
+      {expanded ? (
+        <path d="m15 15-3-3 3-3" />
+      ) : (
+        <path d="m13 9 3 3-3 3" />
+      )}
+    </svg>
+  )
+}
+
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { isDark, toggleTheme } = useTheme()
+  const { isDark, toggleTheme, setTheme } = useTheme()
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('nexushire_sidebar_expanded')
+      if (saved === 'true') setIsExpanded(true)
+    } catch (_) {}
+  }, [])
+
+  const toggleExpanded = () => {
+    setIsExpanded(prev => {
+      const next = !prev
+      try {
+        localStorage.setItem('nexushire_sidebar_expanded', String(next))
+      } catch (_) {}
+      return next
+    })
+  }
 
   const navItems: NavItem[] = [
-    { name: 'Home', href: '/', icon: House, section: 'Talent' },
-    { name: 'Candidates', href: '/candidates', icon: Users, section: 'Talent' },
-    { name: 'Search', href: '/search', icon: MagnifyingGlass, section: 'Talent' },
-    { name: 'Category', href: '/sectors', icon: SquaresFour, section: 'Browse' },
-    { name: 'Age', href: '/age', icon: CalendarBlank, section: 'Browse' },
-    { name: 'Experience', href: '/experience', icon: Briefcase, section: 'Browse' },
-    { name: 'Jobs', href: '/recruitment/jobs', icon: Buildings, section: 'Recruitment' },
+    { name: 'Home', href: '/', icon: House, section: 'Workspace' },
+    { name: 'Candidates', href: '/candidates', icon: Users, section: 'Workspace' },
+    { name: 'Search', href: '/search', icon: MagnifyingGlass, section: 'Workspace' },
+    { name: 'Category', href: '/sectors', icon: SquaresFour, section: 'Operations' },
+    { name: 'Age', href: '/age', icon: CalendarBlank, section: 'Operations' },
+    { name: 'Experience', href: '/experience', icon: Briefcase, section: 'Operations' },
+    { name: 'Jobs', href: '/recruitment/jobs', icon: Buildings, section: 'Operations' },
     ...(user.role === 'ADMIN'
-      ? [{ name: 'Branches', href: '/admin/branches', icon: Storefront, section: 'Admin' }]
+      ? [{ name: 'Branches', href: '/admin/branches', icon: Storefront, section: 'Operations' as const }]
       : []),
   ]
+
+  const workspaceItems = navItems.filter(item => item.section === 'Workspace')
+  const operationsItems = navItems.filter(item => item.section === 'Operations')
 
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -53,119 +99,322 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   }
 
   return (
-    <aside className="w-18 shrink-0 h-full flex flex-col items-center justify-between py-4 px-2 select-none z-30 overflow-x-hidden">
-      {/* Top Capsule: Theme / Brand toggle */}
-      <div className="flex flex-col items-center gap-2">
-        <Link
-          href="/"
-          className="w-11 h-11 rounded-2xl bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-xs flex items-center justify-center hover:scale-105 transition-all group p-2"
-          title="NexusHire · The Global Hub for Cross-Border Manpower"
-        >
-          <Image
-            src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
-            alt="NexusHire"
-            width={32}
-            height={32}
-            priority
-            className="w-full h-full object-contain"
-          />
-        </Link>
+    <aside
+      className={`shrink-0 h-full flex flex-col justify-between py-4 px-2 select-none z-30 transition-all duration-300 ease-in-out ${
+        isExpanded ? 'w-64 overflow-visible' : 'w-18 items-center overflow-visible'
+      }`}
+    >
+      {/* ────────────────────────────────────────────────────────── */}
+      {/* EXPANDED SIDEBAR VIEW (Matching user's reference layout)  */}
+      {/* ────────────────────────────────────────────────────────── */}
+      {isExpanded ? (
+        <div className="w-full h-full flex flex-col justify-between overflow-hidden">
+          {/* Top Section: Navigation Header & Theme Switcher */}
+          <div className="shrink-0 flex flex-col gap-2">
+            {/* Navigation Header Pill */}
+            <div className="w-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-2xl px-3 py-2 flex items-center justify-between shadow-2xs transition-colors">
+              <div className="flex items-center gap-2.5">
+                <Link
+                  href="/"
+                  className="w-8 h-8 rounded-xl bg-[#faf8f5] dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] p-1 flex items-center justify-center hover:scale-105 transition-transform"
+                  title="NexusHire"
+                >
+                  <Image
+                    src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
+                    alt="NexusHire"
+                    width={22}
+                    height={22}
+                    priority
+                    className="w-full h-full object-contain"
+                  />
+                </Link>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#73675a] dark:text-[#a89c8e] uppercase">
+                  Navigation
+                </span>
+              </div>
 
-        {/* Theme pill button */}
-        <button
-          onClick={toggleTheme}
-          className="w-8 h-14 rounded-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-2xs flex flex-col items-center justify-between p-1.5 hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] transition-colors cursor-pointer"
-          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-          aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-        >
-          <div
-            className={`p-1 rounded-full transition-all ${
-              !isDark
-                ? 'text-[#b58933] bg-[#fdf7df] shadow-xs scale-105'
-                : 'text-[#73675a] hover:text-[#a89c8e]'
-            }`}
-          >
-            <Sun weight="bold" className="w-3.5 h-3.5" />
-          </div>
-          <div
-            className={`p-1 rounded-full transition-all ${
-              isDark
-                ? 'text-[#e85d3f] bg-[#331c17] shadow-xs scale-105'
-                : 'text-[#7e715f] hover:text-[#24211f]'
-            }`}
-          >
-            <Moon weight="bold" className="w-3.5 h-3.5" />
-          </div>
-        </button>
-      </div>
-
-      {/* Middle Capsule: Main Navigation Dock */}
-      <nav
-        aria-label="Main Navigation"
-        className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.5)] py-3 px-1.5 flex flex-col items-center gap-1.5 max-h-[calc(100vh-210px)] overflow-y-auto overflow-x-hidden no-scrollbar"
-      >
-        {navItems.map((item) => {
-          const active = isActive(item.href)
-          const IconComponent = item.icon
-          return (
-            <div key={item.href} className="relative group shrink-0">
-              <Link
-                href={item.href}
-                aria-current={active ? 'page' : undefined}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                  active
-                    ? 'bg-[#24211f] dark:bg-[#e85d3f] text-white shadow-md dark:shadow-[#e85d3f]/25 scale-102'
-                    : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-[#f3eee8] hover:bg-[#f3efe9] dark:hover:bg-[#2a221b]'
-                }`}
-                aria-label={item.name}
+              {/* Collapse Button */}
+              <button
+                onClick={toggleExpanded}
+                className="w-7 h-7 rounded-lg border border-[#e2dcce] dark:border-[#352c25] text-[#7e715f] dark:text-[#a89c8e] hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#2a221b] flex items-center justify-center transition-colors cursor-pointer"
+                title="Collapse sidebar"
+                aria-label="Collapse sidebar"
               >
-                <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5" />
-              </Link>
+                <SidebarToggleIcon expanded={true} />
+              </button>
+            </div>
 
-              {/* Floating Tooltip */}
-              <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#24211f] dark:bg-[#352c25] text-white text-[11px] font-semibold rounded-md shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all whitespace-nowrap z-50">
-                {item.name}
-                <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-1 border-4 border-transparent border-r-[#24211f] dark:border-r-[#352c25]" />
+            {/* Horizontal Dual-Pill Theme Toggle (as shown in reference) */}
+            <div className="w-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full p-1 flex items-center justify-between shadow-2xs transition-colors">
+              <button
+                onClick={() => setTheme('light')}
+                className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  !isDark
+                    ? 'bg-[#fdf7df] text-[#b58933] shadow-xs'
+                    : 'text-[#73675a] hover:text-[#24211f] dark:hover:text-[#f3eee8]'
+                }`}
+              >
+                <Sun weight="bold" className="w-3.5 h-3.5" />
+                <span>Light</span>
+              </button>
+              <button
+                onClick={() => setTheme('dark')}
+                className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  isDark
+                    ? 'bg-[#e85d3f] text-white shadow-xs'
+                    : 'text-[#73675a] hover:text-[#24211f] dark:hover:text-[#f3eee8]'
+                }`}
+              >
+                <Moon weight="bold" className="w-3.5 h-3.5" />
+                <span>Dark</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Center Main Menu Card: Grouped sections with full labels */}
+          <nav
+            aria-label="Expanded Navigation"
+            className="w-full flex-1 bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-3xl p-3 shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.5)] my-2 overflow-y-auto no-scrollbar flex flex-col justify-between transition-colors"
+          >
+            <div className="space-y-4">
+              {/* Group 1: WORKSPACE */}
+              <div className="space-y-1">
+                <span className="block text-[10px] font-bold tracking-[0.18em] text-[#8a7e70] dark:text-[#73675a] px-3 pt-1 pb-1.5 uppercase">
+                  Workspace
+                </span>
+                {workspaceItems.map((item) => {
+                  const active = isActive(item.href)
+                  const IconComponent = item.icon
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+                        active
+                          ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25'
+                          : 'text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
+                      }`}
+                    >
+                      <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5 shrink-0" />
+                      <span className="truncate">{item.name}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+
+              {/* Group 2: OPERATIONS */}
+              <div className="space-y-1 pt-3 border-t border-[#f0ece1] dark:border-[#2d241d]">
+                <span className="block text-[10px] font-bold tracking-[0.18em] text-[#8a7e70] dark:text-[#73675a] px-3 pt-1 pb-1.5 uppercase">
+                  Operations
+                </span>
+                {operationsItems.map((item) => {
+                  const active = isActive(item.href)
+                  const IconComponent = item.icon
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+                        active
+                          ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25'
+                          : 'text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
+                      }`}
+                    >
+                      <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5 shrink-0" />
+                      <span className="truncate">{item.name}</span>
+                    </Link>
+                  )
+                })}
               </div>
             </div>
-          )
-        })}
-      </nav>
 
-      {/* Bottom Capsule: User & Session Actions */}
-      <div className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_16px_-2px_rgba(36,33,31,0.04)] dark:shadow-[0_4px_16px_-2px_rgba(0,0,0,0.5)] py-2.5 px-1.5 flex flex-col items-center gap-1.5">
-        <div className="relative group">
-          <Link
-            href="/account"
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-              pathname === '/account'
-                ? 'bg-[#24211f] dark:bg-[#e85d3f] text-white shadow-md dark:shadow-[#e85d3f]/25'
-                : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-[#f3eee8] hover:bg-[#f3efe9] dark:hover:bg-[#2a221b]'
-            }`}
-            aria-label="Account Settings"
-          >
-            <Key weight="bold" className="w-4.5 h-4.5" />
-          </Link>
-          <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#24211f] dark:bg-[#352c25] text-white text-[11px] font-semibold rounded-md shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all whitespace-nowrap z-50">
-            Account Settings
-            <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-1 border-4 border-transparent border-r-[#24211f] dark:border-r-[#352c25]" />
-          </div>
-        </div>
+            {/* Group 3: ADMIN & USER ACTIONS */}
+            <div className="space-y-1 pt-3 border-t border-[#f0ece1] dark:border-[#2d241d] shrink-0 mt-2">
+              <span className="block text-[10px] font-bold tracking-[0.18em] text-[#8a7e70] dark:text-[#73675a] px-3 pt-1 pb-1.5 uppercase">
+                Admin
+              </span>
 
-        <div className="relative group">
-          <button
-            onClick={logout}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#e85d3f] hover:bg-[#fdf3f0] dark:hover:bg-[#331c17] transition-all cursor-pointer"
-            aria-label="Sign Out"
-          >
-            <SignOut weight="bold" className="w-4.5 h-4.5" />
-          </button>
-          <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#e85d3f] text-white text-[11px] font-semibold rounded-md shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all whitespace-nowrap z-50">
-            Sign Out
-            <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-1 border-4 border-transparent border-r-[#e85d3f]" />
-          </div>
+              <Link
+                href="/account"
+                aria-current={pathname === '/account' ? 'page' : undefined}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+                  pathname === '/account'
+                    ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25'
+                    : 'text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
+                }`}
+              >
+                <Key weight="bold" className="w-4.5 h-4.5 shrink-0" />
+                <span className="truncate">Account Settings</span>
+              </Link>
+
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#e85d3f] hover:bg-[#fdf3f0] dark:hover:bg-[#331c17] transition-all cursor-pointer"
+              >
+                <SignOut weight="bold" className="w-4.5 h-4.5 shrink-0" />
+                <span className="truncate">Sign Out</span>
+              </button>
+            </div>
+          </nav>
         </div>
-      </div>
+      ) : (
+        /* ────────────────────────────────────────────────────────── */
+        /* COMPACT ICON RAIL VIEW (Default compact with hover-pills)  */
+        /* ────────────────────────────────────────────────────────── */
+        <>
+          {/* Top Capsule: Monogram Logo, Expand Button & Vertical Theme Toggle */}
+          <div className="flex flex-col items-center gap-2">
+            {/* Brand Monogram */}
+            <div className="relative h-11 w-11 shrink-0 group">
+              <Link
+                href="/"
+                className="absolute left-0 top-0 h-11 w-11 group-hover:w-auto group-hover:pr-4 rounded-2xl bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-xs group-hover:shadow-lg flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap p-1.5"
+                title="NexusHire · The Global Hub for Cross-Border Manpower"
+              >
+                <div className="w-8 h-8 shrink-0 flex items-center justify-center">
+                  <Image
+                    src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
+                    alt="NexusHire"
+                    width={32}
+                    height={32}
+                    priority
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-xs font-bold tracking-tight text-[#24211f] dark:text-[#f3eee8] max-w-0 opacity-0 overflow-hidden group-hover:max-w-[140px] group-hover:opacity-100 transition-all duration-200 ease-out pl-2">
+                  NexusHire
+                </span>
+              </Link>
+            </div>
+
+            {/* Expand Menu Toggle Button at Top */}
+            <div className="relative group">
+              <button
+                onClick={toggleExpanded}
+                className="w-8 h-8 rounded-xl bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-2xs flex items-center justify-center text-[#7e715f] dark:text-[#a89c8e] hover:text-[#24211f] dark:hover:text-white hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] transition-all cursor-pointer"
+                title="Expand sidebar navigation"
+                aria-label="Expand sidebar navigation"
+              >
+                <SidebarToggleIcon expanded={false} />
+              </button>
+              <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#24211f] dark:bg-[#e85d3f] text-white text-xs font-bold shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50">
+                Expand Menu
+              </div>
+            </div>
+
+            {/* Theme pill button with hover label */}
+            <div className="relative group">
+              <button
+                onClick={toggleTheme}
+                className="w-8 h-14 rounded-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-2xs flex flex-col items-center justify-between p-1.5 hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] transition-colors cursor-pointer"
+                title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+              >
+                <div
+                  className={`p-1 rounded-full transition-all ${
+                    !isDark
+                      ? 'text-[#b58933] bg-[#fdf7df] shadow-xs scale-105'
+                      : 'text-[#73675a] hover:text-[#a89c8e]'
+                  }`}
+                >
+                  <Sun weight="bold" className="w-3.5 h-3.5" />
+                </div>
+                <div
+                  className={`p-1 rounded-full transition-all ${
+                    isDark
+                      ? 'text-[#e85d3f] bg-[#331c17] shadow-xs scale-105'
+                      : 'text-[#7e715f] hover:text-[#24211f]'
+                  }`}
+                >
+                  <Moon weight="bold" className="w-3.5 h-3.5" />
+                </div>
+              </button>
+
+              {/* Hover Capsule Tag */}
+              <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-full bg-[#24211f] dark:bg-[#e85d3f] text-white text-xs font-bold shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50 flex items-center gap-1.5">
+                {isDark ? <Sun weight="bold" className="w-3.5 h-3.5" /> : <Moon weight="bold" className="w-3.5 h-3.5" />}
+                <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Capsule: Main Navigation Dock with smooth hover pills */}
+          <nav
+            aria-label="Compact Navigation"
+            className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.5)] py-3 px-1.5 flex flex-col items-center gap-1.5 overflow-visible transition-colors"
+          >
+            {navItems.map((item) => {
+              const active = isActive(item.href)
+              const IconComponent = item.icon
+              return (
+                <div key={item.href} className="relative w-10 h-10 shrink-0 group">
+                  <Link
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`absolute left-0 top-0 h-10 w-10 group-hover:w-auto group-hover:pr-4 group-hover:min-w-[110px] rounded-full flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap ${
+                      active
+                        ? 'bg-[#24211f] dark:bg-[#e85d3f] text-white shadow-md dark:shadow-[#e85d3f]/25'
+                        : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-white group-hover:bg-[#24211f] group-hover:text-white dark:group-hover:bg-[#e85d3f] shadow-none group-hover:shadow-lg'
+                    }`}
+                    aria-label={item.name}
+                  >
+                    {/* Center Icon */}
+                    <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+                      <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5" />
+                    </div>
+
+                    {/* Smooth Pill Name on hover */}
+                    <span className="text-xs font-bold tracking-tight text-white max-w-0 opacity-0 overflow-hidden group-hover:max-w-[160px] group-hover:opacity-100 transition-all duration-200 ease-out pl-0.5">
+                      {item.name}
+                    </span>
+                  </Link>
+                </div>
+              )
+            })}
+          </nav>
+
+          {/* Bottom Capsule: User & Session Actions */}
+          <div className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_16px_-2px_rgba(36,33,31,0.04)] dark:shadow-[0_4px_16px_-2px_rgba(0,0,0,0.5)] py-2.5 px-1.5 flex flex-col items-center gap-1.5 overflow-visible transition-colors">
+            {/* Account Settings */}
+            <div className="relative w-10 h-10 shrink-0 group">
+              <Link
+                href="/account"
+                className={`absolute left-0 top-0 h-10 w-10 group-hover:w-auto group-hover:pr-4 group-hover:min-w-[145px] rounded-full flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap ${
+                  pathname === '/account'
+                    ? 'bg-[#24211f] dark:bg-[#e85d3f] text-white shadow-md dark:shadow-[#e85d3f]/25'
+                    : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-white group-hover:bg-[#24211f] group-hover:text-white dark:group-hover:bg-[#e85d3f] shadow-none group-hover:shadow-lg'
+                }`}
+                aria-label="Account Settings"
+              >
+                <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+                  <Key weight="bold" className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-xs font-bold tracking-tight text-white max-w-0 opacity-0 overflow-hidden group-hover:max-w-[160px] group-hover:opacity-100 transition-all duration-200 ease-out pl-0.5">
+                  Account Settings
+                </span>
+              </Link>
+            </div>
+
+            {/* Sign Out */}
+            <div className="relative w-10 h-10 shrink-0 group">
+              <button
+                onClick={logout}
+                className="absolute left-0 top-0 h-10 w-10 group-hover:w-auto group-hover:pr-4 group-hover:min-w-[110px] rounded-full flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap text-[#24211f]/65 dark:text-[#f3eee8]/65 group-hover:bg-[#e85d3f] group-hover:text-white shadow-none group-hover:shadow-lg cursor-pointer"
+                aria-label="Sign Out"
+              >
+                <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+                  <SignOut weight="bold" className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-xs font-bold tracking-tight text-white max-w-0 opacity-0 overflow-hidden group-hover:max-w-[140px] group-hover:opacity-100 transition-all duration-200 ease-out pl-0.5">
+                  Sign Out
+                </span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </aside>
   )
 }
