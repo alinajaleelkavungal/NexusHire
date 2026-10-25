@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useTheme } from '@/components/ThemeProvider'
 import {
   House, Users, Briefcase, SignOut, Key, Storefront, SquaresFour,
-  CalendarBlank, MagnifyingGlass, MagicWand, Buildings, Sun, Moon,
+  CalendarBlank, MagnifyingGlass, Buildings, Sun, Moon,
   type Icon,
 } from '@/components/icons'
 
@@ -32,7 +32,6 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
     { name: 'Home', href: '/', icon: House, section: 'Talent' },
     { name: 'Candidates', href: '/candidates', icon: Users, section: 'Talent' },
     { name: 'Search', href: '/search', icon: MagnifyingGlass, section: 'Talent' },
-    { name: 'AI Assistant', href: '/chat', icon: MagicWand, section: 'Talent' },
     { name: 'Category', href: '/sectors', icon: SquaresFour, section: 'Browse' },
     { name: 'Age', href: '/age', icon: CalendarBlank, section: 'Browse' },
     { name: 'Experience', href: '/experience', icon: Briefcase, section: 'Browse' },
