@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useTheme } from '@/components/ThemeProvider'
 import {
   House, Users, Briefcase, SignOut, Key, Storefront, SquaresFour,
-  CalendarBlank, MagnifyingGlass, Buildings, Sun, Moon,
+  CalendarBlank, MagnifyingGlass, Buildings,
   type Icon,
 } from '@/components/icons'
 
@@ -52,7 +52,7 @@ function SidebarToggleIcon({ expanded }: { expanded: boolean }) {
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { isDark, toggleTheme, setTheme } = useTheme()
+  const { isDark } = useTheme()
   const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
@@ -169,7 +169,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                   title="NexusHire"
                 >
                   <Image
-                    src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
+                    src={isDark ? "/brand-mark-dark.png" : "/brand-mark.png"}
                     alt="NexusHire"
                     width={22}
                     height={22}
@@ -190,32 +190,6 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 aria-label="Collapse sidebar"
               >
                 <SidebarToggleIcon expanded={true} />
-              </button>
-            </div>
-
-            {/* Horizontal Dual-Pill Theme Toggle */}
-            <div className="w-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full p-1 flex items-center justify-between shadow-2xs transition-colors">
-              <button
-                onClick={() => setTheme('light')}
-                className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                  !isDark
-                    ? 'bg-[#fdf7df] text-[#b58933] shadow-xs'
-                    : 'text-[#73675a] hover:text-[#24211f] dark:hover:text-[#f3eee8]'
-                }`}
-              >
-                <Sun weight="bold" className="w-3.5 h-3.5" />
-                <span>Light</span>
-              </button>
-              <button
-                onClick={() => setTheme('dark')}
-                className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                  isDark
-                    ? 'bg-[#e85d3f] text-white shadow-xs'
-                    : 'text-[#73675a] hover:text-[#24211f] dark:hover:text-[#f3eee8]'
-                }`}
-              >
-                <Moon weight="bold" className="w-3.5 h-3.5" />
-                <span>Dark</span>
               </button>
             </div>
           </div>
@@ -337,7 +311,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 title="NexusHire"
               >
                 <Image
-                  src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
+                  src={isDark ? "/brand-mark-dark.png" : "/brand-mark.png"}
                   alt="NexusHire"
                   width={26}
                   height={26}
@@ -350,7 +324,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
               <div className="pointer-events-none opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[42px] w-max rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-2.5 pl-2 pr-4 transition-all duration-200 ease-out whitespace-nowrap after:absolute after:-inset-1.5 after:content-['']">
                 <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 p-1">
                   <Image
-                    src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
+                    src={isDark ? "/brand-mark-dark.png" : "/brand-mark.png"}
                     alt=""
                     width={18}
                     height={18}
@@ -386,51 +360,6 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 <div className="flex flex-col text-left whitespace-nowrap">
                   <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">Expand Menu</span>
                   <span className="text-[10px] font-normal text-[#a89c8e] leading-tight mt-0.5">Click to view full sidebar</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Theme Pill Button */}
-            <div className="relative group before:absolute before:-inset-1.5 before:content-['']">
-              <button
-                onClick={toggleTheme}
-                className="w-7.5 h-12.5 rounded-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-2xs flex flex-col items-center justify-between p-1 hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] transition-colors cursor-pointer"
-                title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-              >
-                <div
-                  className={`p-1 rounded-full transition-all ${
-                    !isDark
-                      ? 'text-[#b58933] bg-[#fdf7df] shadow-xs scale-105'
-                      : 'text-[#73675a] hover:text-[#a89c8e]'
-                  }`}
-                >
-                  <Sun weight="bold" className="w-3 h-3" />
-                </div>
-                <div
-                  className={`p-1 rounded-full transition-all ${
-                    isDark
-                      ? 'text-[#e85d3f] bg-[#331c17] shadow-xs scale-105'
-                      : 'text-[#7e715f] hover:text-[#24211f]'
-                  }`}
-                >
-                  <Moon weight="bold" className="w-3 h-3" />
-                </div>
-              </button>
-
-              {/* Hover Pill Capsule - Narrow text-fit with no empty space */}
-              <div
-                onClick={toggleTheme}
-                className="pointer-events-none group-hover:pointer-events-auto opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[42px] w-max rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-2.5 pl-2.5 pr-4 transition-all duration-200 ease-out whitespace-nowrap cursor-pointer hover:border-[#e85d3f]/60 after:absolute after:-inset-1.5 after:content-['']"
-              >
-                <div className="w-7 h-7 text-[#f4d06f] flex items-center justify-center shrink-0">
-                  {isDark ? <Sun weight="bold" className="w-4 h-4" /> : <Moon weight="bold" className="w-4 h-4 text-[#e85d3f]" />}
-                </div>
-                <div className="flex flex-col text-left whitespace-nowrap">
-                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">
-                    {isDark ? 'Light Mode' : 'Dark Mode'}
-                  </span>
-                  <span className="text-[10px] font-normal text-[#a89c8e] leading-tight mt-0.5">Switch visual appearance</span>
                 </div>
               </div>
             </div>
