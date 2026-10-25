@@ -116,7 +116,7 @@ export default async function HomePage() {
 
         <Link
           href="/candidates"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#24211f] hover:bg-black text-white text-xs font-semibold rounded-full shadow-sm hover:shadow-md transition-all active:scale-98"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#24211f] dark:bg-[#e85d3f] hover:bg-black dark:hover:bg-[#f0684a] text-white text-xs font-semibold rounded-full shadow-sm hover:shadow-md transition-all active:scale-98"
         >
           <span>View candidates</span>
           <ArrowRight weight="bold" className="w-3.5 h-3.5" />
@@ -130,19 +130,19 @@ export default async function HomePage() {
           return (
             <div
               key={s.label}
-              className="vertix-card bg-white rounded-2xl p-5 border border-[#e2dcce] shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
+              className="vertix-card rounded-2xl p-5 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#7e715f]">{s.label}</span>
+                <span className="text-xs font-bold text-[#7e715f] dark:text-[#a89c8e]">{s.label}</span>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${s.palette.bg} ${s.palette.text} border ${s.palette.border}`}>
                   <IconComponent weight="bold" className="w-4 h-4" />
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-black text-[#24211f] tabular-nums">
+                <div className="text-3xl font-black text-[#24211f] dark:text-[#f3eee8] tabular-nums">
                   {s.value}
                 </div>
-                <div className="text-[11px] font-semibold text-[#a79a87] mt-0.5">
+                <div className="text-[11px] font-semibold text-[#a79a87] dark:text-[#73675a] mt-0.5">
                   {s.subtitle}
                 </div>
               </div>
@@ -157,8 +157,8 @@ export default async function HomePage() {
       {/* Recent Uploads & Pipeline Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Recent Uploads */}
-        <section className="lg:col-span-3 vertix-card bg-white rounded-3xl border border-[#e2dcce] p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1]">
+        <section className="lg:col-span-3 vertix-card rounded-3xl p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1] dark:border-[#2d241d]">
             <h2 className="text-sm font-bold text-[#24211f]">Recent candidate uploads</h2>
             <Link
               href="/candidates"
@@ -206,10 +206,10 @@ export default async function HomePage() {
         </section>
 
         {/* Pipeline Summary */}
-        <section className="lg:col-span-2 vertix-card bg-white rounded-3xl border border-[#e2dcce] p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1]">
+        <section className="lg:col-span-2 vertix-card rounded-3xl p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1] dark:border-[#2d241d]">
             <h2 className="text-sm font-bold text-[#24211f]">Recruitment pipeline</h2>
-            <span className="text-[11px] font-semibold text-[#a79a87]">
+            <span className="text-[11px] font-semibold text-[#a79a87] dark:text-[#73675a]">
               {candidates.length} total
             </span>
           </div>
@@ -226,15 +226,15 @@ export default async function HomePage() {
                 ? 'bg-[#e85d3f]'
                 : isInterview
                 ? 'bg-[#f4d06f]'
-                : 'bg-[#24211f]'
+                : 'bg-[#24211f] dark:bg-white/70'
 
               return (
                 <li key={stage}>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="font-semibold text-[#423a30]">{stage}</span>
-                    <span className="font-bold text-[#24211f] tabular-nums">{n}</span>
+                    <span className="font-semibold text-[#423a30] dark:text-[#d4c9bd]">{stage}</span>
+                    <span className="font-bold text-[#24211f] dark:text-[#f3eee8] tabular-nums">{n}</span>
                   </div>
-                  <div className="h-2 bg-[#f0ece1] overflow-hidden rounded-full">
+                  <div className="h-2 bg-[#f0ece1] dark:bg-[#2d241d] overflow-hidden rounded-full">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${barColor}`}
                       style={{ width: `${(n / maxStage) * 100}%` }}
@@ -249,12 +249,12 @@ export default async function HomePage() {
 
       {/* Admin: CVs by Branch */}
       {isAdmin && byBranch.size > 0 && (
-        <section className="vertix-card bg-white rounded-3xl border border-[#e2dcce] p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1]">
+        <section className="vertix-card rounded-3xl p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1] dark:border-[#2d241d]">
             <h2 className="text-sm font-bold text-[#24211f]">CVs by Branch</h2>
             <Link
               href="/admin/branches"
-              className="text-xs font-semibold text-[#7e715f] hover:text-[#24211f] flex items-center gap-1 transition-colors"
+              className="text-xs font-semibold text-[#7e715f] dark:text-[#a89c8e] hover:text-[#24211f] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
               Manage branches <ArrowUpRight weight="bold" className="w-3 h-3" />
             </Link>
@@ -265,10 +265,10 @@ export default async function HomePage() {
               .map(([name, n]) => (
                 <li
                   key={name}
-                  className="border border-[#e2dcce] rounded-2xl p-4 bg-[#faf8f5] hover:bg-white transition-colors"
+                  className="border border-[#e2dcce] dark:border-[#352c25] rounded-2xl p-4 bg-[#faf8f5] dark:bg-[#241c17] hover:bg-white dark:hover:bg-[#2c221c] transition-colors"
                 >
-                  <p className="text-2xl font-black text-[#24211f] tabular-nums">{n}</p>
-                  <p className="text-xs font-semibold text-[#423a30] truncate mt-0.5">{name}</p>
+                  <p className="text-2xl font-black text-[#24211f] dark:text-[#f3eee8] tabular-nums">{n}</p>
+                  <p className="text-xs font-semibold text-[#423a30] dark:text-[#d4c9bd] truncate mt-0.5">{name}</p>
                 </li>
               ))}
           </ul>

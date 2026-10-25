@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
-  ResumeIQ "Earthy Energy" Design System
+  NexusHire "Earthy Energy" Design System
   ---------------------------------------
   Palette:
   • Burnt Coral:    #E85D3F (Energetic terracotta/coral accent)
@@ -9,6 +11,8 @@
   • Espresso:       #24211F (Deep rich dark roast charcoal)
   • Warm Cream:     #F7F5F0 (Linen/paper dashboard canvas)
   • Card Surface:   #FFFFFF (Pure white floating surfaces)
+  • Dark Canvas:    #14100D (Deep rich espresso dark mode)
+  • Dark Card:      #1E1814 (Warm dark chocolate floating surfaces)
 */
 
 :root {
@@ -19,6 +23,30 @@
   --coral: #e85d3f;
   --butter: #f4d06f;
   --accent: #e85d3f;
+  --card-bg: #ffffff;
+  --card-border: rgba(226, 220, 206, 0.75);
+  --card-shadow: 0 2px 14px -3px rgba(36, 33, 31, 0.04), 0 1px 3px rgba(36, 33, 31, 0.02);
+  --heading-color: #24211f;
+  --muted-text: #7e715f;
+  --subtle-text: #a79a87;
+  --divider-color: #f0ece1;
+}
+
+.dark {
+  --background: #14100d;
+  --foreground: #f3eee8;
+  --paper: #1e1814;
+  --espresso: #f3eee8;
+  --coral: #e85d3f;
+  --butter: #f4d06f;
+  --accent: #e85d3f;
+  --card-bg: #1e1814;
+  --card-border: rgba(53, 44, 37, 0.85);
+  --card-shadow: 0 4px 20px -3px rgba(0, 0, 0, 0.45);
+  --heading-color: #f3eee8;
+  --muted-text: #a89c8e;
+  --subtle-text: #73675a;
+  --divider-color: #2d241d;
 }
 
 @theme {
@@ -152,11 +180,12 @@ body {
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 h1, h2, h3 {
   letter-spacing: -0.025em;
-  color: #24211f;
+  color: var(--heading-color);
 }
 
 ::selection {
@@ -166,15 +195,15 @@ h1, h2, h3 {
 
 /* Floating Vertix Card with Warm Ambient Glow */
 .vertix-card {
-  background-color: #ffffff;
-  border: 1px solid rgba(226, 220, 206, 0.75);
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 1.5rem;
-  box-shadow: 0 2px 14px -3px rgba(36, 33, 31, 0.04), 0 1px 3px rgba(36, 33, 31, 0.02);
+  box-shadow: var(--card-shadow);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .vertix-card:hover {
-  box-shadow: 0 12px 30px -6px rgba(36, 33, 31, 0.09), 0 4px 12px -2px rgba(36, 33, 31, 0.03);
+  box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
@@ -185,6 +214,97 @@ h1, h2, h3 {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(247, 245, 240, 0.85);
   box-shadow: 0 8px 24px -4px rgba(36, 33, 31, 0.05);
+}
+
+.dark .glass-card {
+  background: rgba(30, 24, 20, 0.92);
+  border: 1px solid rgba(53, 44, 37, 0.85);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+/* Dark Mode Utility Adaptations */
+.dark .bg-white {
+  background-color: #1e1814 !important;
+}
+
+.dark .bg-white\/95 {
+  background-color: rgba(30, 24, 20, 0.95) !important;
+}
+
+.dark .bg-white\/90 {
+  background-color: rgba(30, 24, 20, 0.9) !important;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-\[\#e2dcce\],
+.dark .border-\[\#e2dcce\]\/90 {
+  border-color: #352c25 !important;
+}
+
+.dark .text-gray-900,
+.dark .text-\[\#24211f\] {
+  color: #f3eee8 !important;
+}
+
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-\[\#423a30\] {
+  color: #d4c9bd !important;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-\[\#7e715f\] {
+  color: #a89c8e !important;
+}
+
+.dark .text-gray-400,
+.dark .text-\[\#a79a87\] {
+  color: #73675a !important;
+}
+
+.dark .bg-\[\#faf8f5\],
+.dark .bg-\[\#f5f3f1\],
+.dark .bg-\[\#f3efe9\],
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: #241c17 !important;
+}
+
+.dark .hover\:bg-\[\#faf8f5\]:hover,
+.dark .hover\:bg-\[\#f3efe9\]:hover,
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover {
+  background-color: #2a221b !important;
+}
+
+.dark .border-\[\#f0ece1\],
+.dark .divide-\[\#f0ece1\] > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #2d241d !important;
+}
+
+.dark .bg-\[\#fdf3f0\] {
+  background-color: #331c17 !important;
+}
+
+.dark .border-\[\#fbe4de\] {
+  border-color: #522920 !important;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background-color: #241c17;
+  color: #f3eee8;
+  border-color: #3d3229;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6d6153;
 }
 
 /* Smooth Focus visible with Burnt Coral ring */
