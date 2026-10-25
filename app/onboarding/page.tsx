@@ -10,9 +10,10 @@ export default function OnboardingPage() {
 
   const handleComplete = () => {
     try {
-      localStorage.setItem('nexushire_onboarded', 'true')
+      localStorage.removeItem('nexushire_onboarded')
+      sessionStorage.removeItem('nexushire_splash_shown')
     } catch (_) {}
-    router.push('/candidates')
+    router.push('/')
   }
 
   return (

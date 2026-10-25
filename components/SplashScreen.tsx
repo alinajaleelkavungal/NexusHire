@@ -31,6 +31,13 @@ export default function SplashScreen({
   useEffect(() => {
     setMounted(true)
 
+    // Clean up any stale legacy lockout flags so onboarding always runs reliably
+    try {
+      localStorage.removeItem('nexushire_onboarded')
+      localStorage.removeItem('nexushire_splash_shown')
+      sessionStorage.removeItem('nexushire_splash_shown')
+    } catch (_) {}
+
     // If we're already on dedicated /splash or /onboarding routes, don't overlay the global layout intro
     if ((pathname === '/splash' || pathname === '/onboarding') && !forceShow) {
       setStage('done')
@@ -38,21 +45,9 @@ export default function SplashScreen({
     }
 
     const searchParams = new URLSearchParams(window.location.search)
-    const urlForce = searchParams.get('splash') === '1' || searchParams.get('intro') === '1'
-    const reset = searchParams.get('reset') === '1'
+    const skipIntro = searchParams.get('skip') === '1' || searchParams.get('nointro') === '1'
 
-    if (reset) {
-      try {
-        localStorage.removeItem('nexushire_onboarded')
-        sessionStorage.removeItem('nexushire_splash_shown')
-      } catch (_) {}
-    }
-
-    const hasSeenSplash = sessionStorage.getItem('nexushire_splash_shown')
-    const hasCompletedOnboarding = localStorage.getItem('nexushire_onboarded') === 'true'
-
-    // If user has seen both, skip directly to content
-    if (hasSeenSplash && hasCompletedOnboarding && !forceShow && !urlForce) {
+    if (skipIntro && !forceShow) {
       setStage('done')
       if (onComplete) onComplete()
       return
@@ -73,25 +68,13 @@ export default function SplashScreen({
       }
     }
 
-    // Step 2: Decide next step after splash finishes
+    // Step 2: Seamlessly transition from Splash to Onboarding screen
     const tNext = setTimeout(() => {
-      sessionStorage.setItem('nexushire_splash_shown', 'true')
-
-      if (!hasCompletedOnboarding || urlForce) {
-        // Needs onboarding: initiate smooth cross-fade from Splash to Onboarding
-        setIsCrossFading(true)
-        setTimeout(() => {
-          setStage('onboarding')
-          setIsCrossFading(false)
-        }, 350)
-      } else {
-        // Already onboarded: fade out directly to the app
-        setFadeOutFinal(true)
-        setTimeout(() => {
-          setStage('done')
-          if (onComplete) onComplete()
-        }, 500)
-      }
+      setIsCrossFading(true)
+      setTimeout(() => {
+        setStage('onboarding')
+        setIsCrossFading(false)
+      }, 350)
     }, 1450)
 
     return () => {
@@ -105,8 +88,8 @@ export default function SplashScreen({
 
   const finishOnboarding = () => {
     try {
-      localStorage.setItem('nexushire_onboarded', 'true')
-      sessionStorage.setItem('nexushire_splash_shown', 'true')
+      localStorage.removeItem('nexushire_onboarded')
+      sessionStorage.removeItem('nexushire_splash_shown')
     } catch (_) {}
 
     setFadeOutFinal(true)
