@@ -21,7 +21,6 @@ export default function TopHeader({ user }: TopHeaderProps) {
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Candidates', href: '/candidates' },
-    { label: 'AI Assistant', href: '/chat' },
     { label: 'Categories', href: '/sectors' },
     ...(user.role === 'ADMIN' ? [{ label: 'Branches', href: '/admin/branches' }] : []),
   ]

@@ -16,6 +16,7 @@ interface NavItem {
   href: string
   icon: Icon
   section: 'Workspace' | 'Operations'
+  subtitle: string
 }
 
 interface SidebarUser {
@@ -72,15 +73,63 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   }
 
   const navItems: NavItem[] = [
-    { name: 'Home', href: '/', icon: House, section: 'Workspace' },
-    { name: 'Candidates', href: '/candidates', icon: Users, section: 'Workspace' },
-    { name: 'Search', href: '/search', icon: MagnifyingGlass, section: 'Workspace' },
-    { name: 'Category', href: '/sectors', icon: SquaresFour, section: 'Operations' },
-    { name: 'Age', href: '/age', icon: CalendarBlank, section: 'Operations' },
-    { name: 'Experience', href: '/experience', icon: Briefcase, section: 'Operations' },
-    { name: 'Jobs', href: '/recruitment/jobs', icon: Buildings, section: 'Operations' },
+    {
+      name: 'Home',
+      href: '/',
+      icon: House,
+      section: 'Workspace',
+      subtitle: 'Recruitment dashboard',
+    },
+    {
+      name: 'Candidates',
+      href: '/candidates',
+      icon: Users,
+      section: 'Workspace',
+      subtitle: 'Talent profiles & pipeline',
+    },
+    {
+      name: 'Search',
+      href: '/search',
+      icon: MagnifyingGlass,
+      section: 'Workspace',
+      subtitle: 'Find candidates & CVs',
+    },
+    {
+      name: 'Category',
+      href: '/sectors',
+      icon: SquaresFour,
+      section: 'Operations',
+      subtitle: 'Browse industry sectors',
+    },
+    {
+      name: 'Age',
+      href: '/age',
+      icon: CalendarBlank,
+      section: 'Operations',
+      subtitle: 'Filter by candidate age',
+    },
+    {
+      name: 'Experience',
+      href: '/experience',
+      icon: Briefcase,
+      section: 'Operations',
+      subtitle: 'Years of work experience',
+    },
+    {
+      name: 'Jobs',
+      href: '/recruitment/jobs',
+      icon: Buildings,
+      section: 'Operations',
+      subtitle: 'Active vacancies & postings',
+    },
     ...(user.role === 'ADMIN'
-      ? [{ name: 'Branches', href: '/admin/branches', icon: Storefront, section: 'Operations' as const }]
+      ? [{
+          name: 'Branches',
+          href: '/admin/branches',
+          icon: Storefront,
+          section: 'Operations' as const,
+          subtitle: 'Manage branch accounts',
+        }]
       : []),
   ]
 
@@ -105,7 +154,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
       }`}
     >
       {/* ────────────────────────────────────────────────────────── */}
-      {/* EXPANDED SIDEBAR VIEW (Matching user's reference layout)  */}
+      {/* EXPANDED SIDEBAR VIEW (Full grouped menu mode)            */}
       {/* ────────────────────────────────────────────────────────── */}
       {isExpanded ? (
         <div className="w-full h-full flex flex-col justify-between overflow-hidden">
@@ -144,7 +193,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
               </button>
             </div>
 
-            {/* Horizontal Dual-Pill Theme Toggle (as shown in reference) */}
+            {/* Horizontal Dual-Pill Theme Toggle */}
             <div className="w-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full p-1 flex items-center justify-between shadow-2xs transition-colors">
               <button
                 onClick={() => setTheme('light')}
@@ -197,7 +246,14 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                       }`}
                     >
                       <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5 shrink-0" />
-                      <span className="truncate">{item.name}</span>
+                      <div className="flex flex-col text-left">
+                        <span className="truncate">{item.name}</span>
+                        {!active && (
+                          <span className="text-[10px] text-[#8a7e70] dark:text-[#73675a] font-normal leading-none mt-0.5">
+                            {item.subtitle}
+                          </span>
+                        )}
+                      </div>
                     </Link>
                   )
                 })}
@@ -223,7 +279,14 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                       }`}
                     >
                       <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5 shrink-0" />
-                      <span className="truncate">{item.name}</span>
+                      <div className="flex flex-col text-left">
+                        <span className="truncate">{item.name}</span>
+                        {!active && (
+                          <span className="text-[10px] text-[#8a7e70] dark:text-[#73675a] font-normal leading-none mt-0.5">
+                            {item.subtitle}
+                          </span>
+                        )}
+                      </div>
                     </Link>
                   )
                 })}
@@ -261,51 +324,74 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         </div>
       ) : (
         /* ────────────────────────────────────────────────────────── */
-        /* COMPACT ICON RAIL VIEW (Default compact with hover-pills)  */
+        /* COMPACT ICON RAIL VIEW (Exact match to reference image)    */
         /* ────────────────────────────────────────────────────────── */
         <>
           {/* Top Capsule: Monogram Logo, Expand Button & Vertical Theme Toggle */}
           <div className="flex flex-col items-center gap-2">
-            {/* Brand Monogram */}
-            <div className="relative h-11 w-11 shrink-0 group">
+            {/* 1. Brand Monogram Circle */}
+            <div className="relative group before:absolute before:-inset-1.5 before:content-['']">
               <Link
                 href="/"
-                className="absolute left-0 top-0 h-11 w-11 group-hover:w-auto group-hover:pr-4 rounded-2xl bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-xs group-hover:shadow-lg flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap p-1.5"
-                title="NexusHire · The Global Hub for Cross-Border Manpower"
+                className="w-11 h-11 rounded-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-xs flex items-center justify-center hover:scale-105 transition-all p-2 cursor-pointer"
+                title="NexusHire"
               >
-                <div className="w-8 h-8 shrink-0 flex items-center justify-center">
+                <Image
+                  src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
+                  alt="NexusHire"
+                  width={30}
+                  height={30}
+                  priority
+                  className="w-full h-full object-contain"
+                />
+              </Link>
+
+              {/* Hover Pill Capsule */}
+              <div className="pointer-events-none opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[50px] min-w-[220px] rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-3 pl-3 pr-6 transition-all duration-200 ease-out whitespace-nowrap after:absolute after:-inset-1.5 after:content-['']">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 p-1">
                   <Image
                     src={isDark ? "/logo-mark-dark.png" : "/logo-mark.png"}
-                    alt="NexusHire"
-                    width={32}
-                    height={32}
-                    priority
+                    alt=""
+                    width={20}
+                    height={20}
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-xs font-bold tracking-tight text-[#24211f] dark:text-[#f3eee8] max-w-0 opacity-0 overflow-hidden group-hover:max-w-[140px] group-hover:opacity-100 transition-all duration-200 ease-out pl-2">
-                  NexusHire
-                </span>
-              </Link>
-            </div>
-
-            {/* Expand Menu Toggle Button at Top */}
-            <div className="relative group">
-              <button
-                onClick={toggleExpanded}
-                className="w-8 h-8 rounded-xl bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-2xs flex items-center justify-center text-[#7e715f] dark:text-[#a89c8e] hover:text-[#24211f] dark:hover:text-white hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] transition-all cursor-pointer"
-                title="Expand sidebar navigation"
-                aria-label="Expand sidebar navigation"
-              >
-                <SidebarToggleIcon expanded={false} />
-              </button>
-              <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-[#24211f] dark:bg-[#e85d3f] text-white text-xs font-bold shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50">
-                Expand Menu
+                <div className="flex flex-col text-left">
+                  <span className="text-[13.5px] font-semibold text-white tracking-tight leading-snug">NexusHire</span>
+                  <span className="text-[11px] font-normal text-[#a89c8e] leading-tight mt-0.5">Global Manpower Hub</span>
+                </div>
               </div>
             </div>
 
-            {/* Theme pill button with hover label */}
-            <div className="relative group">
+            {/* 2. Expand Sidebar Toggle Button (With coral ring as in reference image) */}
+            <div className="relative group before:absolute before:-inset-1.5 before:content-['']">
+              <button
+                onClick={toggleExpanded}
+                className="w-10 h-10 rounded-full border border-[#e85d3f]/70 dark:border-[#e85d3f]/80 text-[#e85d3f] bg-white/50 dark:bg-white/5 hover:bg-[#e85d3f] hover:text-white dark:hover:bg-[#e85d3f] transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
+                title="Expand sidebar"
+                aria-label="Expand sidebar"
+              >
+                <SidebarToggleIcon expanded={false} />
+              </button>
+
+              {/* Hover Pill Capsule */}
+              <div
+                onClick={toggleExpanded}
+                className="pointer-events-none group-hover:pointer-events-auto opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[50px] min-w-[220px] rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-3 pl-3.5 pr-6 transition-all duration-200 ease-out whitespace-nowrap cursor-pointer hover:border-[#e85d3f]/60 after:absolute after:-inset-1.5 after:content-['']"
+              >
+                <div className="w-5 h-5 text-[#e85d3f] flex items-center justify-center shrink-0">
+                  <SidebarToggleIcon expanded={false} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[13.5px] font-semibold text-white tracking-tight leading-snug">Expand Menu</span>
+                  <span className="text-[11px] font-normal text-[#a89c8e] leading-tight mt-0.5">Click to view full sidebar</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Theme Pill Button */}
+            <div className="relative group before:absolute before:-inset-1.5 before:content-['']">
               <button
                 onClick={toggleTheme}
                 className="w-8 h-14 rounded-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] shadow-2xs flex flex-col items-center justify-between p-1.5 hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] transition-colors cursor-pointer"
@@ -332,85 +418,138 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 </div>
               </button>
 
-              {/* Hover Capsule Tag */}
-              <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-full bg-[#24211f] dark:bg-[#e85d3f] text-white text-xs font-bold shadow-lg opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50 flex items-center gap-1.5">
-                {isDark ? <Sun weight="bold" className="w-3.5 h-3.5" /> : <Moon weight="bold" className="w-3.5 h-3.5" />}
-                <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+              {/* Hover Pill Capsule */}
+              <div
+                onClick={toggleTheme}
+                className="pointer-events-none group-hover:pointer-events-auto opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[50px] min-w-[220px] rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-3 pl-3.5 pr-6 transition-all duration-200 ease-out whitespace-nowrap cursor-pointer hover:border-[#e85d3f]/60 after:absolute after:-inset-1.5 after:content-['']"
+              >
+                <div className="w-5 h-5 text-[#f4d06f] flex items-center justify-center shrink-0">
+                  {isDark ? <Sun weight="bold" className="w-5 h-5" /> : <Moon weight="bold" className="w-5 h-5 text-[#e85d3f]" />}
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[13.5px] font-semibold text-white tracking-tight leading-snug">
+                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                  </span>
+                  <span className="text-[11px] font-normal text-[#a89c8e] leading-tight mt-0.5">Switch visual appearance</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Middle Capsule: Main Navigation Dock with smooth hover pills */}
+          {/* 4. Main Navigation Dock (Tall capsule rail with 2-line hover pills) */}
           <nav
             aria-label="Compact Navigation"
-            className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.5)] py-3 px-1.5 flex flex-col items-center gap-1.5 overflow-visible transition-colors"
+            className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_20px_-2px_rgba(36,33,31,0.05)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.5)] py-3 px-1.5 flex flex-col items-center gap-2 overflow-visible transition-colors"
           >
             {navItems.map((item) => {
               const active = isActive(item.href)
               const IconComponent = item.icon
               return (
-                <div key={item.href} className="relative w-10 h-10 shrink-0 group">
+                <div key={item.href} className="relative w-10 h-10 shrink-0 group flex items-center justify-center before:absolute before:-inset-1.5 before:content-['']">
+                  {/* The Compact Rail Icon */}
                   <Link
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
-                    className={`absolute left-0 top-0 h-10 w-10 group-hover:w-auto group-hover:pr-4 group-hover:min-w-[110px] rounded-full flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                       active
-                        ? 'bg-[#24211f] dark:bg-[#e85d3f] text-white shadow-md dark:shadow-[#e85d3f]/25'
-                        : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-white group-hover:bg-[#24211f] group-hover:text-white dark:group-hover:bg-[#e85d3f] shadow-none group-hover:shadow-lg'
+                        ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/30 scale-105'
+                        : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                     }`}
                     aria-label={item.name}
                   >
-                    {/* Center Icon */}
-                    <div className="w-10 h-10 shrink-0 flex items-center justify-center">
-                      <IconComponent weight={active ? 'fill' : 'bold'} className="w-4.5 h-4.5" />
-                    </div>
+                    <IconComponent weight={active ? 'fill' : 'bold'} className="w-5 h-5" />
+                  </Link>
 
-                    {/* Smooth Pill Name on hover */}
-                    <span className="text-xs font-bold tracking-tight text-white max-w-0 opacity-0 overflow-hidden group-hover:max-w-[160px] group-hover:opacity-100 transition-all duration-200 ease-out pl-0.5">
-                      {item.name}
-                    </span>
+                  {/* ────────────────────────────────────────────────────────── */}
+                  {/* 2-LINE HOVER PILL CAPSULE (Exact match to reference screenshot) */}
+                  {/* ────────────────────────────────────────────────────────── */}
+                  <Link
+                    href={item.href}
+                    className="pointer-events-none group-hover:pointer-events-auto opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[50px] min-w-[230px] rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-3.5 pl-3.5 pr-6 transition-all duration-200 ease-out whitespace-nowrap cursor-pointer hover:border-[#e85d3f]/60 after:absolute after:-inset-1.5 after:content-['']"
+                  >
+                    {/* Icon - Clean bare icon matching reference image, coral badge if active */}
+                    {active ? (
+                      <div className="w-8 h-8 rounded-full bg-[#e85d3f] text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <IconComponent weight="fill" className="w-4.5 h-4.5" />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 flex items-center justify-center shrink-0 text-[#d8cec3] group-hover:text-white">
+                        <IconComponent weight="bold" className="w-5 h-5" />
+                      </div>
+                    )}
+
+                    {/* 2-Line Text Content (Bold Title + Muted Subtitle) */}
+                    <div className="flex flex-col text-left">
+                      <span className="text-[13.5px] font-semibold text-white tracking-tight leading-tight">
+                        {item.name}
+                      </span>
+                      <span className="text-[11px] font-normal text-[#9e9285] dark:text-[#a89c8e] leading-tight mt-0.5">
+                        {item.subtitle}
+                      </span>
+                    </div>
                   </Link>
                 </div>
               )
             })}
           </nav>
 
-          {/* Bottom Capsule: User & Session Actions */}
-          <div className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-full shadow-[0_4px_16px_-2px_rgba(36,33,31,0.04)] dark:shadow-[0_4px_16px_-2px_rgba(0,0,0,0.5)] py-2.5 px-1.5 flex flex-col items-center gap-1.5 overflow-visible transition-colors">
-            {/* Account Settings */}
-            <div className="relative w-10 h-10 shrink-0 group">
+          {/* 5. Bottom Capsule: Account Settings & Sign Out */}
+          <div className="flex flex-col items-center gap-2 overflow-visible">
+            {/* Account Settings Circle Button */}
+            <div className="relative group before:absolute before:-inset-1.5 before:content-['']">
               <Link
                 href="/account"
-                className={`absolute left-0 top-0 h-10 w-10 group-hover:w-auto group-hover:pr-4 group-hover:min-w-[145px] rounded-full flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap ${
+                aria-current={pathname === '/account' ? 'page' : undefined}
+                className={`w-11 h-11 rounded-full border border-[#e2dcce] dark:border-[#352c25] flex items-center justify-center transition-all ${
                   pathname === '/account'
-                    ? 'bg-[#24211f] dark:bg-[#e85d3f] text-white shadow-md dark:shadow-[#e85d3f]/25'
-                    : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-white group-hover:bg-[#24211f] group-hover:text-white dark:group-hover:bg-[#e85d3f] shadow-none group-hover:shadow-lg'
+                    ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25 scale-105'
+                    : 'bg-white dark:bg-[#1e1814] text-[#24211f]/70 dark:text-[#f3eee8]/70 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                 }`}
+                title="Account Settings"
                 aria-label="Account Settings"
               >
-                <div className="w-10 h-10 shrink-0 flex items-center justify-center">
-                  <Key weight="bold" className="w-4.5 h-4.5" />
+                <Key weight="bold" className="w-4.5 h-4.5" />
+              </Link>
+
+              {/* Hover Pill Capsule */}
+              <Link
+                href="/account"
+                className="pointer-events-none group-hover:pointer-events-auto opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[50px] min-w-[230px] rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-3.5 pl-3.5 pr-6 transition-all duration-200 ease-out whitespace-nowrap cursor-pointer hover:border-[#e85d3f]/60 after:absolute after:-inset-1.5 after:content-['']"
+              >
+                <div className="w-8 h-8 flex items-center justify-center shrink-0 text-[#d8cec3] group-hover:text-white">
+                  <Key weight="bold" className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-bold tracking-tight text-white max-w-0 opacity-0 overflow-hidden group-hover:max-w-[160px] group-hover:opacity-100 transition-all duration-200 ease-out pl-0.5">
-                  Account Settings
-                </span>
+                <div className="flex flex-col text-left">
+                  <span className="text-[13.5px] font-semibold text-white tracking-tight leading-snug">Account Settings</span>
+                  <span className="text-[11px] font-normal text-[#a89c8e] leading-tight mt-0.5">Profile & credentials</span>
+                </div>
               </Link>
             </div>
 
-            {/* Sign Out */}
-            <div className="relative w-10 h-10 shrink-0 group">
+            {/* Sign Out Button */}
+            <div className="relative group before:absolute before:-inset-1.5 before:content-['']">
               <button
                 onClick={logout}
-                className="absolute left-0 top-0 h-10 w-10 group-hover:w-auto group-hover:pr-4 group-hover:min-w-[110px] rounded-full flex items-center justify-start transition-all duration-200 ease-out z-30 whitespace-nowrap text-[#24211f]/65 dark:text-[#f3eee8]/65 group-hover:bg-[#e85d3f] group-hover:text-white shadow-none group-hover:shadow-lg cursor-pointer"
+                className="w-11 h-11 rounded-full bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#e85d3f] hover:bg-[#fdf3f0] dark:hover:bg-[#331c17] transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+                title="Sign Out"
                 aria-label="Sign Out"
               >
-                <div className="w-10 h-10 shrink-0 flex items-center justify-center">
-                  <SignOut weight="bold" className="w-4.5 h-4.5" />
-                </div>
-                <span className="text-xs font-bold tracking-tight text-white max-w-0 opacity-0 overflow-hidden group-hover:max-w-[140px] group-hover:opacity-100 transition-all duration-200 ease-out pl-0.5">
-                  Sign Out
-                </span>
+                <SignOut weight="bold" className="w-4.5 h-4.5" />
               </button>
+
+              {/* Hover Pill Capsule */}
+              <div
+                onClick={logout}
+                className="pointer-events-none group-hover:pointer-events-auto opacity-0 scale-95 origin-left group-hover:opacity-100 group-hover:scale-100 absolute left-0 top-1/2 -translate-y-1/2 h-[50px] min-w-[220px] rounded-full bg-[#342e29]/95 dark:bg-[#342e29]/95 backdrop-blur-md border border-[#4f443b] dark:border-[#4f443b] text-white shadow-2xl shadow-black/60 z-50 flex items-center gap-3.5 pl-3.5 pr-6 transition-all duration-200 ease-out whitespace-nowrap cursor-pointer hover:border-[#e85d3f]/60 after:absolute after:-inset-1.5 after:content-['']"
+              >
+                <div className="w-8 h-8 flex items-center justify-center shrink-0 text-[#e85d3f]">
+                  <SignOut weight="bold" className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[13.5px] font-semibold text-white tracking-tight leading-snug">Sign Out</span>
+                  <span className="text-[11px] font-normal text-[#a89c8e] leading-tight mt-0.5">End current session</span>
+                </div>
+              </div>
             </div>
           </div>
         </>
