@@ -1,10 +1,15 @@
 import { Suspense } from 'react'
 import Image from 'next/image'
+import { redirect } from 'next/navigation'
+import { getSession } from '@/lib/auth'
 import LoginForm from './LoginForm'
 
+export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Sign in · NexusHire' }
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getSession()
+  if (session) redirect('/candidates')
   return (
     <div
       className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden select-none"

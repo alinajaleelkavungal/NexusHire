@@ -20,8 +20,10 @@ async function main() {
   const { createAccount, findAccountByLoginId, setAccountPassword } = await import('../lib/auth')
   const existing = await findAccountByLoginId(loginId)
   if (existing) {
+    const prisma = (await import('../lib/prisma')).default
+    await prisma.$executeRawUnsafe(`UPDATE Account SET name = ? WHERE id = ?`, name.trim(), existing.id)
     await setAccountPassword(existing.id, password)
-    console.log(`Password reset for "${existing.loginId}" (${existing.role})`)
+    console.log(`Updated account "${existing.loginId}" (name: "${name.trim()}", role: ${existing.role})`)
   } else {
     await createAccount({ loginId, name, role, password })
     console.log(`Created ${role} account "${loginId}" (${name})`)

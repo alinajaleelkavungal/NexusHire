@@ -104,7 +104,12 @@ export async function getSession(): Promise<Session | null> {
   const payload = verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value)
   if (!payload) return null
   const account = await findAccountById(payload.sub)
-  if (!account || !account.active) return null
+  if (!account || !account.active) {
+    try {
+      cookieStore.delete(SESSION_COOKIE)
+    } catch (_) {}
+    return null
+  }
   // Role/name always come from the database, never from the cookie alone
   return { ...payload, role: account.role, name: account.name, loginId: account.loginId }
 }
