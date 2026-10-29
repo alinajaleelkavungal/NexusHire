@@ -22,7 +22,7 @@ export default function SplashScreen({
   onComplete,
 }: SplashScreenProps) {
   const pathname = usePathname()
-  const isExcluded = (pathname === '/splash' || pathname === '/onboarding' || pathname === '/login') && !forceShow
+  const isDedicatedIntroRoute = (pathname === '/splash' || pathname === '/onboarding') && !forceShow
   const [mounted, setMounted] = useState(false)
   const [stage, setStage] = useState<'splash' | 'onboarding' | 'done'>('splash')
   const [progress, setProgress] = useState(15)
@@ -30,21 +30,13 @@ export default function SplashScreen({
   const [fadeOutFinal, setFadeOutFinal] = useState(false)
 
   useEffect(() => {
-    if (isExcluded) {
+    if (isDedicatedIntroRoute) {
       setStage('done')
       return
     }
 
-    setMounted(true)
-
-    // Clean up any stale legacy lockout flags so onboarding always runs reliably
-    try {
-      localStorage.removeItem('nexushire_onboarded')
-      localStorage.removeItem('nexushire_splash_shown')
-      sessionStorage.removeItem('nexushire_splash_shown')
-    } catch (_) {}
-
     const searchParams = new URLSearchParams(window.location.search)
+    const urlForce = searchParams.get('splash') === '1' || searchParams.get('intro') === '1'
     const skipIntro = searchParams.get('skip') === '1' || searchParams.get('nointro') === '1'
 
     if (skipIntro && !forceShow) {
@@ -52,6 +44,17 @@ export default function SplashScreen({
       if (onComplete) onComplete()
       return
     }
+
+    const hasSeenSplash = sessionStorage.getItem('nexushire_splash_shown') === 'true'
+    const hasCompletedOnboarding = localStorage.getItem('nexushire_onboarded') === 'true'
+
+    if (hasSeenSplash && hasCompletedOnboarding && !forceShow && !urlForce) {
+      setStage('done')
+      if (onComplete) onComplete()
+      return
+    }
+
+    setMounted(true)
 
     // Step 1: Progress animation
     const t1 = setTimeout(() => setProgress(38), 100)
@@ -70,6 +73,7 @@ export default function SplashScreen({
 
     // Step 2: Seamlessly transition from Splash to Onboarding screen
     const tNext = setTimeout(() => {
+      sessionStorage.setItem('nexushire_splash_shown', 'true')
       setIsCrossFading(true)
       setTimeout(() => {
         setStage('onboarding')
@@ -88,8 +92,8 @@ export default function SplashScreen({
 
   const finishOnboarding = () => {
     try {
-      localStorage.removeItem('nexushire_onboarded')
-      sessionStorage.removeItem('nexushire_splash_shown')
+      localStorage.setItem('nexushire_onboarded', 'true')
+      sessionStorage.setItem('nexushire_splash_shown', 'true')
     } catch (_) {}
 
     setFadeOutFinal(true)
@@ -99,7 +103,7 @@ export default function SplashScreen({
     }, 500)
   }
 
-  if (isExcluded || stage === 'done') return null
+  if (isDedicatedIntroRoute || stage === 'done') return null
 
   const content = (
     <div
@@ -271,5 +275,5 @@ export default function SplashScreen({
     return createPortal(content, document.body)
   }
 
-  return content
+  return null
 }

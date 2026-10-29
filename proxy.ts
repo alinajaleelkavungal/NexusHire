@@ -10,12 +10,16 @@ export function proxy(request: NextRequest) {
   const session = verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value)
 
   const isLogin = pathname === '/login'
+  const isPublicPage = pathname === '/login' || pathname === '/onboarding' || pathname === '/splash'
   const isPublicApi = pathname === '/api/auth/login'
 
   if (isPublicApi) return NextResponse.next()
 
-  if (isLogin) {
-    return session ? NextResponse.redirect(new URL('/candidates', request.url)) : NextResponse.next()
+  if (isPublicPage) {
+    if (isLogin && session) {
+      return NextResponse.redirect(new URL('/candidates', request.url))
+    }
+    return NextResponse.next()
   }
 
   if (!session) {

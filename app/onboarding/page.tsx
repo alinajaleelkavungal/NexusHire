@@ -10,10 +10,10 @@ export default function OnboardingPage() {
 
   const handleComplete = () => {
     try {
-      localStorage.removeItem('nexushire_onboarded')
-      sessionStorage.removeItem('nexushire_splash_shown')
+      localStorage.setItem('nexushire_onboarded', 'true')
+      sessionStorage.setItem('nexushire_splash_shown', 'true')
     } catch (_) {}
-    router.push('/')
+    router.push('/login')
   }
 
   return (
