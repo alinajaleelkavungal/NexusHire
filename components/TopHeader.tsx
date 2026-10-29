@@ -41,14 +41,14 @@ export default function TopHeader({ user }: TopHeaderProps) {
     <header className="px-4 sm:px-8 pt-3 pb-1 select-none z-20 shrink-0">
       <div className="bg-white/95 dark:bg-[#1e1814]/95 backdrop-blur-md border border-[#e2dcce]/90 dark:border-[#352c25]/90 rounded-full shadow-[0_2px_14px_-2px_rgba(36,33,31,0.04)] dark:shadow-[0_2px_14px_-2px_rgba(0,0,0,0.4)] px-3 sm:px-4 py-2 flex items-center justify-between gap-3 transition-colors">
         {/* Brand Left */}
-        <Link href="/" className="flex items-center gap-2 pl-1 group shrink-0" title="NexusHire · The Global Hub for Cross-Border Manpower">
+        <Link href="/" className="flex items-center gap-2 pl-1 group shrink-0" title="NexusHire">
           <Image
-            src={isDark ? "/logo-dark.png" : "/logo.png"}
-            alt="NexusHire · The Global Hub for Cross-Border Manpower"
-            width={170}
-            height={37}
+            src={isDark ? "/brand-logo-dark.png" : "/brand-logo.png"}
+            alt="NexusHire"
+            width={180}
+            height={36}
             priority
-            className="h-8 sm:h-8.5 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+            className="h-7 sm:h-7.5 w-auto object-contain transition-transform group-hover:scale-[1.02]"
           />
         </Link>
 

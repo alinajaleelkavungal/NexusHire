@@ -127,13 +127,13 @@ export default function SplashScreen({
             {/* Dark Brand Logo */}
             <div className="transform transition-all duration-700 ease-out">
               <Image
-                src="/logo-dark.png"
-                alt="NexusHire · The Global Hub for Cross-Border Manpower"
-                width={380}
-                height={83}
+                src="/brand-logo-dark.png"
+                alt="NexusHire"
+                width={360}
+                height={72}
                 priority
                 unoptimized
-                className="w-[280px] sm:w-[360px] h-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
+                className="w-[260px] sm:w-[320px] h-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
               />
             </div>
 
@@ -177,8 +177,8 @@ export default function SplashScreen({
           <header className="relative z-10 w-full flex items-center justify-between shrink-0 h-10 sm:h-12">
             <div className="inline-block">
               <Image
-                src="/logo-dark.png"
-                alt="NexusHire · The Global Hub for Cross-Border Manpower"
+                src="/brand-logo-dark.png"
+                alt="NexusHire"
                 width={160}
                 height={35}
                 priority
