@@ -22,6 +22,7 @@ export default function SplashScreen({
   onComplete,
 }: SplashScreenProps) {
   const pathname = usePathname()
+  const isExcluded = (pathname === '/splash' || pathname === '/onboarding' || pathname === '/login') && !forceShow
   const [mounted, setMounted] = useState(false)
   const [stage, setStage] = useState<'splash' | 'onboarding' | 'done'>('splash')
   const [progress, setProgress] = useState(15)
@@ -29,6 +30,11 @@ export default function SplashScreen({
   const [fadeOutFinal, setFadeOutFinal] = useState(false)
 
   useEffect(() => {
+    if (isExcluded) {
+      setStage('done')
+      return
+    }
+
     setMounted(true)
 
     // Clean up any stale legacy lockout flags so onboarding always runs reliably
@@ -37,12 +43,6 @@ export default function SplashScreen({
       localStorage.removeItem('nexushire_splash_shown')
       sessionStorage.removeItem('nexushire_splash_shown')
     } catch (_) {}
-
-    // If we're already on dedicated /splash or /onboarding routes, don't overlay the global layout intro
-    if ((pathname === '/splash' || pathname === '/onboarding') && !forceShow) {
-      setStage('done')
-      return
-    }
 
     const searchParams = new URLSearchParams(window.location.search)
     const skipIntro = searchParams.get('skip') === '1' || searchParams.get('nointro') === '1'
@@ -99,7 +99,7 @@ export default function SplashScreen({
     }, 500)
   }
 
-  if (stage === 'done') return null
+  if (isExcluded || stage === 'done') return null
 
   const content = (
     <div

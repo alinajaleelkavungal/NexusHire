@@ -42,13 +42,13 @@ export default function LoginForm() {
       <div className="w-full text-left mb-6">
         <div className="inline-block mb-3">
           <Image
-            src="/logo-dark.png"
-            alt="NexusHire · The Global Hub for Cross-Border Manpower"
-            width={320}
-            height={70}
+            src="/brand-logo-dark.png"
+            alt="NexusHire"
+            width={300}
+            height={60}
             priority
             unoptimized
-            className="w-[270px] sm:w-[310px] h-auto object-contain drop-shadow-md"
+            className="w-[240px] sm:w-[280px] h-auto object-contain drop-shadow-md"
           />
         </div>
 

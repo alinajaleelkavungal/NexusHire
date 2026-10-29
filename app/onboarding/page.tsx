@@ -30,8 +30,8 @@ export default function OnboardingPage() {
       <header className="relative z-10 w-full flex items-center justify-between shrink-0 h-10 sm:h-12">
         <Link href="/" className="inline-block transition-transform hover:scale-[1.02] group">
           <Image
-            src="/logo-dark.png"
-            alt="NexusHire · The Global Hub for Cross-Border Manpower"
+            src="/brand-logo-dark.png"
+            alt="NexusHire"
             width={160}
             height={35}
             priority
