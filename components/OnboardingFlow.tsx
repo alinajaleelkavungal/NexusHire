@@ -25,6 +25,15 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
         setSelectedTheme(theme)
       }
     } catch (_) {}
+
+    try {
+      if (typeof window !== 'undefined') {
+        const search = new URLSearchParams(window.location.search)
+        if (search.get('step') === '2' || search.get('step') === 'appearance') {
+          setStep(2)
+        }
+      }
+    } catch (_) {}
   }, [theme])
 
   const handleSelectTheme = (t: 'light' | 'dark') => {
