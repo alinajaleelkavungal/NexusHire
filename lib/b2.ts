@@ -12,21 +12,23 @@ const requiredEnvVars = [
     "B2_REGION",
 ] as const;
 
+const clean = (val?: string) => (val ? val.trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t]/g, '') : '');
+
 for (const key of requiredEnvVars) {
-    if (!process.env[key]) {
+    if (!process.env[key] || !clean(process.env[key])) {
         throw new Error(`Missing required env var: ${key}. Check your .env file.`);
     }
 }
 
 export const b2Client = new S3Client({
-    endpoint: process.env.B2_ENDPOINT,
-    region: process.env.B2_REGION,
+    endpoint: clean(process.env.B2_ENDPOINT),
+    region: clean(process.env.B2_REGION),
     credentials: {
-        accessKeyId: process.env.B2_KEY_ID as string,
-        secretAccessKey: process.env.B2_APPLICATION_KEY as string,
+        accessKeyId: clean(process.env.B2_KEY_ID),
+        secretAccessKey: clean(process.env.B2_APPLICATION_KEY),
     },
     // B2's S3-compatible API needs this for correct URL formatting
     forcePathStyle: true,
 });
 
-export const B2_BUCKET_NAME = process.env.B2_BUCKET_NAME as string;
+export const B2_BUCKET_NAME = clean(process.env.B2_BUCKET_NAME);
