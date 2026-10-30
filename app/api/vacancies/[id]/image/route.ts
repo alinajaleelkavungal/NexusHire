@@ -16,20 +16,19 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const imageKey = rows[0].imageKey
 
     // Generate signed download URL and fetch content server-side to stream directly to client
-    const signedUrl = await getResumeDownloadUrl(imageKey, 300)
-    const b2Res = await fetch(signedUrl)
+    let signedUrl = await getResumeDownloadUrl(imageKey, 300)
+    let b2Res = await fetch(signedUrl)
+
+    if (!b2Res.ok && (b2Res.status === 403 || b2Res.status === 404)) {
+      const fallbackUrl = await getResumeDownloadUrl(imageKey, 300, { bucket: 'resume.iq.storage.jaleel' })
+      const fallbackRes = await fetch(fallbackUrl)
+      if (fallbackRes.ok) {
+        b2Res = fallbackRes
+      }
+    }
+
     if (!b2Res.ok) {
-      const errText = await b2Res.text()
-      return NextResponse.json({
-        error: 'Failed to retrieve image from storage',
-        status: b2Res.status,
-        b2Error: errText,
-        diagnostics: {
-          bucket: process.env.B2_BUCKET_NAME,
-          keyId: process.env.B2_KEY_ID?.slice(0, 10),
-          imageKey,
-        },
-      }, { status: b2Res.status })
+      return NextResponse.json({ error: 'Failed to retrieve image from storage' }, { status: b2Res.status })
     }
 
     const arrayBuffer = await b2Res.arrayBuffer()

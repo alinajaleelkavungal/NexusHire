@@ -39,10 +39,10 @@ export async function uploadResume(
 export async function getResumeDownloadUrl(
     key: string,
     expiresInSeconds: number = 600,
-    options?: { fileName?: string; contentType?: string }
+    options?: { fileName?: string; contentType?: string; bucket?: string }
 ): Promise<string> {
     const command = new GetObjectCommand({
-        Bucket: B2_BUCKET_NAME,
+        Bucket: options?.bucket || B2_BUCKET_NAME,
         Key: key,
         // Show PDFs inline in the viewer instead of forcing a download
         ...(options?.fileName && {

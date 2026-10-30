@@ -31,4 +31,5 @@ export const b2Client = new S3Client({
     forcePathStyle: true,
 });
 
-export const B2_BUCKET_NAME = clean(process.env.B2_BUCKET_NAME);
+const envBucket = clean(process.env.B2_BUCKET_NAME);
+export const B2_BUCKET_NAME = envBucket === 'nexushire-storage' ? 'resume.iq.storage.jaleel' : (envBucket || 'resume.iq.storage.jaleel');
