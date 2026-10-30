@@ -24,6 +24,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         error: 'Failed to retrieve image from storage',
         status: b2Res.status,
         b2Error: errText,
+        diagnostics: {
+          bucket: process.env.B2_BUCKET_NAME,
+          keyId: process.env.B2_KEY_ID?.slice(0, 10),
+          imageKey,
+        },
       }, { status: b2Res.status })
     }
 
