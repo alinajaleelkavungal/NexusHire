@@ -38,6 +38,6 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     })
   } catch (error: any) {
     console.error('Failed to stream vacancy image:', error)
-    return NextResponse.json({ error: 'Image not accessible' }, { status: 500 })
+    return NextResponse.json({ error: error?.message || 'Image not accessible' }, { status: 500 })
   }
 }
