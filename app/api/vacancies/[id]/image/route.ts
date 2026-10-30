@@ -19,7 +19,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const signedUrl = await getResumeDownloadUrl(imageKey, 300)
     const b2Res = await fetch(signedUrl)
     if (!b2Res.ok) {
-      return NextResponse.json({ error: 'Failed to retrieve image from storage' }, { status: b2Res.status })
+      const errText = await b2Res.text()
+      return NextResponse.json({
+        error: 'Failed to retrieve image from storage',
+        status: b2Res.status,
+        b2Error: errText,
+      }, { status: b2Res.status })
     }
 
     const arrayBuffer = await b2Res.arrayBuffer()
