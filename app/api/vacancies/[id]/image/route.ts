@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { b2Client, B2_BUCKET_NAME } from '@/lib/b2'
-import { GetObjectCommand } from '@aws-sdk/client-s3'
+import { getResumeDownloadUrl } from '@/services/resumeStorage'
 
 // Serves the vacancy poster image directly with caching so the browser
 // receives an HTTP 200 directly from the same origin, avoiding CORS,
@@ -16,23 +15,21 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     const imageKey = rows[0].imageKey
 
-    const s3Res = await b2Client.send(new GetObjectCommand({
-      Bucket: B2_BUCKET_NAME,
-      Key: imageKey,
-    }))
-
-    if (!s3Res.Body) {
-      return NextResponse.json({ error: 'Image empty' }, { status: 404 })
+    // Generate signed download URL and fetch content server-side to stream directly to client
+    const signedUrl = await getResumeDownloadUrl(imageKey, 300)
+    const b2Res = await fetch(signedUrl)
+    if (!b2Res.ok) {
+      return NextResponse.json({ error: 'Failed to retrieve image from storage' }, { status: b2Res.status })
     }
 
-    const bytes = await s3Res.Body.transformToByteArray()
-    const contentType = s3Res.ContentType || 'image/png'
+    const arrayBuffer = await b2Res.arrayBuffer()
+    const contentType = b2Res.headers.get('content-type') || 'image/png'
 
-    return new NextResponse(Buffer.from(bytes), {
+    return new NextResponse(Buffer.from(arrayBuffer), {
       status: 200,
       headers: {
         'Content-Type': contentType,
-        'Content-Length': String(bytes.byteLength),
+        'Content-Length': String(arrayBuffer.byteLength),
         'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
       },
     })
@@ -40,7 +37,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     console.error('Failed to stream vacancy image:', error)
     return NextResponse.json({
       error: 'Image not accessible',
-      details: String(error?.stack || error?.message || error),
+      details: String(error?.message || error),
     }, { status: 500 })
   }
 }
