@@ -22,13 +22,14 @@ export const metadata: Metadata = {
   description: "NexusHire - The Global Hub for Cross-Border Manpower",
   icons: {
     icon: [
-      { url: '/icon.png', type: 'image/png' },
-      { url: '/logo-mark.png', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png', sizes: '512x512' },
+      { url: '/logo-mark.png', type: 'image/png', sizes: '512x512' },
     ],
     apple: [
-      { url: '/apple-icon.png' },
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
     ],
-    shortcut: '/logo-mark.png',
+    shortcut: '/favicon.ico',
   },
 };
 
