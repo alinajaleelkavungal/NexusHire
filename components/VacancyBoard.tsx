@@ -264,16 +264,16 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                       type="button"
                       onClick={() => setLightbox(v)}
                       title="Click to enlarge poster"
-                      className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-200 cursor-zoom-in shrink-0 relative group shadow-2xs hover:border-gray-400 transition-colors"
+                      className="w-14 h-14 min-w-[56px] min-h-[56px] rounded-xl overflow-hidden bg-gray-50 border border-gray-200 cursor-zoom-in shrink-0 relative group shadow-2xs hover:border-gray-400 transition-colors"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={v.imageUrl!} alt={`Poster for ${v.title}`} className="w-full h-full object-cover" />
+                      <img src={v.imageUrl!} alt={`Poster for ${v.title}`} className="w-full h-full object-cover" loading="lazy" />
                       <span className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px]">
                         <ZoomIn className="w-3.5 h-3.5" />
                       </span>
                     </button>
                   ) : (
-                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl bg-[#f5f0e8] border border-[#e5dfd3] flex items-center justify-center text-[10px] sm:text-[11px] font-medium text-gray-400 shrink-0 select-none">
+                    <div className="w-14 h-14 min-w-[56px] min-h-[56px] rounded-xl bg-[#f5f0e8] border border-[#e5dfd3] flex items-center justify-center text-[10px] sm:text-[11px] font-medium text-gray-400 shrink-0 select-none">
                       Poster
                     </div>
                   )}

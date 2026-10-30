@@ -12,8 +12,9 @@ export function proxy(request: NextRequest) {
   const isLogin = pathname === '/login'
   const isPublicPage = pathname === '/login' || pathname === '/onboarding' || pathname === '/splash'
   const isPublicApi = pathname === '/api/auth/login'
+  const isVacancyImage = pathname.startsWith('/api/vacancies/') && pathname.endsWith('/image')
 
-  if (isPublicApi || isPublicPage) return NextResponse.next()
+  if (isPublicApi || isPublicPage || isVacancyImage) return NextResponse.next()
 
   if (!session) {
     if (pathname.startsWith('/api/')) {
