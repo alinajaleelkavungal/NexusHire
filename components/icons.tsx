@@ -92,6 +92,7 @@ export {
   Megaphone,
 
   // Status & Feedback
+  Check,
   CheckCircle,
   CheckCircle as CheckCircle2,
   WarningCircle,
