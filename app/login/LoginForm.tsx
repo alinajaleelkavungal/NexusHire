@@ -28,7 +28,7 @@ export default function LoginForm() {
       if (!res.ok) throw new Error(data.error || 'Login failed')
 
       const next = params.get('next')
-      router.replace(next && next.startsWith('/') && !next.startsWith('//') ? next : '/candidates')
+      router.replace(next && next.startsWith('/') && !next.startsWith('//') ? next : '/')
       router.refresh()
     } catch (err: any) {
       setError(err.message)

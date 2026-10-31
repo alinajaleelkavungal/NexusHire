@@ -11,7 +11,7 @@ export const metadata = { title: 'Sign in · NexusHire' }
 
 export default async function LoginPage() {
   const session = await getSession()
-  if (session) redirect('/candidates')
+  if (session) redirect('/')
 
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden select-none bg-[#faf8f5] dark:bg-[#100d0b] transition-colors duration-300">
