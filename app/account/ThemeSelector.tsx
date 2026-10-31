@@ -24,7 +24,7 @@ export default function ThemeSelector() {
           onClick={() => setTheme('light')}
           className={`relative p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-4 group ${
             !isDark
-              ? 'border-[#e85d3f] bg-[#fffaf5] dark:bg-[#261e18] shadow-md ring-2 ring-[#e85d3f]/25'
+              ? 'border-[#e85d3f] bg-[#fffaf5] dark:bg-[#261e18]'
               : 'border-[#e2dcce] dark:border-[#352c25] hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] bg-[#faf8f5]/60 dark:bg-[#231b16]'
           }`}
         >
@@ -87,7 +87,7 @@ export default function ThemeSelector() {
           onClick={() => setTheme('dark')}
           className={`relative p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-4 group ${
             isDark
-              ? 'border-[#e85d3f] bg-[#fffaf5] dark:bg-[#261e18] shadow-md ring-2 ring-[#e85d3f]/25'
+              ? 'border-[#e85d3f] bg-[#fffaf5] dark:bg-[#261e18]'
               : 'border-[#e2dcce] dark:border-[#352c25] hover:border-[#cdc3b2] dark:hover:border-[#4d3f35] bg-[#faf8f5]/60 dark:bg-[#231b16]'
           }`}
         >

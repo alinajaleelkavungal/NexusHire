@@ -190,7 +190,7 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
                 <div
                   className={`w-full h-[230px] sm:h-[270px] lg:h-[295px] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 transition-all duration-300 relative overflow-hidden flex gap-2 sm:gap-2.5 bg-[#fcfaf6] ${
                     selectedTheme === 'light'
-                      ? 'border-2 border-[#e85d3f] shadow-[0_0_26px_rgba(232,93,63,0.3)] ring-2 ring-[#e85d3f]/40 scale-[1.02]'
+                      ? 'border-2 border-[#e85d3f] scale-[1.02]'
                       : 'border border-white/10 hover:border-white/25 opacity-75 hover:opacity-100'
                   }`}
                 >
@@ -266,7 +266,7 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
                 <div
                   className={`w-full h-[230px] sm:h-[270px] lg:h-[295px] rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 transition-all duration-300 relative overflow-hidden flex gap-2 sm:gap-2.5 bg-[#14100e] ${
                     selectedTheme === 'dark'
-                      ? 'border-2 border-[#e85d3f] shadow-[0_0_26px_rgba(232,93,63,0.3)] ring-2 ring-[#e85d3f]/40 scale-[1.02]'
+                      ? 'border-2 border-[#e85d3f] scale-[1.02]'
                       : 'border border-white/10 hover:border-white/25 opacity-75 hover:opacity-100'
                   }`}
                 >
@@ -376,8 +376,7 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
         {/* Right Side: Next Action Button */}
         <button
           onClick={handleNext}
-          className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-white text-xs sm:text-sm font-semibold tracking-wide shadow-lg shadow-[#e85d3f]/25 hover:shadow-xl hover:shadow-[#e85d3f]/35 active:scale-95 transition-all cursor-pointer group"
-          style={{ backgroundColor: '#e85d3f' }}
+          className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-white text-xs sm:text-sm font-semibold tracking-wide hover:bg-[#eb6a4e] active:scale-95 transition-all cursor-pointer group bg-[#e85d3f]"
           aria-label={step === 1 ? 'Next to appearance' : 'Complete onboarding'}
         >
           <span>Next</span>

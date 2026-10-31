@@ -143,7 +143,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full h-12 flex items-center justify-center gap-2 rounded-full text-white text-sm font-semibold tracking-wide shadow-lg shadow-[#e85d3f]/25 hover:shadow-xl hover:shadow-[#e85d3f]/35 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-60 bg-[#e85d3f] hover:bg-[#eb6a4e]"
+        className="w-full h-12 flex items-center justify-center gap-2 rounded-full text-white text-sm font-semibold tracking-wide active:scale-[0.99] transition-all cursor-pointer disabled:opacity-60 bg-[#e85d3f] hover:bg-[#eb6a4e]"
       >
         {loading && <CircleNotch weight="bold" className="w-4 h-4 animate-spin" />}
         <span>{loading ? 'Signing in…' : 'Sign in'}</span>

@@ -215,7 +215,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                       aria-current={active ? 'page' : undefined}
                       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
                         active
-                          ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25'
+                          ? 'bg-[#e85d3f] text-white'
                           : 'text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                       }`}
                     >
@@ -248,7 +248,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                       aria-current={active ? 'page' : undefined}
                       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
                         active
-                          ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25'
+                          ? 'bg-[#e85d3f] text-white'
                           : 'text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                       }`}
                     >
@@ -278,7 +278,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 aria-current={pathname === '/account' ? 'page' : undefined}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
                   pathname === '/account'
-                    ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25'
+                    ? 'bg-[#e85d3f] text-white'
                     : 'text-[#24211f]/75 dark:text-[#f3eee8]/75 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                 }`}
               >
@@ -381,7 +381,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                     aria-current={active ? 'page' : undefined}
                     className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                       active
-                        ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/30 scale-105'
+                        ? 'bg-[#e85d3f] text-white scale-105'
                         : 'text-[#24211f]/65 dark:text-[#f3eee8]/65 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                     }`}
                     aria-label={item.name}
@@ -431,7 +431,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
                 aria-current={pathname === '/account' ? 'page' : undefined}
                 className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                   pathname === '/account'
-                    ? 'bg-[#e85d3f] text-white shadow-md shadow-[#e85d3f]/25 scale-105'
+                    ? 'bg-[#e85d3f] text-white scale-105'
                     : 'text-[#24211f]/70 dark:text-[#f3eee8]/70 hover:text-[#24211f] dark:hover:text-white hover:bg-[#f3efe9] dark:hover:bg-[#261f1a]'
                 }`}
                 title="Account Settings"
