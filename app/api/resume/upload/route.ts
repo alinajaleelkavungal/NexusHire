@@ -4,6 +4,9 @@ import { guardSession } from '@/lib/auth'
 import { uploadResume, deleteResumeFiles } from '@/services/resumeStorage'
 import { processResumeFile } from '@/services/resume-parser'
 
+export const dynamic = 'force-dynamic'
+export const maxDuration = 60
+
 export async function POST(request: NextRequest) {
   try {
     const g = await guardSession()
@@ -110,6 +113,10 @@ export async function POST(request: NextRequest) {
     }, { status: 201 })
   } catch (error: any) {
     console.error('Upload Error:', error)
-    return NextResponse.json({ error: 'Failed to process file upload', details: error.message }, { status: 500 })
+    const status = error.status || error.statusCode || 500
+    return NextResponse.json({
+      error: 'Failed to process file upload',
+      details: error?.message || String(error)
+    }, { status: typeof status === 'number' && status >= 400 && status < 600 ? status : 500 })
   }
 }

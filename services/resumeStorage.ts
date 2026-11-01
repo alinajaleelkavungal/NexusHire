@@ -18,17 +18,33 @@ export async function uploadResume(
     contentType: string
 ): Promise<{ key: string }> {
     const key = `resumes/${randomUUID()}-${originalFileName}`;
+    const targetBucket = B2_BUCKET_NAME || 'resume.iq.storage.jaleel';
 
-    await b2Client.send(
-        new PutObjectCommand({
-            Bucket: B2_BUCKET_NAME,
-            Key: key,
-            Body: fileBuffer,
-            ContentType: contentType,
-        })
-    );
-
-    return { key };
+    try {
+        await b2Client.send(
+            new PutObjectCommand({
+                Bucket: targetBucket,
+                Key: key,
+                Body: fileBuffer,
+                ContentType: contentType,
+            })
+        );
+        return { key };
+    } catch (err: any) {
+        if (targetBucket !== 'resume.iq.storage.jaleel') {
+            console.warn(`[resumeStorage] Upload to ${targetBucket} failed (${err?.message}), falling back to resume.iq.storage.jaleel...`);
+            await b2Client.send(
+                new PutObjectCommand({
+                    Bucket: 'resume.iq.storage.jaleel',
+                    Key: key,
+                    Body: fileBuffer,
+                    ContentType: contentType,
+                })
+            );
+            return { key };
+        }
+        throw err;
+    }
 }
 
 /**
@@ -94,15 +110,31 @@ export async function uploadPoster(
     contentType: string
 ): Promise<{ key: string }> {
     const key = `posters/${randomUUID()}-${originalFileName}`;
+    const targetBucket = B2_BUCKET_NAME || 'resume.iq.storage.jaleel';
 
-    await b2Client.send(
-        new PutObjectCommand({
-            Bucket: B2_BUCKET_NAME,
-            Key: key,
-            Body: fileBuffer,
-            ContentType: contentType,
-        })
-    );
-
-    return { key };
+    try {
+        await b2Client.send(
+            new PutObjectCommand({
+                Bucket: targetBucket,
+                Key: key,
+                Body: fileBuffer,
+                ContentType: contentType,
+            })
+        );
+        return { key };
+    } catch (err: any) {
+        if (targetBucket !== 'resume.iq.storage.jaleel') {
+            console.warn(`[resumeStorage] Upload poster to ${targetBucket} failed (${err?.message}), falling back to resume.iq.storage.jaleel...`);
+            await b2Client.send(
+                new PutObjectCommand({
+                    Bucket: 'resume.iq.storage.jaleel',
+                    Key: key,
+                    Body: fileBuffer,
+                    ContentType: contentType,
+                })
+            );
+            return { key };
+        }
+        throw err;
+    }
 }

@@ -16,13 +16,21 @@ export interface ParsedResume {
 export async function parsePdf(fileBuffer: Buffer): Promise<ParsedResume> {
   let parser: any
   try {
-    parser = new PDFParse({ data: fileBuffer })
-    const data = await parser.getText()
-    return {
-      rawText: data?.text || ''
-    }
+    const parsePromise = (async () => {
+      parser = new PDFParse({ data: fileBuffer })
+      const data = await parser.getText()
+      return data?.text || ''
+    })()
+
+    // 3.5s timeout prevents serverless execution timeout/freeze on Vercel
+    const timeoutPromise = new Promise<string>((_, reject) =>
+      setTimeout(() => reject(new Error('PDF parsing timed out (3.5s limit)')), 3500)
+    )
+
+    const rawText = await Promise.race([parsePromise, timeoutPromise])
+    return { rawText }
   } catch (error: any) {
-    console.warn('PDF text extraction error:', error?.message || error)
+    console.warn('PDF text extraction skipped/failed:', error?.message || error)
     return {
       rawText: ''
     }

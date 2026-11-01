@@ -166,14 +166,38 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
 
       const res = await fetch('/api/resume/upload', { method: 'POST', body })
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.error || errData.details || 'Upload failed')
+        let errorMessage = `Upload failed (${res.status} ${res.statusText || 'Error'})`
+        try {
+          const contentType = res.headers.get('content-type') || ''
+          if (contentType.includes('application/json')) {
+            const errData = await res.json()
+            if (errData.details && errData.error && errData.details !== errData.error) {
+              errorMessage = `${errData.error}: ${errData.details}`
+            } else {
+              errorMessage = errData.error || errData.details || errorMessage
+            }
+          } else {
+            const text = await res.text()
+            if (res.status === 504) {
+              errorMessage = 'Upload timed out on the server (504). Please try again.'
+            } else if (res.status === 413) {
+              errorMessage = 'File is too large for upload (413). Resume exceeds the maximum upload limit.'
+            } else if (res.status === 401) {
+              errorMessage = 'Session expired (401). Please log in again.'
+            } else if (text && text.length < 150 && !text.includes('<html') && !text.includes('<!DOCTYPE')) {
+              errorMessage = `${errorMessage} - ${text.trim()}`
+            }
+          }
+        } catch {
+          // Keep default errorMessage
+        }
+        throw new Error(errorMessage)
       }
       updateItem(item.id, { status: 'COMPLETED' })
       onSuccess() // Update the dashboard in the background immediately
     } catch (err: any) {
       // Back to the form so the user can fix the problem and retry
-      updateItem(item.id, { status: 'NEEDS_FORM', error: err.message })
+      updateItem(item.id, { status: 'NEEDS_FORM', error: err?.message || 'Upload failed' })
     }
   }
 
