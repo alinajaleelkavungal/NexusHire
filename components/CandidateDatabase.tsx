@@ -123,10 +123,17 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   }, [candidates, manualSectors, savedSectors])
 
   const filteredCandidates = candidates.filter(c => {
-    // Matches name, skills, category, sub category and the saved CV file name(s)
+    // Matches name, skills, category, sub category, company, recommended role, and saved CV file name(s)
     const q = search.trim().toLowerCase()
-    const matchesSearch = !q || [c.name, c.skills, c.sector, c.category, ...(c.resumes ?? []).map((r: any) => r.fileName)]
-      .some(v => v && String(v).toLowerCase().includes(q))
+    const terms = q.split(/\s+/).filter(t => t.length > 2)
+    const matchesSearch = !q || [
+      c.name, c.skills, c.sector, c.category, c.company, c.recommendedRole,
+      ...(c.resumes ?? []).map((r: any) => r.fileName)
+    ].some(v => {
+      if (!v) return false
+      const s = String(v).toLowerCase()
+      return s.includes(q) || q.includes(s) || (terms.length > 0 && terms.some(t => s.includes(t)))
+    })
     
     // Filter by activeCategory (which maps to sector now)
     const matchesCategory = activeCategory ? (c.sector === activeCategory || c.category === activeCategory) : true

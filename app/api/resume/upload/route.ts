@@ -34,6 +34,8 @@ export async function POST(request: NextRequest) {
       category: field('category'),
       yearsOfExperience: field('yearsOfExperience'),
       agent: field('agent'),
+      company: field('company') || null,
+      recommendedRole: field('recommendedRole') || null,
     }
     const labels: Record<string, string> = {
       name: 'Name', age: 'Age', sector: 'Category', category: 'Sub Category',
@@ -109,6 +111,8 @@ export async function POST(request: NextRequest) {
             category: details.category,
             yearsOfExperience: details.yearsOfExperience,
             agent: details.agent,
+            company: details.company,
+            recommendedRole: details.recommendedRole,
             ownerId: g.session.sub,
             recruitmentStage: 'Applied',
           }
@@ -127,6 +131,8 @@ export async function POST(request: NextRequest) {
               category: details.category,
               yearsOfExperience: details.yearsOfExperience,
               agent: details.agent,
+              company: details.company,
+              recommendedRole: details.recommendedRole,
               ownerId: g.session.sub,
               recruitmentStage: 'Applied',
             }
@@ -142,8 +148,8 @@ export async function POST(request: NextRequest) {
           })
 
           await prisma.$executeRawUnsafe(
-            `UPDATE Candidate SET age = ?, sector = ?, category = ?, yearsOfExperience = ?, agent = ?, ownerId = ? WHERE id = ?`,
-            age, details.sector, details.category, details.yearsOfExperience, details.agent, g.session.sub, candidate.id
+            `UPDATE Candidate SET age = ?, sector = ?, category = ?, yearsOfExperience = ?, agent = ?, company = ?, recommendedRole = ?, ownerId = ? WHERE id = ?`,
+            age, details.sector, details.category, details.yearsOfExperience, details.agent, details.company, details.recommendedRole, g.session.sub, candidate.id
           ).catch((e: any) => console.warn('Candidate fields raw update warning:', e?.message))
 
           // Attach updated fields to candidate object
@@ -152,6 +158,8 @@ export async function POST(request: NextRequest) {
           candidate.category = details.category
           candidate.yearsOfExperience = details.yearsOfExperience
           candidate.agent = details.agent
+          candidate.company = details.company
+          candidate.recommendedRole = details.recommendedRole
           candidate.ownerId = g.session.sub
         }
       }
@@ -219,6 +227,12 @@ async function ensureCandidateColumns() {
     if (!existing.has('agent')) {
       await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN agent TEXT`).catch(() => {})
     }
+    if (!existing.has('company')) {
+      await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN company TEXT`).catch(() => {})
+    }
+    if (!existing.has('recommendedrole')) {
+      await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN recommendedRole TEXT`).catch(() => {})
+    }
   } catch (e) {
     // If PRAGMA is not supported or errors, attempt direct ALTERs safely
     await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN ownerId TEXT`).catch(() => {})
@@ -227,6 +241,8 @@ async function ensureCandidateColumns() {
     await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN category TEXT`).catch(() => {})
     await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN yearsOfExperience TEXT`).catch(() => {})
     await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN agent TEXT`).catch(() => {})
+    await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN company TEXT`).catch(() => {})
+    await prisma.$executeRawUnsafe(`ALTER TABLE Candidate ADD COLUMN recommendedRole TEXT`).catch(() => {})
   }
 }
 

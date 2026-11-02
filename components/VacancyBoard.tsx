@@ -4,9 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Search, Plus, Trash2, Pencil, X, Loader2, AlertCircle, ImagePlus, ZoomIn, CalendarDays, CalendarClock, Calendar
+  Search, Plus, Trash2, Pencil, X, Loader2, AlertCircle, ImagePlus, ZoomIn, CalendarDays, CalendarClock, Calendar, UploadSimple
 } from '@/components/icons'
 import type { Vacancy } from '@/lib/vacancies'
+import UploadModal from '@/components/UploadModal'
+import { matchSectorAndCategory } from '@/config/sector-categories'
 
 const PAGE_SIZE = 9
 const POSTER_TYPES = ['image/png', 'image/jpeg', 'image/webp']
@@ -89,6 +91,7 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
   const [editing, setEditing] = useState<Vacancy | null>(null)
   const [lightbox, setLightbox] = useState<Vacancy | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [uploadVacancy, setUploadVacancy] = useState<Vacancy | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -349,6 +352,17 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                   </>
                 )}
 
+                {/* Upload CV for this Vacancy */}
+                <button
+                  type="button"
+                  onClick={() => setUploadVacancy(v)}
+                  className="px-3.5 py-1 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-full transition-all active:scale-95 shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                  title={`Upload candidate CV for ${v.title}`}
+                >
+                  <UploadSimple weight="bold" className="w-3.5 h-3.5" />
+                  Upload CV
+                </button>
+
                 {/* View candidates Option */}
                 <Link
                   href={`/candidates?search=${encodeURIComponent(v.title)}`}
@@ -402,6 +416,22 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
             setEditing(null)
             router.refresh()
           }}
+        />
+      )}
+
+      {/* Upload CV for Vacancy Modal */}
+      {uploadVacancy && (
+        <UploadModal
+          isOpen={!!uploadVacancy}
+          onClose={() => setUploadVacancy(null)}
+          onSuccess={() => {
+            setUploadVacancy(null)
+            router.refresh()
+          }}
+          vacancyTitle={uploadVacancy.title}
+          vacancyCompany={uploadVacancy.company || undefined}
+          initialSector={matchSectorAndCategory(uploadVacancy.title).sector}
+          initialCategory={matchSectorAndCategory(uploadVacancy.title).category}
         />
       )}
     </section>

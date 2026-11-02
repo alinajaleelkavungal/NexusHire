@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { UploadSimple, FileText, X, CheckCircle, WarningCircle, CircleNotch, Warning } from '@/components/icons'
-import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'
+import { SECTOR_CATEGORY_MAP, matchSectorAndCategory } from '@/config/sector-categories'
 import Link from 'next/link'
 
 type DuplicateWarning = {
@@ -60,10 +60,29 @@ interface UploadModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
+  initialSector?: string
+  initialCategory?: string
+  vacancyTitle?: string
+  vacancyCompany?: string
 }
 
-export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalProps) {
+export default function UploadModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  initialSector,
+  initialCategory,
+  vacancyTitle,
+  vacancyCompany,
+}: UploadModalProps) {
   const [items, setItems] = useState<UploadItem[]>([])
+
+  const matched = useMemo(() => {
+    return vacancyTitle ? matchSectorAndCategory(vacancyTitle) : { sector: '', category: '' }
+  }, [vacancyTitle])
+
+  const defaultSector = initialSector || matched.sector || ''
+  const defaultCategory = initialCategory || matched.category || ''
 
   // Files stay in the browser until the user submits the form — nothing is
   // uploaded or saved before that.
@@ -77,14 +96,14 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
       formData: {
         name: '',
         age: '',
-        sector: '',
-        category: '',
+        sector: defaultSector,
+        category: defaultCategory,
         yearsOfExperience: '',
         agent: ''
       }
     }))
     setItems(prev => [...prev, ...newItems])
-  }, [])
+  }, [defaultSector, defaultCategory])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -163,6 +182,8 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
       const body = new FormData()
       body.append('file', item.file)
       Object.entries(item.formData).forEach(([key, value]) => body.append(key, value.trim()))
+      if (vacancyTitle) body.append('recommendedRole', vacancyTitle)
+      if (vacancyCompany) body.append('company', vacancyCompany)
 
       const res = await fetch('/api/resume/upload', { method: 'POST', body })
       if (!res.ok) {
@@ -268,6 +289,21 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
         </div>
 
         <div className="p-6 space-y-6">
+          {vacancyTitle && (
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-950 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <span className="font-extrabold text-[10px] tracking-wider uppercase bg-emerald-600 text-white px-2.5 py-0.5 rounded-full">
+                  Vacancy
+                </span>
+                <span className="font-bold text-sm text-gray-900">{vacancyTitle}</span>
+                {vacancyCompany && <span className="text-xs text-gray-500">· {vacancyCompany}</span>}
+              </div>
+              <div className="text-xs text-emerald-800 font-medium bg-white/80 border border-emerald-200 px-3 py-1 rounded-lg">
+                Auto-filled: <span className="font-bold text-emerald-950">{defaultSector || 'Category'}</span> &rsaquo; <span className="font-bold text-emerald-950">{defaultCategory || 'Sub-category'}</span>
+              </div>
+            </div>
+          )}
+
           <div 
             {...getRootProps()} 
             className={`border-2 border-dashed rounded-3xl p-8 text-center cursor-pointer transition-all ${
