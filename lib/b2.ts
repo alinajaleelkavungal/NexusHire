@@ -17,7 +17,9 @@ export const B2_BUCKET_NAME =
         ? 'resume.iq.storage.jaleel'
         : envBucket;
 
-if (!keyId || !appKey) {
+export const hasB2Credentials = Boolean(keyId && appKey);
+
+if (!hasB2Credentials) {
     console.warn('[B2 Storage] Warning: B2_KEY_ID or B2_APPLICATION_KEY is not defined in environment variables.');
 }
 

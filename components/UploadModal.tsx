@@ -168,24 +168,58 @@ export default function UploadModal({ isOpen, onClose, onSuccess }: UploadModalP
       if (!res.ok) {
         let errorMessage = `Upload failed (${res.status} ${res.statusText || 'Error'})`
         try {
-          const contentType = res.headers.get('content-type') || ''
-          if (contentType.includes('application/json')) {
-            const errData = await res.json()
-            if (errData.details && errData.error && errData.details !== errData.error) {
-              errorMessage = `${errData.error}: ${errData.details}`
-            } else {
-              errorMessage = errData.error || errData.details || errorMessage
-            }
-          } else {
-            const text = await res.text()
-            if (res.status === 504) {
-              errorMessage = 'Upload timed out on the server (504). Please try again.'
-            } else if (res.status === 413) {
-              errorMessage = 'File is too large for upload (413). Resume exceeds the maximum upload limit.'
-            } else if (res.status === 401) {
-              errorMessage = 'Session expired (401). Please log in again.'
-            } else if (text && text.length < 150 && !text.includes('<html') && !text.includes('<!DOCTYPE')) {
-              errorMessage = `${errorMessage} - ${text.trim()}`
+          const rawText = await res.text()
+          if (rawText) {
+            try {
+              const errData = JSON.parse(rawText)
+              if (errData && typeof errData === 'object') {
+                const primary = errData.details || errData.error || errData.message
+                const secondary = errData.error && errData.details && errData.error !== errData.details
+                  ? `${errData.error}: ${errData.details}`
+                  : null
+                errorMessage = secondary || primary || errorMessage
+              }
+            } catch {
+              // Raw response is not JSON (e.g. server crash, edge error page, proxy error)
+              if (res.status === 504) {
+                errorMessage = 'Server timeout (504): Upload took too long. Please try again.'
+              } else if (res.status === 413) {
+                errorMessage = 'File too large (413): Resume exceeds maximum upload limit.'
+              } else if (res.status === 401) {
+                errorMessage = 'Session expired (401): Please log in again.'
+              } else if (res.status === 502) {
+                errorMessage = 'Storage gateway error (502): Could not reach cloud storage. Please retry.'
+              } else {
+                // Try extracting meaningful message from HTML/error text
+                const preMatch = rawText.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i)
+                const h1Match = rawText.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)
+                const h2Match = rawText.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i)
+                const codeMatch = rawText.match(/Code:\s*<code>(.*?)<\/code>/i)
+                const titleMatch = rawText.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
+
+                const extracted = (codeMatch && codeMatch[1]) ||
+                  (preMatch && preMatch[1]) ||
+                  (h1Match && h1Match[1]) ||
+                  (h2Match && h2Match[1]) ||
+                  (titleMatch && titleMatch[1])
+
+                if (extracted) {
+                  const cleaned = extracted.replace(/<[^>]+>/g, '').trim()
+                  if (cleaned && cleaned !== 'Error' && cleaned !== '500') {
+                    errorMessage = `Server Error (${res.status}): ${cleaned.slice(0, 180)}`
+                  }
+                } else {
+                  const stripped = rawText
+                    .replace(/<style[\s\S]*?<\/style>/gi, '')
+                    .replace(/<script[\s\S]*?<\/script>/gi, '')
+                    .replace(/<[^>]+>/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim()
+                  if (stripped && stripped.length > 0 && stripped.length < 200) {
+                    errorMessage = `Server Error (${res.status}): ${stripped}`
+                  }
+                }
+              }
             }
           }
         } catch {

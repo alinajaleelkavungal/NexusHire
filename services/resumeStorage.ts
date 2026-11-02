@@ -4,7 +4,7 @@ import {
     DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { b2Client, B2_BUCKET_NAME } from "@/lib/b2";
+import { b2Client, B2_BUCKET_NAME, hasB2Credentials } from "@/lib/b2";
 import { randomUUID } from "crypto";
 
 /**
@@ -17,6 +17,9 @@ export async function uploadResume(
     originalFileName: string,
     contentType: string
 ): Promise<{ key: string }> {
+    if (!hasB2Credentials) {
+        throw new Error('Backblaze B2 credentials (B2_KEY_ID, B2_APPLICATION_KEY) are missing in environment variables.');
+    }
     const key = `resumes/${randomUUID()}-${originalFileName}`;
     const targetBucket = B2_BUCKET_NAME || 'resume.iq.storage.jaleel';
 
@@ -109,6 +112,9 @@ export async function uploadPoster(
     originalFileName: string,
     contentType: string
 ): Promise<{ key: string }> {
+    if (!hasB2Credentials) {
+        throw new Error('Backblaze B2 credentials (B2_KEY_ID, B2_APPLICATION_KEY) are missing in environment variables.');
+    }
     const key = `posters/${randomUUID()}-${originalFileName}`;
     const targetBucket = B2_BUCKET_NAME || 'resume.iq.storage.jaleel';
 

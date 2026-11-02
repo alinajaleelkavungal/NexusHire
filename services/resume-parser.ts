@@ -1,5 +1,17 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { PDFParse } = require('pdf-parse')
+// Polyfill DOMMatrix for pdfjs-dist in serverless environments
+if (typeof (globalThis as any).DOMMatrix === 'undefined') {
+  (globalThis as any).DOMMatrix = class DOMMatrix {
+    a = 1; b = 0; c = 0; d = 1; e = 0; f = 0;
+    m11 = 1; m12 = 0; m13 = 0; m14 = 0;
+    m21 = 0; m22 = 1; m23 = 0; m24 = 0;
+    m31 = 0; m32 = 0; m33 = 1; m34 = 0;
+    m41 = 0; m42 = 0; m43 = 0; m44 = 1;
+    is2D = true;
+    isIdentity = true;
+    transformPoint(p: any) { return p; }
+  };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mammoth = require('mammoth') as {
   extractRawText: (opts: { buffer: Buffer }) => Promise<{ value: string }>
@@ -17,6 +29,8 @@ export async function parsePdf(fileBuffer: Buffer): Promise<ParsedResume> {
   let parser: any
   try {
     const parsePromise = (async () => {
+      // Lazy-load to prevent top-level module evaluation errors
+      const { PDFParse } = require('pdf-parse')
       parser = new PDFParse({ data: fileBuffer })
       const data = await parser.getText()
       return data?.text || ''
