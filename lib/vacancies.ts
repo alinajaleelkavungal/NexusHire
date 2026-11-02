@@ -80,10 +80,22 @@ export function parseVacancyForm(form: FormData, options?: { allowExpiredDate?: 
     return { error: 'Openings must be a whole number of 1 or more' }
   }
 
-  const closingDate = text('closingDate')
+  let closingDate = text('closingDate')
   if (closingDate) {
+    // Support DD/MM/YYYY or DD-MM-YYYY format
+    const ddmmyyyyMatch = closingDate.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/)
+    if (ddmmyyyyMatch) {
+      const d = Number(ddmmyyyyMatch[1])
+      const m = Number(ddmmyyyyMatch[2])
+      const y = Number(ddmmyyyyMatch[3])
+      if (m < 1 || m > 12 || d < 1 || d > 31) {
+        return { error: 'Last date to apply must be a valid date in DD/MM/YYYY format' }
+      }
+      closingDate = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    }
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(closingDate) || Number.isNaN(Date.parse(closingDate))) {
-      return { error: 'Closing date is not valid' }
+      return { error: 'Last date to apply must be a valid date in DD/MM/YYYY format' }
     }
     if (!options?.allowExpiredDate && isExpired(closingDate)) {
       return { error: 'Last date to apply cannot be in the past' }

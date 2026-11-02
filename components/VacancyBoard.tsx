@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Search, Plus, Trash2, Pencil, X, Loader2, AlertCircle, ImagePlus, ZoomIn, CalendarDays, CalendarClock
+  Search, Plus, Trash2, Pencil, X, Loader2, AlertCircle, ImagePlus, ZoomIn, CalendarDays, CalendarClock, Calendar
 } from '@/components/icons'
 import type { Vacancy } from '@/lib/vacancies'
 
@@ -14,9 +14,42 @@ const POSTER_MAX_BYTES = 5 * 1024 * 1024
 
 function formatDate(isoOrDateStr: string | null | undefined): string {
   if (!isoOrDateStr) return ''
+  const match = isoOrDateStr.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (match) {
+    return `${match[3]}/${match[2]}/${match[1]}`
+  }
   const d = new Date(isoOrDateStr)
   if (isNaN(d.getTime())) return String(isoOrDateStr)
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
+function isoToDisplayDate(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const clean = iso.trim()
+  const match = clean.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (match) {
+    return `${match[3]}/${match[2]}/${match[1]}`
+  }
+  return clean
+}
+
+function displayToIsoDate(display: string | null | undefined): string {
+  if (!display) return ''
+  const clean = display.trim()
+  const match = clean.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/)
+  if (match) {
+    const d = match[1].padStart(2, '0')
+    const m = match[2].padStart(2, '0')
+    const y = match[3]
+    return `${y}-${m}-${d}`
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) {
+    return clean
+  }
+  return ''
 }
 
 type VacancyStatus = 'NEW' | 'CLOSING SOON' | 'OPEN' | 'CLOSED'
@@ -420,9 +453,10 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
     company: vacancy?.company ?? '',
     location: vacancy?.location ?? '',
     openings: vacancy?.openings ? String(vacancy.openings) : '',
-    closingDate: vacancy?.closingDate ?? '',
+    closingDate: vacancy?.closingDate ? isoToDisplayDate(vacancy.closingDate) : '',
     details: vacancy?.details ?? '',
   })
+  const datePickerRef = useRef<HTMLInputElement>(null)
   const [image, setImage] = useState<File | null>(null)
   const [removeImage, setRemoveImage] = useState(false)
   const hasExistingImage = !!vacancy?.hasImage
@@ -459,10 +493,41 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
   const submit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    let isoClosingDate = ''
+    if (form.closingDate.trim()) {
+      const match = form.closingDate.trim().match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/)
+      if (!match) {
+        setError('Last date to apply must be in DD/MM/YYYY format (e.g. 25/12/2026)')
+        return
+      }
+      const day = Number(match[1])
+      const month = Number(match[2])
+      const year = Number(match[3])
+      if (month < 1 || month > 12 || day < 1 || day > 31) {
+        setError('Last date to apply is not a valid date')
+        return
+      }
+      isoClosingDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      if (Number.isNaN(Date.parse(isoClosingDate))) {
+        setError('Last date to apply is not a valid date')
+        return
+      }
+      if (isoClosingDate < todayLocal) {
+        setError('Last date to apply cannot be in the past')
+        return
+      }
+    }
+
     setSaving(true)
     try {
       const body = new FormData()
-      Object.entries(form).forEach(([k, v]) => body.append(k, v))
+      body.append('title', form.title.trim())
+      body.append('company', form.company.trim())
+      body.append('location', form.location.trim())
+      body.append('openings', form.openings.trim())
+      body.append('closingDate', isoClosingDate)
+      body.append('details', form.details.trim())
       if (image) body.append('image', image)
       if (removeImage && !image) body.append('removeImage', '1')
       const res = await fetch(isEdit ? `/api/vacancies/${vacancy!.id}` : '/api/vacancies', {
@@ -477,7 +542,7 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
       setError(err.message)
       setSaving(false)
     }
-  }, [form, image, removeImage, isEdit, vacancy, onSaved])
+  }, [form, image, removeImage, isEdit, vacancy, onSaved, todayLocal])
 
   const input = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black'
   const label = 'block text-xs font-semibold text-gray-700 mb-1'
@@ -525,7 +590,59 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
             </div>
             <div>
               <label className={label}>Last date to apply</label>
-              <input type="date" min={todayLocal} className={input} value={form.closingDate} onChange={set('closingDate')} />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  maxLength={10}
+                  className={`${input} pr-10`}
+                  value={form.closingDate}
+                  onChange={e => {
+                    let val = e.target.value.replace(/[^\d/-]/g, '').replace(/-/g, '/')
+                    const digits = val.replace(/\D/g, '')
+                    if (!val.includes('/') && digits.length === 8) {
+                      val = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`
+                    }
+                    setForm(f => ({ ...f, closingDate: val.slice(0, 10) }))
+                  }}
+                  onBlur={() => {
+                    const digits = form.closingDate.replace(/\D/g, '')
+                    if (digits.length === 8 && !form.closingDate.includes('/')) {
+                      setForm(f => ({ ...f, closingDate: `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}` }))
+                    }
+                  }}
+                  placeholder="DD/MM/YYYY"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    try {
+                      datePickerRef.current?.showPicker?.()
+                    } catch {
+                      datePickerRef.current?.focus()
+                    }
+                  }}
+                  className="absolute right-2 p-1.5 text-gray-400 hover:text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
+                  title="Pick date from calendar"
+                  aria-label="Pick date from calendar"
+                >
+                  <Calendar className="w-4 h-4" />
+                </button>
+                <input
+                  ref={datePickerRef}
+                  type="date"
+                  min={todayLocal}
+                  value={displayToIsoDate(form.closingDate)}
+                  onChange={e => {
+                    if (e.target.value) {
+                      setForm(f => ({ ...f, closingDate: isoToDisplayDate(e.target.value) }))
+                    }
+                  }}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="sr-only"
+                />
+              </div>
+              <p className="text-[11px] text-gray-400 mt-1">Format: DD/MM/YYYY</p>
             </div>
           </div>
           <div>
