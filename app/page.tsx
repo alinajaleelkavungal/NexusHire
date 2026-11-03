@@ -98,9 +98,8 @@ export default async function HomePage() {
       {/* Header Row */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[11px] font-bold tracking-tight px-3 py-1 rounded-full bg-[#fdf3f0] text-[#e85d3f] border border-[#fbe4de] shadow-2xs inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#e85d3f]" />
+          <div className="mb-1.5">
+            <span className="text-xs font-bold tracking-tight text-[#e85d3f]">
               The Global Hub for Cross-Border Manpower
             </span>
           </div>
