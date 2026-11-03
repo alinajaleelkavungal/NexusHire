@@ -104,7 +104,7 @@ export default async function HomePage() {
               The Global Hub for Cross-Border Manpower
             </span>
           </div>
-          <h1 className="text-3xl font-black text-[#24211f] tracking-tight">
+          <h1 className="text-3xl font-black text-[#24211f] tracking-tight font-sans">
             {greeting}, {session.name}
           </h1>
           <p className="text-sm font-medium text-[#7e715f] mt-1">
