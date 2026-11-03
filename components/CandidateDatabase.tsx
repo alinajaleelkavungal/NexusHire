@@ -419,7 +419,12 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
       <EditCandidateModal 
         isOpen={!!editingCandidate} 
         onClose={() => setEditingCandidate(null)} 
-        onSuccess={() => router.refresh()} 
+        onSuccess={(updated) => {
+          if (updated) {
+            setCandidates(prev => prev.map(c => c.id === updated.id ? { ...c, ...updated } : c))
+          }
+          router.refresh()
+        }} 
         candidate={editingCandidate}
       />
       <div className="p-4 sm:p-8 max-w-6xl mx-auto flex flex-col gap-6 min-h-screen">

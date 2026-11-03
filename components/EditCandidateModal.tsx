@@ -7,9 +7,20 @@ import { SECTOR_CATEGORY_MAP } from '@/config/sector-categories'
 interface EditCandidateModalProps {
   isOpen: boolean
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (updated?: any) => void
   candidate: any
 }
+
+const PIPELINE_STAGES = [
+  'Applied',
+  'Screening',
+  'Shortlisted',
+  'Interview Scheduled',
+  'Technical Interview',
+  'HR Interview',
+  'Selected',
+  'Rejected'
+]
 
 export default function EditCandidateModal({ isOpen, onClose, onSuccess, candidate }: EditCandidateModalProps) {
   const [formData, setFormData] = useState({
@@ -17,7 +28,8 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
     sector: '',
     category: '',
     yearsOfExperience: '',
-    agent: ''
+    agent: '',
+    stage: 'Applied'
   })
   const [saving, setSaving] = useState(false)
 
@@ -28,7 +40,8 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
         sector: candidate.sector || '',
         category: candidate.category || '',
         yearsOfExperience: candidate.yearsOfExperience || '',
-        agent: candidate.agent || ''
+        agent: candidate.agent || '',
+        stage: candidate.recruitmentStage || candidate.stage || 'Applied'
       })
     }
   }, [candidate])
@@ -47,14 +60,16 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           candidateId: candidate.id,
-          ...formData
+          ...formData,
+          recruitmentStage: formData.stage
         })
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({ error: 'Failed to update candidate' }))
         throw new Error(errData.details || errData.error || 'Failed to update candidate')
       }
-      onSuccess()
+      const data = await res.json().catch(() => ({}))
+      onSuccess(data.candidate)
       onClose()
     } catch (err: any) {
       console.error(err)
@@ -77,6 +92,19 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
         </div>
 
         <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-gray-800 mb-1">Recruitment Stage / Pipeline</label>
+            <select
+              className="w-full p-2.5 border border-gray-200/90 rounded-xl text-xs bg-white text-gray-950 focus:ring-2 focus:ring-gray-900 outline-none font-medium"
+              value={formData.stage}
+              onChange={(e) => setFormData({...formData, stage: e.target.value})}
+            >
+              {PIPELINE_STAGES.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="block text-xs font-bold text-gray-800 mb-1">Age</label>
             <input

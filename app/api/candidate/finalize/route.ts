@@ -55,6 +55,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const prevCandidate = await prisma.candidate.findUnique({
+      where: { id: candidateId },
+      select: { recruitmentStage: true }
+    })
+
+    const stage = text(body.recruitmentStage || body.stage)
+    if (stage) {
+      assign('recruitmentStage', stage)
+    }
+
     assign('agent', agent)
     sets.push('updatedAt = CURRENT_TIMESTAMP')
 
@@ -64,6 +74,16 @@ export async function POST(request: NextRequest) {
       ...values,
       candidateId
     )
+
+    if (stage && prevCandidate && prevCandidate.recruitmentStage !== stage) {
+      await prisma.activityLog.create({
+        data: {
+          candidateId,
+          action: 'Stage Changed',
+          description: `Moved from ${prevCandidate.recruitmentStage || 'Applied'} to ${stage}`
+        }
+      }).catch(() => {})
+    }
 
     const updatedCandidate = await prisma.candidate.findUnique({
       where: { id: candidateId }
