@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { Geist_Mono } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import TopHeader from "@/components/TopHeader";
 import SplashScreen from "@/components/SplashScreen";
@@ -7,9 +8,34 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { getSession } from "@/lib/auth";
 import "./globals.css";
 
-const jakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-jakarta-sans",
-  subsets: ["latin"],
+const satoshi = localFont({
+  src: [
+    {
+      path: "../public/fonts/Satoshi-Variable.woff2",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/Satoshi-VariableItalic.woff2",
+      style: "italic",
+    },
+  ],
+  variable: "--font-satoshi",
+  display: "swap",
+});
+
+const boska = localFont({
+  src: [
+    {
+      path: "../public/fonts/Boska-Variable.woff2",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/Boska-VariableItalic.woff2",
+      style: "italic",
+    },
+  ],
+  variable: "--font-boska",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -44,7 +70,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${jakartaSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${satoshi.variable} ${boska.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
         <script
