@@ -113,10 +113,10 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
               </div>
 
               <h1
-                className="text-2xl sm:text-4xl lg:text-[42px] xl:text-[48px] leading-[1.14] tracking-tight font-normal"
+                className="text-2xl sm:text-4xl lg:text-[42px] xl:text-[48px] leading-[1.14] tracking-tight font-bold"
                 style={{
                   color: '#ffffff',
-                  fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif',
+                  fontFamily: 'var(--font-satoshi), sans-serif',
                 }}
               >
                 The global hub for<br />
@@ -162,10 +162,10 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
               </div>
 
               <h1
-                className="text-3xl sm:text-4xl lg:text-[46px] xl:text-[50px] leading-[1.12] tracking-tight font-normal"
+                className="text-3xl sm:text-4xl lg:text-[46px] xl:text-[50px] leading-[1.12] tracking-tight font-bold"
                 style={{
                   color: '#ffffff',
-                  fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif',
+                  fontFamily: 'var(--font-satoshi), sans-serif',
                 }}
               >
                 Choose your<br />
