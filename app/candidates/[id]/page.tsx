@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 import { notFound, redirect } from 'next/navigation'
 import { getSession, canAccessCandidate } from '@/lib/auth'
-import { Envelope, Phone, MapPin, ClipboardText, FileText, ArrowSquareOut, CalendarBlank, Briefcase, SquaresFour } from '@/components/icons'
+import { Envelope, Phone, MapPin, ClipboardText, FileText, ArrowSquareOut, Age, CalendarBlank, Experience, SquaresFour } from '@/components/icons'
 
 export default async function CandidateProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -84,7 +84,7 @@ export default async function CandidateProfilePage({ params }: { params: Promise
               <div className="space-y-5">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 flex items-center">
-                    <CalendarBlank weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                    <Age weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                     Age
                   </p>
                   <p className="text-sm text-gray-950 font-bold">{candidate.age ? `${candidate.age} Years Old` : 'Not Specified'}</p>
@@ -108,7 +108,7 @@ export default async function CandidateProfilePage({ params }: { params: Promise
 
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 flex items-center">
-                    <Briefcase weight="bold" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                    <Experience weight="fill" className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
                     Experience
                   </p>
                   <p className="text-sm text-gray-950 font-bold">{candidate.yearsOfExperience || 'Not Specified'}</p>

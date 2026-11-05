@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Briefcase, CaretRight, FileText, MagnifyingGlass } from '@/components/icons'
+import { Experience, CaretRight, FileText, MagnifyingGlass } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import FileHit from '@/components/FileHit'
 
@@ -90,7 +90,7 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
             >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-700 flex items-center justify-center">
-                  <Briefcase weight="bold" className="w-5 h-5" />
+                  <Experience weight="fill" className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-950">{group.exp}</h3>

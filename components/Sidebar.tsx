@@ -6,8 +6,8 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTheme } from '@/components/ThemeProvider'
 import {
-  House, Users, Briefcase, SignOut, Key, Storefront, SquaresFour,
-  CalendarBlank, MagnifyingGlass, Buildings,
+  House, Users, Experience, SignOut, Key, Storefront, SquaresFour,
+  Age, MagnifyingGlass, Buildings,
   type Icon,
 } from '@/components/icons'
 
@@ -104,14 +104,14 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
     {
       name: 'Age',
       href: '/age',
-      icon: CalendarBlank,
+      icon: Age,
       section: 'Operations',
       subtitle: 'Filter by candidate age',
     },
     {
       name: 'Experience',
       href: '/experience',
-      icon: Briefcase,
+      icon: Experience,
       section: 'Operations',
       subtitle: 'Years of work experience',
     },

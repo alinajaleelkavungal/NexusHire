@@ -129,3 +129,126 @@ export {
 
 export type { Icon, IconProps, IconWeight } from '@phosphor-icons/react'
 export type { Icon as LucideIcon } from '@phosphor-icons/react'
+
+import * as React from 'react'
+import type { Icon, IconProps } from '@phosphor-icons/react'
+
+export const Age: Icon = React.forwardRef<SVGSVGElement, IconProps>(function Age(
+  { size = '1em', weight = 'regular', color = 'currentColor', className, mirrored, ...props },
+  ref
+) {
+  const strokeWidth = weight === 'bold' || weight === 'fill' ? 20 : weight === 'light' ? 12 : weight === 'thin' ? 8 : 16
+
+  return (
+    <svg
+      ref={ref}
+      viewBox="0 0 256 256"
+      width={size}
+      height={size}
+      fill="none"
+      stroke={color}
+      className={className}
+      transform={mirrored ? 'scale(-1, 1)' : undefined}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {/* Adult */}
+      <circle cx="191" cy="49" r="21" fill={color} stroke="none" />
+      <rect
+        x="152"
+        y="88"
+        width="78"
+        height="87"
+        rx="32"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill={weight === 'fill' ? color : 'none'}
+      />
+      <line x1="173" y1="176" x2="173" y2="231" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <line x1="210" y1="176" x2="210" y2="231" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+
+      {/* Youth */}
+      <circle cx="127" cy="82" r="21" fill={color} stroke="none" />
+      <path
+        d="M 132 114 C 99 121, 95 146, 95 164 C 95 183, 113 190, 120 194 L 120 231"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+
+      {/* Child */}
+      <circle cx="67" cy="109" r="19" fill={color} stroke="none" />
+      <path
+        d="M 72 141 C 40 148, 35 171, 35 185 C 35 199, 51 203, 58 208 L 58 231"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  )
+}) as unknown as Icon
+
+export const AgeIcon = Age
+
+export const Experience: Icon = React.forwardRef<SVGSVGElement, IconProps>(function Experience(
+  { size = '1em', weight = 'regular', color = 'currentColor', className, mirrored, ...props },
+  ref
+) {
+  const strokeWidth = weight === 'bold' || weight === 'fill' ? 18 : weight === 'light' ? 12 : weight === 'thin' ? 8 : 16
+
+  return (
+    <svg
+      ref={ref}
+      viewBox="0 0 256 256"
+      width={size}
+      height={size}
+      fill="none"
+      stroke={color}
+      className={className}
+      transform={mirrored ? 'scale(-1, 1)' : undefined}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {/* 3 Stars above candidate head (Experience rating) */}
+      {/* Center Top Star */}
+      <path
+        d="M 128 31 L 135.1 49.3 L 154.6 50.3 L 139.4 62.6 L 144.5 81.4 L 128 70.8 L 111.5 81.4 L 116.6 62.6 L 101.4 50.3 L 120.9 49.3 Z"
+        fill={color}
+        stroke="none"
+      />
+      {/* Left Star */}
+      <path
+        d="M 58.5 62.5 L 65.6 80.8 L 85.1 81.8 L 69.9 94.1 L 75 112.9 L 58.5 102.3 L 42 112.9 L 47.1 94.1 L 31.9 81.8 L 51.4 80.8 Z"
+        fill={color}
+        stroke="none"
+      />
+      {/* Right Star */}
+      <path
+        d="M 197.5 62.5 L 204.6 80.8 L 224.1 81.8 L 208.9 94.1 L 214 112.9 L 197.5 102.3 L 181 112.9 L 186.1 94.1 L 170.9 81.8 L 190.4 80.8 Z"
+        fill={color}
+        stroke="none"
+      />
+
+      {/* Candidate Head */}
+      <circle cx="128" cy="126" r="30" fill={color} stroke="none" />
+
+      {/* Candidate Shoulders / Bust */}
+      <path
+        d="M 128 170 C 104 170 80 187 80 213 C 80 220.5 84.5 224 91 224 L 165 224 C 171.5 224 176 220.5 176 213 C 176 187 152 170 128 170 Z"
+        fill={weight === 'fill' ? color : 'none'}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}) as unknown as Icon
+
+export const ExperienceIcon = Experience

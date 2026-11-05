@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { CalendarBlank, CaretRight, FileText, MagnifyingGlass } from '@/components/icons'
+import { Age, CaretRight, FileText, MagnifyingGlass } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import FileHit from '@/components/FileHit'
 
@@ -100,7 +100,7 @@ export default function AgeGroupList({ initialCandidates, initialQuery = '' }: {
             >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                  <CalendarBlank weight="bold" className="w-5 h-5" />
+                  <Age weight="bold" className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-950">{group.label}</h3>
