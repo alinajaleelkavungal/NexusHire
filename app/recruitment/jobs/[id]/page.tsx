@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { CircleNotch, ArrowLeft, Buildings, MapPin, Briefcase, CaretDown, CaretUp, UserCircle, Star, WarningCircle, CheckCircle, XCircle } from '@/components/icons'
+import { CircleNotch, ArrowLeft, Buildings, MapPin, Jobs, CaretDown, CaretUp, UserCircle, Star, WarningCircle, CheckCircle, XCircle } from '@/components/icons'
 
 export default function JobMatchDashboard() {
   const params = useParams()
@@ -95,7 +95,7 @@ export default function JobMatchDashboard() {
               )}
               {job.employmentType && (
                 <div className="flex items-center text-gray-700 text-sm font-medium">
-                  <Briefcase weight="bold" className="w-4 h-4 mr-2 text-gray-500" /> {job.employmentType}
+                  <Jobs weight="bold" className="w-4 h-4 mr-2 text-gray-500" /> {job.employmentType}
                 </div>
               )}
             </div>

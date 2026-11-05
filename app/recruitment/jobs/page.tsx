@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Briefcase, MapPin, CircleNotch, FileText, CaretRight, X } from '@/components/icons'
+import { Plus, Jobs, MapPin, CircleNotch, FileText, CaretRight, X } from '@/components/icons'
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<any[]>([])
@@ -87,7 +87,7 @@ export default function JobsPage() {
                 <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group">
                   <div className="flex justify-between items-start mb-4">
                     <div className="p-3 bg-blue-50 text-blue-700 rounded-xl">
-                      <Briefcase weight="bold" className="w-6 h-6" />
+                      <Jobs weight="bold" className="w-6 h-6" />
                     </div>
                     <span className="text-xs font-semibold text-gray-700 bg-gray-100 border border-gray-200 px-2 py-1 rounded-md">
                       {new Date(job.createdAt).toLocaleDateString()}

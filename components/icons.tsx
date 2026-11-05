@@ -252,3 +252,103 @@ export const Experience: Icon = React.forwardRef<SVGSVGElement, IconProps>(funct
 }) as unknown as Icon
 
 export const ExperienceIcon = Experience
+
+export const Jobs: Icon = React.forwardRef<SVGSVGElement, IconProps>(function Jobs(
+  { size = '1em', weight = 'regular', color = 'currentColor', className, mirrored, ...props },
+  ref
+) {
+  const strokeWidth = weight === 'bold' || weight === 'fill' ? 18 : weight === 'light' ? 12 : weight === 'thin' ? 8 : 16
+
+  if (weight === 'fill') {
+    return (
+      <svg
+        ref={ref}
+        viewBox="0 0 256 256"
+        width={size}
+        height={size}
+        fill={color}
+        stroke={color}
+        className={className}
+        transform={mirrored ? 'scale(-1, 1)' : undefined}
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        {/* Handle */}
+        <path
+          d="M 94 68 C 94 40 108 30 128 30 C 148 30 162 40 162 68"
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Top Half / Flap */}
+        <path
+          d="M 32 104 C 32 82 46 68 68 68 L 188 68 C 210 68 224 82 224 104 L 224 128 L 32 128 Z"
+          fill={color}
+          stroke="none"
+        />
+        {/* Bottom Compartment with Center Clasp */}
+        <path
+          d="M 32 144 L 118 144 L 118 162 C 118 167 122 170 128 170 C 134 170 138 167 138 162 L 138 144 L 224 144 L 224 188 C 224 210 210 224 188 224 L 68 224 C 46 224 32 210 32 188 Z"
+          fill={color}
+          stroke="none"
+        />
+      </svg>
+    )
+  }
+
+  return (
+    <svg
+      ref={ref}
+      viewBox="0 0 256 256"
+      width={size}
+      height={size}
+      fill="none"
+      stroke={color}
+      className={className}
+      transform={mirrored ? 'scale(-1, 1)' : undefined}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {/* Handle */}
+      <path
+        d="M 94 68 C 94 40 108 30 128 30 C 148 30 162 40 162 68"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Bag Body */}
+      <rect
+        x="32"
+        y="68"
+        width="192"
+        height="156"
+        rx="36"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Divider */}
+      <line
+        x1="32"
+        y1="136"
+        x2="224"
+        y2="136"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      {/* Center Latch */}
+      <line
+        x1="128"
+        y1="136"
+        x2="128"
+        y2="154"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}) as unknown as Icon
+
+export const JobsIcon = Jobs

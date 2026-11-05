@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useTheme } from '@/components/ThemeProvider'
 import {
   House, Users, Experience, SignOut, Key, Storefront, SquaresFour,
-  Age, MagnifyingGlass, Buildings,
+  Age, MagnifyingGlass, Jobs,
   type Icon,
 } from '@/components/icons'
 
@@ -118,7 +118,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
     {
       name: 'Jobs',
       href: '/recruitment/jobs',
-      icon: Buildings,
+      icon: Jobs,
       section: 'Operations',
       subtitle: 'Active vacancies & postings',
     },
