@@ -50,31 +50,27 @@ export default async function HomePage() {
 
   const stats = [
     {
-      label: 'Total CVs',
+      label: 'TOTAL CVS',
       value: candidates.length,
-      icon: Users,
-      palette: { bg: 'bg-[#f5f3f1]', text: 'text-[#24211f]', border: 'border-[#e8e4e0]' },
+      colorClass: 'text-[#191614] dark:text-[#f3eee8]',
       subtitle: 'Candidate profiles'
     },
     {
-      label: 'Added this week',
+      label: 'ADDED THIS WEEK',
       value: candidates.filter(c => c.createdAt.getTime() >= weekAgo).length,
-      icon: CalendarBlank,
-      palette: { bg: 'bg-[#fdf3f0]', text: 'text-[#e85d3f]', border: 'border-[#fbe4de]' },
+      colorClass: 'text-[#e85d3f]',
       subtitle: 'New resumes'
     },
     {
-      label: 'In interviews',
+      label: 'IN INTERVIEWS',
       value: candidates.filter(c => stageOf(c).includes('Interview')).length,
-      icon: ChatText,
-      palette: { bg: 'bg-[#fefcf3]', text: 'text-[#b58933]', border: 'border-[#fbedb8]' },
+      colorClass: 'text-[#191614] dark:text-[#f3eee8]',
       subtitle: 'Active rounds'
     },
     {
-      label: 'Selected',
+      label: 'SELECTED',
       value: countStage('Selected'),
-      icon: CheckCircle,
-      palette: { bg: 'bg-[#f3f6f1]', text: 'text-[#467335]', border: 'border-[#e2ebdc]' },
+      colorClass: 'text-[#191614] dark:text-[#f3eee8]',
       subtitle: 'Final placement'
     },
   ]
@@ -94,63 +90,52 @@ export default async function HomePage() {
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 select-none">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 select-none">
       {/* Header Row */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="mb-1.5">
-            <span className="text-xs font-bold tracking-tight text-[#e85d3f]">
-              The Global Hub for Cross-Border Manpower
+          <div className="mb-1">
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+              THE GLOBAL HUB FOR CROSS-BORDER MANPOWER
             </span>
           </div>
           <h1
-            className="text-3xl font-black text-[#24211f] tracking-tight font-sans"
+            className="text-4xl sm:text-5xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1.5 mb-2 font-sans"
             style={{ fontFamily: 'var(--font-satoshi), sans-serif' }}
           >
-            {greeting}, {session.name}
+            {greeting}, {session.name}.
           </h1>
-          <p className="text-sm font-medium text-[#7e715f] mt-1">
+          <p className="text-sm font-medium text-[#6b6257] dark:text-[#a89c8e]">
             {isAdmin
-              ? "Here's the centralized recruitment overview across all branches."
+              ? "Recruitment overview across all branches."
               : "Here's an overview of the CVs your branch has uploaded."}
           </p>
         </div>
 
         <Link
           href="/candidates"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#24211f] dark:bg-[#e85d3f] hover:bg-black dark:hover:bg-[#f0684a] text-white text-xs font-semibold rounded-full shadow-sm hover:shadow-md transition-all active:scale-98"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#181513] hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-98"
         >
           <span>View candidates</span>
           <ArrowRight weight="bold" className="w-3.5 h-3.5" />
         </Link>
       </div>
 
-      {/* Modern Stats Cards (matching Vertix StatsCard snippet) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map(s => {
-          const IconComponent = s.icon
-          return (
-            <div
-              key={s.label}
-              className="vertix-card rounded-2xl p-5 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#7e715f] dark:text-[#a89c8e]">{s.label}</span>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${s.palette.bg} ${s.palette.text} border ${s.palette.border}`}>
-                  <IconComponent weight="bold" className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-3xl font-black text-[#24211f] dark:text-[#f3eee8] tabular-nums">
-                  {s.value}
-                </div>
-                <div className="text-[11px] font-semibold text-[#a79a87] dark:text-[#73675a] mt-0.5">
-                  {s.subtitle}
-                </div>
-              </div>
+      {/* Modernist Stats Bar (Architectural 4-column divided grid) */}
+      <div className="border-t border-b border-[#c8c0af] dark:border-[#3d3329] grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#c8c0af] dark:divide-[#3d3329]">
+        {stats.map(s => (
+          <div key={s.label} className="py-5 px-4 sm:px-6 flex flex-col justify-between">
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">
+              {s.label}
+            </span>
+            <div className={`text-4xl sm:text-5xl font-black leading-none my-3 tabular-nums font-sans ${s.colorClass}`}>
+              {s.value}
             </div>
-          )
-        })}
+            <span className="text-xs text-[#7a7062] dark:text-[#8a7f70] font-medium">
+              {s.subtitle}
+            </span>
+          </div>
+        ))}
       </div>
 
       {/* Vacancy Board */}

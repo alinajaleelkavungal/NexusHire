@@ -158,76 +158,73 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
   return (
     <section aria-label="Vacancies" className="space-y-4">
       {/* Top Filter & Search Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
         {/* Tabs */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-5 sm:gap-6">
           <button
             type="button"
             onClick={() => { setTab('active'); setPage(1); }}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`pb-1 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               tab === 'active'
-                ? 'bg-white border border-gray-300 shadow-2xs text-gray-900'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'border-b-2 border-[#191614] dark:border-white text-[#191614] dark:text-white'
+                : 'text-[#7a7062] dark:text-[#a89c8e] hover:text-[#191614] dark:hover:text-white font-medium'
             }`}
           >
-            Active <span className="ml-1 tabular-nums">{activeCount}</span>
+            Active <span className="tabular-nums font-bold">{activeCount}</span>
           </button>
           <button
             type="button"
             onClick={() => { setTab('closing_soon'); setPage(1); }}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`pb-1 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               tab === 'closing_soon'
-                ? 'bg-white border border-gray-300 shadow-2xs text-gray-900'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'border-b-2 border-[#191614] dark:border-white text-[#191614] dark:text-white'
+                : 'text-[#7a7062] dark:text-[#a89c8e] hover:text-[#191614] dark:hover:text-white font-medium'
             }`}
           >
-            Closing soon <span className="ml-1 tabular-nums">{closingSoonCount}</span>
+            Closing soon <span className="tabular-nums font-bold">{closingSoonCount}</span>
           </button>
           <button
             type="button"
             onClick={() => { setTab('closed'); setPage(1); }}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`pb-1 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               tab === 'closed'
-                ? 'bg-white border border-gray-300 shadow-2xs text-gray-900'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'border-b-2 border-[#191614] dark:border-white text-[#191614] dark:text-white'
+                : 'text-[#7a7062] dark:text-[#a89c8e] hover:text-[#191614] dark:hover:text-white font-medium'
             }`}
           >
-            Closed {closedCount > 0 && <span className="ml-1 tabular-nums">{closedCount}</span>}
+            Closed <span className="tabular-nums font-bold">{closedCount}</span>
           </button>
         </div>
 
         {/* Search & Actions */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 font-medium hidden sm:inline">Search</span>
-            <div className="relative">
-              <input
-                type="text"
-                value={query}
-                onChange={e => { setQuery(e.target.value); setPage(1); }}
-                placeholder="Search vacancies..."
-                className="w-48 sm:w-60 pl-8 pr-3 py-1.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-black transition-all"
-              />
-              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-[#8a7f70] absolute left-0 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={query}
+              onChange={e => { setQuery(e.target.value); setPage(1); }}
+              placeholder="Search vacancies"
+              className="w-44 sm:w-56 pl-6 pr-4 py-1 text-xs bg-transparent border-b border-[#a89f8f] dark:border-[#4a3f35] text-[#191614] dark:text-[#f3eee8] placeholder-[#8a7f70] focus:outline-none focus:border-black dark:focus:border-white transition-all rounded-none"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {isAdmin && (
             <button
               type="button"
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-lg transition-colors shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-[#191614] dark:text-white bg-white dark:bg-[#1f1a16] border border-[#191614] dark:border-[#4a3f35] hover:bg-[#191614] hover:text-white dark:hover:bg-white dark:hover:text-black rounded-sm transition-all shadow-2xs cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" /> Post vacancy
+              <span>+ Post vacancy</span>
             </button>
           )}
         </div>
@@ -235,17 +232,17 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
 
       {/* Vacancy Cards Grid */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-          <p className="text-sm font-semibold text-gray-800">No vacancies found</p>
-          <p className="text-xs text-gray-500 mt-1">
+        <div className="bg-white dark:bg-[#1f1a16] border border-[#191614] dark:border-[#4a3f35] p-12 text-center rounded-none sm:rounded-sm">
+          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">No vacancies found</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {query ? `No vacancies matched "${query}" in this category.` : 'There are currently no vacancies posted in this tab.'}
           </p>
           {isAdmin && (
             <button
               onClick={() => setShowForm(true)}
-              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-lg"
+              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-sm"
             >
-              <Plus className="w-3.5 h-3.5" /> Post a new vacancy
+              + Post a new vacancy
             </button>
           )}
         </div>
@@ -254,56 +251,54 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
           {pageVacancies.map(v => (
             <article
               key={v.id}
-              className="bg-white rounded-2xl p-5 sm:p-6 transition-all duration-200 relative flex flex-col justify-between shadow-2xs hover:shadow-md border border-gray-200 hover:border-gray-300"
+              className="bg-white dark:bg-[#1f1a16] border border-[#191614] dark:border-[#4a3f35] rounded-none sm:rounded-sm transition-all duration-200 relative flex flex-col justify-between shadow-2xs hover:shadow-md overflow-hidden"
             >
-              <div>
+              <div className="p-4 sm:p-5">
                 {/* Card Top Row: Status badge on left, Admin Edit & Delete on right */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {v.status === 'NEW' && (
-                      <span className="bg-[#facc15] text-black font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full inline-block">
+                      <span className="bg-[#c84626] text-white font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
                         NEW
                       </span>
                     )}
                     {v.status === 'CLOSING SOON' && (
-                      <span className="bg-black text-white font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full inline-block">
+                      <span className="bg-black text-white font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
                         CLOSING SOON
                       </span>
                     )}
                     {v.status === 'OPEN' && (
-                      <span className="bg-[#e7e5e4] text-[#44403c] font-bold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full inline-block">
+                      <span className="bg-[#e5e0d8] text-[#44403c] font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
                         OPEN
                       </span>
                     )}
                     {v.status === 'CLOSED' && (
-                      <span className="bg-stone-300 text-stone-700 font-bold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full inline-block">
+                      <span className="bg-stone-300 text-stone-700 font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
                         CLOSED
                       </span>
                     )}
                   </div>
 
-                  {/* Admin Management Actions (Top Right) */}
+                  {/* Admin Management Actions: Edit & Delete text links */}
                   {isAdmin && (
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                       <button
                         type="button"
                         onClick={() => setEditing(v)}
-                        className="px-2.5 py-1 text-[11px] font-semibold text-[#7e715f] hover:text-[#24211f] bg-[#f7f5f0] hover:bg-[#ece6dd] border border-[#e2dcce] rounded-full transition-all active:scale-95 flex items-center gap-1 shadow-2xs cursor-pointer"
+                        className="text-xs font-bold text-[#191614] dark:text-white underline hover:text-[#e85d3f] transition-colors cursor-pointer"
                         title="Edit vacancy"
                       >
-                        <PencilSimple className="w-3 h-3 text-[#7e715f]" />
-                        <span>Edit</span>
+                        Edit
                       </button>
 
                       <button
                         type="button"
                         disabled={deletingId === v.id}
                         onClick={() => remove(v)}
-                        className="px-2.5 py-1 text-[11px] font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100/70 border border-red-200 rounded-full transition-all active:scale-95 disabled:opacity-50 flex items-center gap-1 shadow-2xs cursor-pointer"
+                        className="text-xs font-bold text-[#c84626] underline hover:text-red-700 transition-colors cursor-pointer disabled:opacity-50"
                         title="Delete vacancy"
                       >
-                        <Trash className="w-3 h-3 text-red-500" />
-                        <span>{deletingId === v.id ? '...' : 'Delete'}</span>
+                        {deletingId === v.id ? '...' : 'Delete'}
                       </button>
                     </div>
                   )}
@@ -312,10 +307,16 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                 {/* Title and Poster Preview Row */}
                 <div className="flex items-start justify-between gap-3 mt-4 mb-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-2">
-                      {v.title}
+                    <h3 className="text-xl sm:text-2xl font-black text-[#191614] dark:text-white tracking-tight leading-tight line-clamp-2">
+                      <Link
+                        href={`/candidates?search=${encodeURIComponent(v.title)}`}
+                        className="hover:underline"
+                        title={`View candidates for ${v.title}`}
+                      >
+                        {v.title}
+                      </Link>
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-500 font-normal mt-0.5 truncate">
+                    <p className="text-xs sm:text-sm text-[#7a7062] dark:text-[#a89c8e] font-medium mt-1 truncate">
                       {v.company || 'Direct Hiring'}
                     </p>
                   </div>
@@ -326,7 +327,7 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                       type="button"
                       onClick={() => setLightbox(v)}
                       title="Click to enlarge poster"
-                      className="w-14 h-14 min-w-[56px] min-h-[56px] rounded-xl overflow-hidden bg-gray-50 border border-gray-200 cursor-zoom-in shrink-0 relative group shadow-2xs hover:border-gray-400 transition-colors"
+                      className="w-16 h-16 min-w-[64px] min-h-[64px] rounded-none overflow-hidden bg-[#f5f2eb] dark:bg-[#28211b] border border-dashed border-[#b8b0a0] cursor-zoom-in shrink-0 relative group shadow-2xs"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={v.imageUrl!} alt={`Poster for ${v.title}`} className="w-full h-full object-cover" loading="lazy" />
@@ -335,46 +336,41 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                       </span>
                     </button>
                   ) : (
-                    <div className="w-14 h-14 min-w-[56px] min-h-[56px] rounded-xl bg-[#f5f0e8] border border-[#e5dfd3] flex items-center justify-center text-[10px] sm:text-[11px] font-medium text-gray-400 shrink-0 select-none">
-                      Poster
+                    <div className="w-16 h-16 min-w-[64px] min-h-[64px] rounded-none bg-[#f5f2eb] dark:bg-[#28211b] border border-dashed border-[#b8b0a0] flex items-center justify-center text-[10px] font-mono tracking-widest text-[#9a9080] uppercase shrink-0 select-none">
+                      POSTER
                     </div>
                   )}
                 </div>
-
-                {/* Metadata Lines */}
-                <div className="mt-4 space-y-1">
-                  <p className="text-xs text-gray-700 font-normal">
-                    <strong className="font-semibold">{v.openings ? `${v.openings} openings` : '1 opening'}</strong>
-                    {' '}· Apply by {v.closingDate ? (mounted ? formatDate(v.closingDate) : v.closingDate) : 'Open'}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Posted {mounted ? formatDate(v.postedAt) : 'Recently'}
-                  </p>
-                </div>
               </div>
 
-              {/* Bottom Row: Candidate Actions (Spacious 2-column grid, never wraps) */}
-              <div className="pt-3.5 mt-4 border-t border-gray-100 grid grid-cols-2 gap-2">
-                {/* Upload CV for this Vacancy */}
-                <button
-                  type="button"
-                  onClick={() => setUploadVacancy(v)}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-[#e85d3f] hover:bg-[#d44d31] rounded-xl transition-all active:scale-98 shadow-2xs whitespace-nowrap cursor-pointer group"
-                  title={`Upload candidate CV for ${v.title}`}
-                >
-                  <UploadSimple weight="bold" className="w-3.5 h-3.5 transition-transform group-hover:-translate-y-0.5" />
-                  <span>Upload CV</span>
-                </button>
+              {/* Bottom Row: 3-column Technical Spec Table */}
+              <div className="border-t border-[#191614] dark:border-[#4a3f35] grid grid-cols-3 divide-x divide-[#191614] dark:divide-[#4a3f35] bg-[#faf8f4] dark:bg-[#1a1512]">
+                <div className="p-3">
+                  <span className="block text-[9px] sm:text-[10px] font-mono uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
+                    OPENINGS
+                  </span>
+                  <span className="block text-base sm:text-lg font-black text-[#191614] dark:text-white mt-0.5 tabular-nums font-sans">
+                    {v.openings ?? 1}
+                  </span>
+                </div>
 
-                {/* View candidates Option */}
-                <Link
-                  href={`/candidates?search=${encodeURIComponent(v.title)}`}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-[#24211f] bg-[#f7f5f0] hover:bg-[#ece6dd] border border-[#e2dcce] rounded-xl transition-all active:scale-98 shadow-2xs whitespace-nowrap group"
-                  title={`View candidates for ${v.title}`}
-                >
-                  <Users weight="bold" className="w-3.5 h-3.5 text-[#7e715f] group-hover:text-[#24211f] transition-colors" />
-                  <span>View candidates</span>
-                </Link>
+                <div className="p-3">
+                  <span className="block text-[9px] sm:text-[10px] font-mono uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
+                    APPLY BY
+                  </span>
+                  <span className="block text-xs sm:text-sm font-bold text-[#191614] dark:text-white mt-1 font-mono tabular-nums truncate">
+                    {v.closingDate ? (mounted ? formatDate(v.closingDate) : v.closingDate) : 'Open'}
+                  </span>
+                </div>
+
+                <div className="p-3">
+                  <span className="block text-[9px] sm:text-[10px] font-mono uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
+                    POSTED
+                  </span>
+                  <span className="block text-xs sm:text-sm font-medium text-[#7a7062] dark:text-[#a89c8e] mt-1 font-mono tabular-nums truncate">
+                    {mounted ? formatDate(v.postedAt) : 'Recently'}
+                  </span>
+                </div>
               </div>
             </article>
           ))}
