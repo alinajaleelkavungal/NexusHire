@@ -56,27 +56,15 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   const [isExpanded, setIsExpanded] = useState(true)
 
   useEffect(() => {
+    // Show sidebar in expanded manner across all pages by default
+    setIsExpanded(true)
     try {
-      const saved = localStorage.getItem('nexushire_sidebar_expanded')
-      // Default to expanded menu on homepage; on other routes respect user choice if saved
-      if (pathname === '/') {
-        setIsExpanded(true)
-      } else if (saved === 'false') {
-        setIsExpanded(false)
-      } else {
-        setIsExpanded(true)
-      }
+      localStorage.setItem('nexushire_sidebar_expanded', 'true')
     } catch (_) {}
   }, [pathname])
 
   const toggleExpanded = () => {
-    setIsExpanded(prev => {
-      const next = !prev
-      try {
-        localStorage.setItem('nexushire_sidebar_expanded', String(next))
-      } catch (_) {}
-      return next
-    })
+    setIsExpanded(prev => !prev)
   }
 
   const navItems: NavItem[] = [
