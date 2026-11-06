@@ -8,7 +8,7 @@ import { deleteResume, uploadPoster } from '@/services/resumeStorage'
 export async function GET() {
   const g = await guardSession()
   if (g.response) return g.response
-  return NextResponse.json({ vacancies: await listVacancies(g.session.role === 'ADMIN') })
+  return NextResponse.json({ vacancies: await listVacancies(true) })
 }
 
 // Post a new vacancy (multipart so an optional poster image can come along)

@@ -42,7 +42,7 @@ export default async function HomePage() {
   // Admin: every branch. Branch: only its own CVs.
   const candidates = await listCandidatesFor(session)
   const isAdmin = session.role === 'ADMIN'
-  const vacancies = await listVacancies(isAdmin)
+  const vacancies = await listVacancies(true)
 
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
   const stageOf = (c: any) => c.recruitmentStage || 'Applied'

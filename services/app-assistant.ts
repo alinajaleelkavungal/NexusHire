@@ -64,7 +64,7 @@ interface Ctx {
   session: Session
   isAdmin: boolean
   candidates: any[]
-  vacancies: Vacancy[] // admin: all (active + expired); branch: active only
+  vacancies: Vacancy[] // all active + closed vacancies
   branches: { name: string; loginId: string; active: boolean; cvs: number }[]
   jobTitles: string[]
 }
@@ -73,7 +73,7 @@ async function loadCtx(session: Session): Promise<Ctx> {
   const isAdmin = session.role === 'ADMIN'
   const [candidates, vacancies] = await Promise.all([
     listCandidatesWithResumesFor(session),
-    listVacancies(isAdmin),
+    listVacancies(true),
   ])
   let branches: Ctx['branches'] = []
   if (isAdmin) {

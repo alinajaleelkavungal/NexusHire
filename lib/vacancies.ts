@@ -25,8 +25,8 @@ export interface Vacancy {
 const latestOpenDate = () => new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString().slice(0, 10)
 export const isExpired = (closingDate: string | null) => !!closingDate && closingDate < latestOpenDate()
 
-/** Newest first. Expired vacancies are hidden unless `includeExpired` (admin). */
-export async function listVacancies(includeExpired: boolean): Promise<Vacancy[]> {
+/** Newest first. Expired vacancies are included when `includeExpired` is true (defaults to true). */
+export async function listVacancies(includeExpired: boolean = true): Promise<Vacancy[]> {
   const rows = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM Vacancy ORDER BY createdAt DESC`)
   return rows
     .map(r => ({
