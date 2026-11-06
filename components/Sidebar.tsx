@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTheme } from '@/components/ThemeProvider'
 import {
-  House, Users, Experience, SignOut, Key, Storefront, SquaresFour,
+  House, Users, Experience, SignOut, Key, Branches, SquaresFour,
   Age, MagnifyingGlass, Jobs,
   type Icon,
 } from '@/components/icons'
@@ -126,7 +126,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
       ? [{
           name: 'Branches',
           href: '/admin/branches',
-          icon: Storefront,
+          icon: Branches,
           section: 'Operations' as const,
           subtitle: 'Manage branch accounts',
         }]

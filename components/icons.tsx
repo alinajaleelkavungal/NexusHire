@@ -352,3 +352,110 @@ export const Jobs: Icon = React.forwardRef<SVGSVGElement, IconProps>(function Jo
 }) as unknown as Icon
 
 export const JobsIcon = Jobs
+
+export const Branches: Icon = React.forwardRef<SVGSVGElement, IconProps>(function Branches(
+  { size = '1em', weight = 'regular', color = 'currentColor', className, mirrored, ...props },
+  ref
+) {
+  const strokeWidth = weight === 'bold' || weight === 'fill' ? 18 : weight === 'light' ? 12 : weight === 'thin' ? 8 : 16
+
+  if (weight === 'fill') {
+    return (
+      <svg
+        ref={ref}
+        viewBox="0 0 256 256"
+        width={size}
+        height={size}
+        fill={color}
+        stroke={color}
+        className={className}
+        transform={mirrored ? 'scale(-1, 1)' : undefined}
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        {/* Top branch curve */}
+        <path
+          d="M 128 128 V 96 A 32 32 0 0 1 160 64 H 170"
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Bottom branch curve */}
+        <path
+          d="M 128 128 V 160 A 32 32 0 0 0 160 192 H 170"
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Main trunk */}
+        <line
+          x1="86"
+          y1="128"
+          x2="170"
+          y2="128"
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+        />
+
+        {/* Solid filled node circles */}
+        <circle cx="64" cy="128" r="28" fill={color} stroke="none" />
+        <circle cx="192" cy="64" r="28" fill={color} stroke="none" />
+        <circle cx="192" cy="128" r="28" fill={color} stroke="none" />
+        <circle cx="192" cy="192" r="28" fill={color} stroke="none" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg
+      ref={ref}
+      viewBox="0 0 256 256"
+      width={size}
+      height={size}
+      fill="none"
+      stroke={color}
+      className={className}
+      transform={mirrored ? 'scale(-1, 1)' : undefined}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {/* Top branch curve */}
+      <path
+        d="M 128 128 V 96 A 32 32 0 0 1 160 64 H 170"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Bottom branch curve */}
+      <path
+        d="M 128 128 V 160 A 32 32 0 0 0 160 192 H 170"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Main trunk */}
+      <line
+        x1="86"
+        y1="128"
+        x2="170"
+        y2="128"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+
+      {/* Hollow node rings */}
+      <circle cx="64" cy="128" r="22" strokeWidth={strokeWidth} />
+      <circle cx="192" cy="64" r="22" strokeWidth={strokeWidth} />
+      <circle cx="192" cy="128" r="22" strokeWidth={strokeWidth} />
+      <circle cx="192" cy="192" r="22" strokeWidth={strokeWidth} />
+    </svg>
+  )
+}) as unknown as Icon
+
+export const BranchesIcon = Branches

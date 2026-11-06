@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Plus, Key, Power, CircleNotch, Storefront, WarningCircle, CheckCircle } from '@/components/icons'
+import { Plus, Key, Power, CircleNotch, Branches, WarningCircle, CheckCircle } from '@/components/icons'
 
 interface Branch {
   id: string
@@ -112,7 +112,7 @@ export default function BranchesManager() {
           <div className="p-10 flex justify-center text-gray-400"><CircleNotch weight="bold" className="w-5 h-5 animate-spin" /></div>
         ) : branches.length === 0 ? (
           <div className="p-10 text-center text-gray-600 font-medium">
-            <Storefront weight="bold" className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+            <Branches weight="bold" className="w-8 h-8 mx-auto text-gray-400 mb-2" />
             No branches yet. Add your first one above.
           </div>
         ) : (
