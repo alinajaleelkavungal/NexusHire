@@ -53,14 +53,21 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname()
   const router = useRouter()
   const { isDark } = useTheme()
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('nexushire_sidebar_expanded')
-      if (saved === 'true') setIsExpanded(true)
+      // Default to expanded menu on homepage; on other routes respect user choice if saved
+      if (pathname === '/') {
+        setIsExpanded(true)
+      } else if (saved === 'false') {
+        setIsExpanded(false)
+      } else {
+        setIsExpanded(true)
+      }
     } catch (_) {}
-  }, [])
+  }, [pathname])
 
   const toggleExpanded = () => {
     setIsExpanded(prev => {
