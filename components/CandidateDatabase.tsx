@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import {
   Search, UploadCloud, ChevronRight, X, Loader2, Code, Stethoscope, Settings, Plus,
   FileText, ChevronDown, CheckCircle, AlertCircle, ArrowDownCircle, Pencil, Trash2,
@@ -90,6 +90,32 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   const [bulkStatusDropdownOpen, setBulkStatusDropdownOpen] = useState(false)
   const [bulkLoading, setBulkLoading] = useState(false)
 
+  // ── Dropdowns and Sorting state ──────────────────────────────────────────
+  const [sectorDropdownOpen, setSectorDropdownOpen] = useState(false)
+  const [branchDropdownOpen, setBranchDropdownOpen] = useState(false)
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false)
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'name'>('newest')
+
+  const sectorDropdownRef = useRef<HTMLDivElement>(null)
+  const branchDropdownRef = useRef<HTMLDivElement>(null)
+  const sortDropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sectorDropdownRef.current && !sectorDropdownRef.current.contains(e.target as Node)) {
+        setSectorDropdownOpen(false)
+      }
+      if (branchDropdownRef.current && !branchDropdownRef.current.contains(e.target as Node)) {
+        setBranchDropdownOpen(false)
+      }
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(e.target as Node)) {
+        setSortDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   // Calculate sector statistics
   const sectors = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -122,28 +148,64 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
     }))
   }, [candidates, manualSectors, savedSectors])
 
-  const filteredCandidates = candidates.filter(c => {
-    // Matches name, skills, category, sub category, company, recommended role, and saved CV file name(s)
+  const availableBranches = useMemo(() => {
+    return Array.from(new Set(candidates.map(branchOf))).filter(Boolean).sort()
+  }, [candidates])
+
+  // Candidates filtered by search, category, and branch (prior to stage filter)
+  const baseFilteredCandidates = useMemo(() => {
     const q = search.trim().toLowerCase()
     const terms = q.split(/\s+/).filter(t => t.length > 2)
-    const matchesSearch = !q || [
-      c.name, c.skills, c.sector, c.category, c.company, c.recommendedRole,
-      ...(c.resumes ?? []).map((r: any) => r.fileName)
-    ].some(v => {
-      if (!v) return false
-      const s = String(v).toLowerCase()
-      return s.includes(q) || q.includes(s) || (terms.length > 0 && terms.some(t => s.includes(t)))
+    return candidates.filter(c => {
+      const matchesSearch = !q || [
+        c.name, c.skills, c.sector, c.category, c.company, c.recommendedRole,
+        ...(c.resumes ?? []).map((r: any) => r.fileName)
+      ].some(v => {
+        if (!v) return false
+        const s = String(v).toLowerCase()
+        return s.includes(q) || q.includes(s) || (terms.length > 0 && terms.some(t => s.includes(t)))
+      })
+
+      const matchesCategory = activeCategory ? (c.sector === activeCategory || c.category === activeCategory) : true
+      const matchesBranch = branchFilter ? branchOf(c) === branchFilter : true
+      return matchesSearch && matchesCategory && matchesBranch
     })
-    
-    // Filter by activeCategory (which maps to sector now)
-    const matchesCategory = activeCategory ? (c.sector === activeCategory || c.category === activeCategory) : true
-    const matchesStage = stageFilter ? (c.recruitmentStage || 'Applied') === stageFilter : true
-    const matchesBranch = branchFilter ? branchOf(c) === branchFilter : true
-    return matchesSearch && matchesCategory && matchesStage && matchesBranch
-  })
+  }, [candidates, search, activeCategory, branchFilter])
+
+  // Dynamic counts for each stage based on current search / sector / branch
+  const stageCounts = useMemo(() => {
+    const counts: Record<string, number> = { total: baseFilteredCandidates.length }
+    STAGE_OPTIONS.forEach(stage => { counts[stage] = 0 })
+    baseFilteredCandidates.forEach(c => {
+      const stage = c.recruitmentStage || 'Applied'
+      counts[stage] = (counts[stage] || 0) + 1
+    })
+    return counts
+  }, [baseFilteredCandidates])
+
+  // Filtered by stage
+  const filteredCandidates = useMemo(() => {
+    if (!stageFilter) return baseFilteredCandidates
+    return baseFilteredCandidates.filter(c => (c.recruitmentStage || 'Applied') === stageFilter)
+  }, [baseFilteredCandidates, stageFilter])
+
+  // Sorted candidates
+  const sortedCandidates = useMemo(() => {
+    const list = [...filteredCandidates]
+    if (sortBy === 'newest') {
+      return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    }
+    if (sortBy === 'oldest') {
+      return list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    }
+    if (sortBy === 'name') {
+      return list.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    }
+    return list
+  }, [filteredCandidates, sortBy])
 
   const allFilteredSelected =
-    filteredCandidates.length > 0 && filteredCandidates.every(c => selectedIds.has(c.id))
+    sortedCandidates.length > 0 && sortedCandidates.every(c => selectedIds.has(c.id))
 
   const openUploadModal = () => {
     setIsUploadModalOpen(true)
@@ -195,14 +257,14 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
       // Deselect all filtered
       setSelectedIds(prev => {
         const next = new Set(prev)
-        filteredCandidates.forEach(c => next.delete(c.id))
+        sortedCandidates.forEach(c => next.delete(c.id))
         return next
       })
     } else {
       // Select all filtered
       setSelectedIds(prev => {
         const next = new Set(prev)
-        filteredCandidates.forEach(c => next.add(c.id))
+        sortedCandidates.forEach(c => next.add(c.id))
         return next
       })
     }
@@ -435,102 +497,227 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         <p className="text-sm text-gray-500 mt-1">Search, filter and manage every resume in one place.</p>
       </div>
 
-      {/* Top Bar */}
-      <div className="flex gap-3 items-center">
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden />
-          <input
-            type="search"
-            aria-label="Search candidates"
-            placeholder="Search by name, skill, file name or sub category"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full pl-12 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition-all [&::-webkit-search-cancel-button]:hidden"
-          />
-          {search && (
-            <button
-              onClick={() => setSearch('')}
-              aria-label="Clear search"
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 rounded-full"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-        <button
-          onClick={openUploadModal}
-          className="flex items-center px-5 py-3 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl text-white font-medium transition-colors shadow-sm whitespace-nowrap"
-        >
-          <UploadCloud className="w-5 h-5 sm:mr-2" />
-          <span className="max-sm:sr-only">Upload CV</span>
-        </button>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by sector">
-          <FilterChip active={!activeCategory} onClick={() => setActiveCategory(null)}>All sectors</FilterChip>
-          {sectors.map(s => (
-            <FilterChip
-              key={s.name}
-              active={activeCategory === s.name}
-              onClick={() => setActiveCategory(activeCategory === s.name ? null : s.name)}
-            >
-              <s.icon className="w-3.5 h-3.5" />
-              {s.name}
-              <span className="text-xs opacity-70">{s.count}</span>
-            </FilterChip>
-          ))}
-        </div>
-        {isAdmin && (
-          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by branch">
-            <FilterChip active={!branchFilter} onClick={() => setBranchFilter(null)}>All branches</FilterChip>
-            {Array.from(new Set(candidates.map(branchOf))).sort().map(branch => (
-              <FilterChip
-                key={branch}
-                active={branchFilter === branch}
-                onClick={() => setBranchFilter(branchFilter === branch ? null : branch)}
+      {/* ── Unified Filter & Search Card (Exact alignment as requested) ── */}
+      <div className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-3xl p-3.5 sm:p-4 shadow-[0_2px_12px_-2px_rgba(36,33,31,0.04)] dark:shadow-[0_2px_12px_-2px_rgba(0,0,0,0.3)] space-y-3 transition-colors">
+        
+        {/* Row 1: Search + Sector + Branch + Upload Button */}
+        <div className="flex flex-wrap lg:flex-nowrap items-center gap-2.5 sm:gap-3">
+          
+          {/* Search Input */}
+          <div className="flex-1 min-w-[260px] relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a7e70] dark:text-[#a89c8e]" aria-hidden />
+            <input
+              type="search"
+              aria-label="Search candidates"
+              placeholder="Search by name, skill, file name or sub category"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-11 pr-10 py-2.5 sm:py-3 bg-[#fbf9f5] dark:bg-[#261f1a] border border-[#eee8dd] dark:border-[#3a3028] rounded-2xl text-sm text-[#24211f] dark:text-[#f3eee8] placeholder-[#9c8e7d] dark:placeholder-[#827668] focus:outline-none focus:ring-2 focus:ring-[#1e4e2b] dark:focus:ring-[#2e7441] focus:border-transparent transition-all [&::-webkit-search-cancel-button]:hidden"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full cursor-pointer"
               >
-                {branch}
-                <span className="text-xs opacity-70">{candidates.filter(c => branchOf(c) === branch).length}</span>
-              </FilterChip>
-            ))}
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
-        )}
-        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by stage">
-          <FilterChip active={!stageFilter} onClick={() => setStageFilter(null)}>Any stage</FilterChip>
-          {STAGE_OPTIONS.map(stage => (
-            <FilterChip
-              key={stage}
-              active={stageFilter === stage}
-              onClick={() => setStageFilter(stageFilter === stage ? null : stage)}
+
+          {/* Sector Dropdown */}
+          <div className="relative shrink-0" ref={sectorDropdownRef}>
+            <button
+              onClick={() => { setSectorDropdownOpen(p => !p); setBranchDropdownOpen(false) }}
+              className="bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-[#342e29] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf7f2] dark:hover:bg-[#2a221b] transition-colors cursor-pointer shadow-2xs"
             >
-              {stage}
-            </FilterChip>
-          ))}
+              <span className="truncate max-w-[130px]">Sector: {activeCategory || 'All'}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-[#8a7e70]" />
+            </button>
+
+            {sectorDropdownOpen && (
+              <div className="absolute right-0 sm:left-0 top-full mt-1.5 w-56 max-h-72 overflow-y-auto bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-2xl shadow-xl p-1.5 z-40">
+                <button
+                  onClick={() => { setActiveCategory(null); setSectorDropdownOpen(false) }}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
+                    !activeCategory ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                  }`}
+                >
+                  <span>All sectors</span>
+                  <span className="text-[11px] opacity-60">{candidates.length}</span>
+                </button>
+                {sectors.map(s => (
+                  <button
+                    key={s.name}
+                    onClick={() => { setActiveCategory(activeCategory === s.name ? null : s.name); setSectorDropdownOpen(false) }}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
+                      activeCategory === s.name ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                    }`}
+                  >
+                    <span className="truncate max-w-[150px]">{s.name}</span>
+                    <span className="text-[11px] opacity-60">{s.count}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Branch Dropdown */}
+          <div className="relative shrink-0" ref={branchDropdownRef}>
+            <button
+              onClick={() => { setBranchDropdownOpen(p => !p); setSectorDropdownOpen(false) }}
+              className="bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-[#342e29] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf7f2] dark:hover:bg-[#2a221b] transition-colors cursor-pointer shadow-2xs"
+            >
+              <span className="truncate max-w-[130px]">Branch: {branchFilter || 'All'}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-[#8a7e70]" />
+            </button>
+
+            {branchDropdownOpen && (
+              <div className="absolute right-0 top-full mt-1.5 w-52 max-h-72 overflow-y-auto bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-2xl shadow-xl p-1.5 z-40">
+                <button
+                  onClick={() => { setBranchFilter(null); setBranchDropdownOpen(false) }}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
+                    !branchFilter ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                  }`}
+                >
+                  <span>All branches</span>
+                  <span className="text-[11px] opacity-60">{candidates.length}</span>
+                </button>
+                {availableBranches.map(branch => (
+                  <button
+                    key={branch}
+                    onClick={() => { setBranchFilter(branchFilter === branch ? null : branch); setBranchDropdownOpen(false) }}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
+                      branchFilter === branch ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                    }`}
+                  >
+                    <span className="truncate max-w-[140px]">{branch}</span>
+                    <span className="text-[11px] opacity-60">
+                      {candidates.filter(c => branchOf(c) === branch).length}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Upload Button (Kept prominent as requested) */}
+          <button
+            onClick={openUploadModal}
+            className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-[#1e4e2b] hover:bg-[#163b20] active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-2xl shadow-sm hover:shadow transition-all shrink-0 cursor-pointer"
+          >
+            <UploadCloud className="w-4 h-4" />
+            <span>Upload CV</span>
+          </button>
+        </div>
+
+        {/* Row 2: Stages Row (Horizontally scrollable with count badges) */}
+        <div className="relative w-full overflow-x-auto pb-1.5 scroll-smooth [scrollbar-width:thin] [scrollbar-color:#c4b8aa_transparent]">
+          <div className="flex items-center gap-2 whitespace-nowrap min-w-max py-0.5">
+            {/* Any stage */}
+            <button
+              onClick={() => setStageFilter(null)}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                !stageFilter
+                  ? 'bg-[#1e4e2b] text-white shadow-xs'
+                  : 'bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] text-[#4a4237] dark:text-[#c4b8aa] hover:bg-[#faf7f2] dark:hover:bg-[#2a221b]'
+              }`}
+            >
+              <span>Any stage</span>
+              <span className={`text-[11px] font-bold px-1.5 py-0.2 rounded-full ${
+                !stageFilter ? 'bg-white/20 text-white' : 'text-[#8a7e70] dark:text-[#8a7e70]'
+              }`}>
+                {stageCounts.total}
+              </span>
+            </button>
+
+            {/* Stages */}
+            {STAGE_OPTIONS.map(stage => {
+              const count = stageCounts[stage] || 0
+              const active = stageFilter === stage
+              return (
+                <button
+                  key={stage}
+                  onClick={() => setStageFilter(active ? null : stage)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    active
+                      ? 'bg-[#1e4e2b] text-white shadow-xs'
+                      : 'bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] text-[#4a4237] dark:text-[#c4b8aa] hover:bg-[#faf7f2] dark:hover:bg-[#2a221b]'
+                  }`}
+                >
+                  <span>{stage}</span>
+                  <span className={`text-[11px] font-bold px-1.5 py-0.2 rounded-full ${
+                    active ? 'bg-white/20 text-white' : 'text-[#8a7e70] dark:text-[#8a7e70]'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 
-      {/* List Header */}
-      <div className="flex justify-between items-center">
+      {/* Row 3: List Header (All candidates · 2 resumes + Newest first) */}
+      <div className="flex justify-between items-center px-0.5">
         <div className="flex items-center gap-3">
           {/* Select All checkbox */}
           <button
             onClick={toggleSelectAll}
-            className="text-gray-400 hover:text-green-600 transition-colors"
+            className="text-gray-400 hover:text-[#1e4e2b] transition-colors cursor-pointer"
             aria-label={allFilteredSelected ? 'Deselect all' : 'Select all'}
             title={allFilteredSelected ? 'Deselect all' : 'Select all'}
           >
             {allFilteredSelected ? (
-              <CheckSquare className="w-5 h-5 text-green-600" />
+              <CheckSquare className="w-5 h-5 text-[#1e4e2b]" />
             ) : (
               <Square className="w-5 h-5" />
             )}
           </button>
-          <h2 className="text-base font-semibold text-gray-900" aria-live="polite">
+          <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100" aria-live="polite">
             {activeCategory || 'All candidates'}
-            <span className="font-normal text-gray-500"> · {filteredCandidates.length} {filteredCandidates.length === 1 ? 'resume' : 'resumes'}</span>
+            <span className="font-normal text-gray-500 dark:text-gray-400"> · {sortedCandidates.length} {sortedCandidates.length === 1 ? 'resume' : 'resumes'}</span>
           </h2>
+        </div>
+
+        {/* Sort By Dropdown (Newest first) */}
+        <div className="relative" ref={sortDropdownRef}>
+          <button
+            onClick={() => setSortDropdownOpen(prev => !prev)}
+            className="bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] rounded-xl px-3.5 py-1.5 text-xs font-semibold text-[#342e29] dark:text-[#f3eee8] flex items-center gap-2 hover:bg-[#faf7f2] dark:hover:bg-[#2a221b] transition-colors cursor-pointer shadow-2xs"
+          >
+            <span>{sortBy === 'newest' ? 'Newest first' : sortBy === 'oldest' ? 'Oldest first' : 'Name (A-Z)'}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#8a7e70]" />
+          </button>
+
+          {sortDropdownOpen && (
+            <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-xl shadow-lg p-1 z-30">
+              <button
+                onClick={() => { setSortBy('newest'); setSortDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
+                  sortBy === 'newest' ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                }`}
+              >
+                Newest first
+              </button>
+              <button
+                onClick={() => { setSortBy('oldest'); setSortDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
+                  sortBy === 'oldest' ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                }`}
+              >
+                Oldest first
+              </button>
+              <button
+                onClick={() => { setSortBy('name'); setSortDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
+                  sortBy === 'name' ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                }`}
+              >
+                Name (A-Z)
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -588,7 +775,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
 
       {/* Candidate List */}
       <div className="flex flex-col gap-3 pb-20">
-        {filteredCandidates.map((candidate) => {
+        {sortedCandidates.map((candidate) => {
           const date = new Date(candidate.createdAt)
           const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true })}`
           const isSelected = selectedIds.has(candidate.id)
@@ -722,7 +909,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           )
         })}
 
-        {filteredCandidates.length === 0 && (
+        {sortedCandidates.length === 0 && (
           <div className="flex flex-col items-center text-center py-16 px-6 border border-dashed border-gray-300 rounded-xl bg-white">
             <Search className="w-10 h-10 text-gray-300 mb-3" aria-hidden />
             <p className="font-medium text-gray-900">No candidates found</p>
