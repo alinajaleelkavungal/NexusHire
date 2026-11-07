@@ -19,20 +19,22 @@ interface CandidateDatabaseProps {
   isAdmin?: boolean
 }
 
-function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-pressed={active}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-        active
-          ? 'bg-green-600 border-green-600 text-white shadow-sm'
-          : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-      }`}
-    >
-      {children}
-    </button>
-  )
+const AVATAR_PALETTES = [
+  { bg: 'bg-[#fdf3f0] dark:bg-[#2b1712]', text: 'text-[#e85d3f]', border: 'border-[#fbe4de] dark:border-[#4a241b]' },
+  { bg: 'bg-[#fefcf3] dark:bg-[#2b2512]', text: 'text-[#b58933]', border: 'border-[#fbedb8] dark:border-[#4a3e1b]' },
+  { bg: 'bg-[#f5f3f1] dark:bg-[#221e1b]', text: 'text-[#24211f] dark:text-[#f3eee8]', border: 'border-[#e8e4e0] dark:border-[#3a3430]' },
+  { bg: 'bg-[#fdf6f0] dark:bg-[#2b1b12]', text: 'text-[#c85a32]', border: 'border-[#fce9dd] dark:border-[#4a2c1b]' },
+  { bg: 'bg-[#f3f6f1] dark:bg-[#172514]', text: 'text-[#467335]', border: 'border-[#e2ebdc] dark:border-[#243d20]' },
+  { bg: 'bg-[#f4f6fa] dark:bg-[#15202b]', text: 'text-[#225178]', border: 'border-[#dde7f1] dark:border-[#1e3447]' },
+]
+
+function getAvatarPalette(id: string) {
+  let hash = 0
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash << 5) - hash + id.charCodeAt(i)
+    hash |= 0
+  }
+  return AVATAR_PALETTES[Math.abs(hash) % AVATAR_PALETTES.length]
 }
 
 // Keep in sync with STAGES in app/board/page.tsx
@@ -216,12 +218,13 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
   }
 
   const getStatusStyle = (status: string) => {
-    if (status?.toLowerCase() === 'rejected') return 'bg-red-100 text-red-700'
-    if (status?.toLowerCase().includes('interview')) return 'bg-blue-100 text-blue-700'
-    if (status?.toLowerCase() === 'selected') return 'bg-emerald-100 text-emerald-700'
-    if (status?.toLowerCase() === 'shortlisted') return 'bg-purple-100 text-purple-700'
-    if (status?.toLowerCase() === 'screening') return 'bg-yellow-100 text-yellow-700'
-    return 'bg-gray-100 text-gray-700'
+    const s = status?.toLowerCase() || ''
+    if (s === 'rejected') return 'border-[#e0b4b4] dark:border-[#522525] bg-[#fbf2f2] dark:bg-[#2a1616] text-[#aa2c1e] dark:text-[#f87171]'
+    if (s.includes('interview')) return 'border-[#d6cba8] dark:border-[#4d4220] bg-[#fdfaf0] dark:bg-[#27210e] text-[#9c7816] dark:text-[#facc15]'
+    if (s === 'selected') return 'border-[#c4dec4] dark:border-[#224422] bg-[#f2f8f2] dark:bg-[#142614] text-[#22632e] dark:text-[#4ade80]'
+    if (s === 'shortlisted') return 'border-[#dcd0f0] dark:border-[#3b2d55] bg-[#f8f5fd] dark:bg-[#201730] text-[#7144b8] dark:text-[#c084fc]'
+    if (s === 'screening') return 'border-[#e6d8c3] dark:border-[#4d3a1f] bg-[#fdf9f3] dark:bg-[#291e10] text-[#ad6800] dark:text-[#fbbf24]'
+    return 'border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#5c5347] dark:text-[#d4c9bd]'
   }
 
   const handleStageChange = async (candidateId: string, newStage: string) => {
@@ -489,38 +492,52 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         }} 
         candidate={editingCandidate}
       />
-      <div className="p-4 sm:p-8 max-w-6xl mx-auto flex flex-col gap-6 min-h-screen">
+      <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 min-h-screen select-none">
 
-      {/* Page title */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Candidates</h1>
-        <p className="text-sm text-gray-500 mt-1">Search, filter and manage every resume in one place.</p>
+      {/* Page Title & Kicker */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div className="mb-1">
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+              MANPOWER DATABASE · RESUME MANAGEMENT
+            </span>
+          </div>
+          <h1
+            className="text-3xl sm:text-4xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1 mb-2 font-sans"
+            style={{ fontFamily: 'var(--font-satoshi), sans-serif' }}
+          >
+            Candidates
+          </h1>
+          <p className="text-sm font-medium text-[#6b6257] dark:text-[#a89c8e]">
+            Search, filter and manage every resume across branches in one place.
+          </p>
+        </div>
       </div>
 
-      {/* ── Unified Filter & Search Card (Exact alignment as requested) ── */}
-      <div className="bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-3xl p-3.5 sm:p-4 shadow-[0_2px_12px_-2px_rgba(36,33,31,0.04)] dark:shadow-[0_2px_12px_-2px_rgba(0,0,0,0.3)] space-y-3 transition-colors">
+      {/* ── Modernist Filter & Search Panel ── */}
+      <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-4 sm:p-5 space-y-3.5 transition-colors">
         
         {/* Row 1: Search + Sector + Branch + Upload Button */}
         <div className="flex flex-wrap lg:flex-nowrap items-center gap-2.5 sm:gap-3">
           
           {/* Search Input */}
           <div className="flex-1 min-w-[260px] relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a7e70] dark:text-[#a89c8e]" aria-hidden />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a7f70] dark:text-[#a89c8e]" aria-hidden />
             <input
               type="search"
               aria-label="Search candidates"
               placeholder="Search by name, skill, file name or sub category"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-11 pr-10 py-2.5 sm:py-3 bg-[#fbf9f5] dark:bg-[#261f1a] border border-[#eee8dd] dark:border-[#3a3028] rounded-2xl text-sm text-[#24211f] dark:text-[#f3eee8] placeholder-[#9c8e7d] dark:placeholder-[#827668] focus:outline-none focus:ring-2 focus:ring-[#1e4e2b] dark:focus:ring-[#2e7441] focus:border-transparent transition-all [&::-webkit-search-cancel-button]:hidden"
+              className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm bg-transparent dark:bg-[#1a1410] border border-[#c8c0af] dark:border-[#3a3028] text-[#191614] dark:text-[#f3eee8] placeholder-[#8a7f70] dark:placeholder-[#6b6055] rounded-sm focus:outline-none focus:border-[#191614] dark:focus:border-[#6b5e52] transition-all [&::-webkit-search-cancel-button]:hidden font-sans"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
                 aria-label="Clear search"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-[#8a7f70] hover:text-[#191614] dark:hover:text-white cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -529,33 +546,33 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <div className="relative shrink-0" ref={sectorDropdownRef}>
             <button
               onClick={() => { setSectorDropdownOpen(p => !p); setBranchDropdownOpen(false) }}
-              className="bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-[#342e29] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf7f2] dark:hover:bg-[#2a221b] transition-colors cursor-pointer shadow-2xs"
+              className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3.5 py-2 text-xs font-mono uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
             >
               <span className="truncate max-w-[130px]">Sector: {activeCategory || 'All'}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#8a7e70]" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#8a7f70]" />
             </button>
 
             {sectorDropdownOpen && (
-              <div className="absolute right-0 sm:left-0 top-full mt-1.5 w-56 max-h-72 overflow-y-auto bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-2xl shadow-xl p-1.5 z-40">
+              <div className="absolute right-0 sm:left-0 top-full mt-1.5 w-56 max-h-72 overflow-y-auto bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl p-1 z-40">
                 <button
                   onClick={() => { setActiveCategory(null); setSectorDropdownOpen(false) }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
-                    !activeCategory ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                    !activeCategory ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                   }`}
                 >
                   <span>All sectors</span>
-                  <span className="text-[11px] opacity-60">{candidates.length}</span>
+                  <span className="text-[10px] tabular-nums opacity-60">{candidates.length}</span>
                 </button>
                 {sectors.map(s => (
                   <button
                     key={s.name}
                     onClick={() => { setActiveCategory(activeCategory === s.name ? null : s.name); setSectorDropdownOpen(false) }}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
-                      activeCategory === s.name ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                      activeCategory === s.name ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                     }`}
                   >
                     <span className="truncate max-w-[150px]">{s.name}</span>
-                    <span className="text-[11px] opacity-60">{s.count}</span>
+                    <span className="text-[10px] tabular-nums opacity-60">{s.count}</span>
                   </button>
                 ))}
               </div>
@@ -566,33 +583,33 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <div className="relative shrink-0" ref={branchDropdownRef}>
             <button
               onClick={() => { setBranchDropdownOpen(p => !p); setSectorDropdownOpen(false) }}
-              className="bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] rounded-xl px-3.5 py-2.5 text-xs font-semibold text-[#342e29] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf7f2] dark:hover:bg-[#2a221b] transition-colors cursor-pointer shadow-2xs"
+              className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3.5 py-2 text-xs font-mono uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
             >
               <span className="truncate max-w-[130px]">Branch: {branchFilter || 'All'}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#8a7e70]" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#8a7f70]" />
             </button>
 
             {branchDropdownOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-52 max-h-72 overflow-y-auto bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-2xl shadow-xl p-1.5 z-40">
+              <div className="absolute right-0 top-full mt-1.5 w-52 max-h-72 overflow-y-auto bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl p-1 z-40">
                 <button
                   onClick={() => { setBranchFilter(null); setBranchDropdownOpen(false) }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
-                    !branchFilter ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                    !branchFilter ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                   }`}
                 >
                   <span>All branches</span>
-                  <span className="text-[11px] opacity-60">{candidates.length}</span>
+                  <span className="text-[10px] tabular-nums opacity-60">{candidates.length}</span>
                 </button>
                 {availableBranches.map(branch => (
                   <button
                     key={branch}
                     onClick={() => { setBranchFilter(branchFilter === branch ? null : branch); setBranchDropdownOpen(false) }}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
-                      branchFilter === branch ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                      branchFilter === branch ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                     }`}
                   >
                     <span className="truncate max-w-[140px]">{branch}</span>
-                    <span className="text-[11px] opacity-60">
+                    <span className="text-[10px] tabular-nums opacity-60">
                       {candidates.filter(c => branchOf(c) === branch).length}
                     </span>
                   </button>
@@ -601,10 +618,10 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
             )}
           </div>
 
-          {/* Upload Button (Kept prominent as requested) */}
+          {/* Upload Button */}
           <button
             onClick={openUploadModal}
-            className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-[#1e4e2b] hover:bg-[#163b20] active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-2xl shadow-sm hover:shadow transition-all shrink-0 cursor-pointer"
+            className="flex items-center gap-2 px-4 sm:px-5 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs sm:text-sm font-bold rounded-sm shadow-2xs hover:shadow transition-all shrink-0 cursor-pointer"
           >
             <UploadCloud className="w-4 h-4" />
             <span>Upload CV</span>
@@ -612,20 +629,20 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         </div>
 
         {/* Row 2: Stages Row (Horizontally scrollable with count badges) */}
-        <div className="relative w-full overflow-x-auto pb-1.5 scroll-smooth [scrollbar-width:thin] [scrollbar-color:#c4b8aa_transparent]">
-          <div className="flex items-center gap-2 whitespace-nowrap min-w-max py-0.5">
+        <div className="relative w-full overflow-x-auto pb-1 scroll-smooth [scrollbar-width:thin] [scrollbar-color:#c4b8aa_transparent]">
+          <div className="flex items-center gap-1.5 whitespace-nowrap min-w-max py-0.5">
             {/* Any stage */}
             <button
               onClick={() => setStageFilter(null)}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-mono tracking-wider uppercase transition-all cursor-pointer ${
                 !stageFilter
-                  ? 'bg-[#1e4e2b] text-white shadow-xs'
-                  : 'bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] text-[#4a4237] dark:text-[#c4b8aa] hover:bg-[#faf7f2] dark:hover:bg-[#2a221b]'
+                  ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold shadow-2xs'
+                  : 'bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] font-medium'
               }`}
             >
               <span>Any stage</span>
-              <span className={`text-[11px] font-bold px-1.5 py-0.2 rounded-full ${
-                !stageFilter ? 'bg-white/20 text-white' : 'text-[#8a7e70] dark:text-[#8a7e70]'
+              <span className={`text-[10px] font-mono tabular-nums px-1 py-0.2 ${
+                !stageFilter ? 'bg-white/20 text-white dark:bg-black/15 dark:text-[#191614]' : 'text-[#8a7f70] dark:text-[#8a7f70]'
               }`}>
                 {stageCounts.total}
               </span>
@@ -639,15 +656,15 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                 <button
                   key={stage}
                   onClick={() => setStageFilter(active ? null : stage)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-mono tracking-wider uppercase transition-all cursor-pointer ${
                     active
-                      ? 'bg-[#1e4e2b] text-white shadow-xs'
-                      : 'bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] text-[#4a4237] dark:text-[#c4b8aa] hover:bg-[#faf7f2] dark:hover:bg-[#2a221b]'
+                      ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold shadow-2xs'
+                      : 'bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] font-medium'
                   }`}
                 >
                   <span>{stage}</span>
-                  <span className={`text-[11px] font-bold px-1.5 py-0.2 rounded-full ${
-                    active ? 'bg-white/20 text-white' : 'text-[#8a7e70] dark:text-[#8a7e70]'
+                  <span className={`text-[10px] font-mono tabular-nums px-1 py-0.2 ${
+                    active ? 'bg-white/20 text-white dark:bg-black/15 dark:text-[#191614]' : 'text-[#8a7f70] dark:text-[#8a7f70]'
                   }`}>
                     {count}
                   </span>
@@ -659,24 +676,24 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
       </div>
 
       {/* Row 3: List Header (All candidates · 2 resumes + Newest first) */}
-      <div className="flex justify-between items-center px-0.5">
+      <div className="flex justify-between items-center px-1">
         <div className="flex items-center gap-3">
           {/* Select All checkbox */}
           <button
             onClick={toggleSelectAll}
-            className="text-gray-400 hover:text-[#1e4e2b] transition-colors cursor-pointer"
+            className="text-[#7a7062] hover:text-[#191614] dark:text-[#8a7f70] dark:hover:text-white transition-colors cursor-pointer"
             aria-label={allFilteredSelected ? 'Deselect all' : 'Select all'}
             title={allFilteredSelected ? 'Deselect all' : 'Select all'}
           >
             {allFilteredSelected ? (
-              <CheckSquare className="w-5 h-5 text-[#1e4e2b]" />
+              <CheckSquare className="w-4 h-4 text-[#e85d3f]" />
             ) : (
-              <Square className="w-5 h-5" />
+              <Square className="w-4 h-4" />
             )}
           </button>
-          <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100" aria-live="polite">
+          <h2 className="text-xs font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
             {activeCategory || 'All candidates'}
-            <span className="font-normal text-gray-500 dark:text-gray-400"> · {sortedCandidates.length} {sortedCandidates.length === 1 ? 'resume' : 'resumes'}</span>
+            <span className="font-normal opacity-70"> · {sortedCandidates.length} {sortedCandidates.length === 1 ? 'resume' : 'resumes'}</span>
           </h2>
         </div>
 
@@ -684,34 +701,34 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         <div className="relative" ref={sortDropdownRef}>
           <button
             onClick={() => setSortDropdownOpen(prev => !prev)}
-            className="bg-white dark:bg-[#241c17] border border-[#e2dcce] dark:border-[#352c25] rounded-xl px-3.5 py-1.5 text-xs font-semibold text-[#342e29] dark:text-[#f3eee8] flex items-center gap-2 hover:bg-[#faf7f2] dark:hover:bg-[#2a221b] transition-colors cursor-pointer shadow-2xs"
+            className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3 py-1.5 text-xs font-mono uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-2 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
           >
             <span>{sortBy === 'newest' ? 'Newest first' : sortBy === 'oldest' ? 'Oldest first' : 'Name (A-Z)'}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-[#8a7e70]" />
+            <ChevronDown className="w-3.5 h-3.5 text-[#8a7f70]" />
           </button>
 
           {sortDropdownOpen && (
-            <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#1e1814] border border-[#e2dcce] dark:border-[#352c25] rounded-xl shadow-lg p-1 z-30">
+            <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl p-1 z-30">
               <button
                 onClick={() => { setSortBy('newest'); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
-                  sortBy === 'newest' ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                className={`w-full text-left px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                  sortBy === 'newest' ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                 }`}
               >
                 Newest first
               </button>
               <button
                 onClick={() => { setSortBy('oldest'); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
-                  sortBy === 'oldest' ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                className={`w-full text-left px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                  sortBy === 'oldest' ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                 }`}
               >
                 Oldest first
               </button>
               <button
                 onClick={() => { setSortBy('name'); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
-                  sortBy === 'name' ? 'bg-[#1e4e2b]/10 text-[#1e4e2b] font-semibold dark:bg-[#1e4e2b]/20 dark:text-green-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a221b]'
+                className={`w-full text-left px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                  sortBy === 'name' ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                 }`}
               >
                 Name (A-Z)
@@ -723,8 +740,8 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
 
       {/* ── Bulk Actions Toolbar ─────────────────────────────────────────── */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg sticky top-3 z-30">
-          <span className="text-sm font-semibold bg-green-500 text-white px-2.5 py-0.5 rounded-full">
+        <div className="flex items-center gap-3 bg-[#181513] text-white border border-[#3d3329] px-4 py-2.5 rounded-sm shadow-xl sticky top-3 z-30 font-mono text-xs">
+          <span className="font-bold text-white bg-[#e85d3f] px-2 py-0.5 uppercase tracking-wider">
             {selectedIds.size} selected
           </span>
 
@@ -732,18 +749,18 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <div className="relative">
             <button
               onClick={() => setBulkStatusDropdownOpen(o => !o)}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1 rounded-sm text-xs uppercase tracking-wider transition-colors cursor-pointer"
             >
               Change Status
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
             {bulkStatusDropdownOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-gray-900 rounded-xl shadow-xl border z-50 w-44 py-1 overflow-hidden">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-[#16110d] text-[#191614] dark:text-[#f3eee8] rounded-sm shadow-xl border border-[#c8c0af] dark:border-[#3d3329] z-50 w-44 py-1 overflow-hidden font-mono text-xs">
                 {STAGE_OPTIONS.map(stage => (
                   <button
                     key={stage}
                     onClick={() => handleBulkStatusChange(stage)}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    className="w-full text-left px-3 py-1.5 uppercase hover:bg-[#faf8f5] dark:hover:bg-[#221a14] transition-colors cursor-pointer"
                   >
                     {stage}
                   </button>
@@ -756,7 +773,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <button
             onClick={handleBulkDelete}
             disabled={bulkLoading}
-            className="flex items-center gap-1.5 bg-red-500/90 hover:bg-red-500 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-60"
+            className="flex items-center gap-1.5 bg-[#aa2c1e] hover:bg-red-700 px-3 py-1 rounded-sm text-xs uppercase tracking-wider transition-colors disabled:opacity-60 cursor-pointer"
           >
             {bulkLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
             Delete Selected
@@ -765,7 +782,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           {/* Clear */}
           <button
             onClick={clearSelection}
-            className="ml-auto text-gray-400 hover:text-white transition-colors p-1 rounded"
+            className="ml-auto text-gray-400 hover:text-white transition-colors p-1 rounded-sm cursor-pointer"
             title="Clear selection"
           >
             <X className="w-4 h-4" />
@@ -773,22 +790,23 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         </div>
       )}
 
-      {/* Candidate List */}
-      <div className="flex flex-col gap-3 pb-20">
+      {/* Candidate List - Architectural Divided Grid */}
+      <div className="border border-[#c8c0af] dark:border-[#3d3329] divide-y divide-[#c8c0af] dark:divide-[#3d3329] bg-white dark:bg-[#16110d]">
         {sortedCandidates.map((candidate) => {
           const date = new Date(candidate.createdAt)
           const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true })}`
           const isSelected = selectedIds.has(candidate.id)
           const searchQ = search.trim().toLowerCase()
           const fileHit = searchQ ? (candidate.resumes ?? []).find((r: any) => r.fileName?.toLowerCase().includes(searchQ)) : null
+          const palette = getAvatarPalette(candidate.id)
           
           return (
             <div 
               key={candidate.id} 
               draggable
               onDragStart={(e) => handleDragStart(e, candidate.id)}
-              className={`flex items-center justify-between max-lg:flex-wrap gap-y-3 p-4 bg-white border rounded-xl hover:shadow-md hover:border-gray-300 transition-all cursor-pointer active:cursor-grabbing group ${
-                isSelected ? 'border-green-400 bg-green-50/40 shadow-sm' : 'border-gray-200'
+              className={`flex items-center justify-between max-lg:flex-wrap gap-y-3 p-4 hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors cursor-pointer active:cursor-grabbing group ${
+                isSelected ? 'bg-[#f8f5f0] dark:bg-[#241c17]' : ''
               }`}
               onClick={() => router.push(`/candidates/${candidate.id}`)}
             >
@@ -796,26 +814,26 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <button
                 onClick={(e) => toggleSelect(e, candidate.id)}
                 aria-label={`${isSelected ? 'Deselect' : 'Select'} ${candidate.name}`}
-                className={`mr-3 flex-shrink-0 transition-colors ${
-                  isSelected ? 'text-green-600' : 'text-gray-300 hover:text-gray-500'
+                className={`mr-3 shrink-0 transition-colors ${
+                  isSelected ? 'text-[#e85d3f]' : 'text-[#a89f8f] hover:text-[#191614] dark:hover:text-white'
                 } ${selectedIds.size === 0 ? 'lg:opacity-0 lg:group-hover:opacity-100 focus-visible:opacity-100' : 'opacity-100'}`}
               >
                 {isSelected ? (
-                  <CheckSquare className="w-5 h-5" />
+                  <CheckSquare className="w-4 h-4" />
                 ) : (
-                  <Square className="w-5 h-5" />
+                  <Square className="w-4 h-4" />
                 )}
               </button>
 
               <div 
-                className="flex items-center gap-4 flex-1"
+                className="flex items-center gap-3.5 flex-1 min-w-0"
               >
-                <div className="w-12 h-12 rounded-sm flex items-center justify-center text-green-700 font-semibold bg-green-100 flex-shrink-0">
+                <div className={`w-10 h-10 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-mono border ${palette.bg} ${palette.text} ${palette.border}`}>
                   {getInitials(candidate.name)}
                 </div>
 
-                <div className="flex flex-col">
-                  <h3 className="font-semibold text-gray-900 text-base group-hover:text-green-700 transition-colors">
+                <div className="flex flex-col min-w-0">
+                  <h3 className="font-black text-sm sm:text-base text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors tracking-tight font-sans">
                     <Link
                       href={`/candidates/${candidate.id}`}
                       onClick={(e) => e.stopPropagation()}
@@ -825,28 +843,38 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                     </Link>
                   </h3>
                   {fileHit && (
-                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5 break-all">
+                    <p className="text-xs text-[#7a7062] dark:text-[#8a7f70] flex items-center gap-1 mt-0.5 break-all font-mono">
                       <FileText className="w-3 h-3 shrink-0" /> {fileHit.fileName}
                     </p>
                   )}
-                  <div className="flex items-center flex-wrap gap-2 mt-1">
+                  <div className="flex items-center flex-wrap gap-1.5 mt-1.5">
                     {candidate.sector && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600"><span className="text-gray-400">Category:</span> {candidate.sector}</span>
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                        <span className="text-[#a89c8e] dark:text-[#6b6055]">CAT:</span> {candidate.sector}
+                      </span>
                     )}
                     {candidate.category && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600"><span className="text-gray-400">Sub category:</span> {candidate.category}</span>
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                        <span className="text-[#a89c8e] dark:text-[#6b6055]">SUB:</span> {candidate.category}
+                      </span>
                     )}
                     {candidate.yearsOfExperience && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.yearsOfExperience}</span>
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                        {candidate.yearsOfExperience}
+                      </span>
                     )}
                     {candidate.age && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">{candidate.age} yrs</span>
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                        {candidate.age} yrs
+                      </span>
                     )}
                     {candidate.agent && (
-                      <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-600">Agent: {candidate.agent}</span>
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                        Agent: {candidate.agent}
+                      </span>
                     )}
                     {isAdmin && (
-                      <span className="bg-blue-50 border border-blue-200 px-2 py-0.5 rounded text-xs text-blue-700 font-medium" title="Uploaded by">
+                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#b4c8dc] dark:border-[#22394e] bg-[#f0f6fb] dark:bg-[#142332] text-[#205282] dark:text-[#7bb0e0] px-2 py-0.5 rounded-sm font-semibold" title="Uploaded by">
                         {branchOf(candidate)}
                       </span>
                     )}
@@ -856,7 +884,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                         e.stopPropagation();
                         setEditingCandidate(candidate);
                       }}
-                      className="ml-1 text-gray-400 hover:text-green-600 flex items-center gap-1 text-xs font-medium transition-colors"
+                      className="ml-1 text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors cursor-pointer"
                       aria-label={`Edit details for ${candidate.name}`}
                     >
                       <Pencil className="w-3 h-3" />
@@ -867,23 +895,23 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               </div>
               
               <div 
-                className="flex items-center gap-4 justify-end flex-1"
+                className="flex items-center gap-4 justify-end flex-wrap sm:flex-nowrap"
               >
                 {/* Date / Time */}
-                <div className="flex items-center text-gray-500 text-sm min-w-[120px]">
-                  <ArrowDownCircle className="w-4 h-4 mr-1.5 text-gray-400" />
+                <div className="flex items-center text-[#8a7f70] dark:text-[#8a7f70] font-mono text-xs tabular-nums min-w-[120px]">
+                  <ArrowDownCircle className="w-3.5 h-3.5 mr-1.5 opacity-60" />
                   {formattedDate}
                 </div>
 
                 {/* Stage tag */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center">
                   <select
                     value={candidate.recruitmentStage || 'Applied'}
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => handleStageChange(candidate.id, e.target.value)}
                     aria-label={`Status for ${candidate.name}`}
                     title="Change status"
-                    className={`pl-3 pr-7 py-1 rounded-full text-sm font-semibold border-0 cursor-pointer appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:0.7rem] bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")] ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}
+                    className={`pl-2.5 pr-6 py-1 rounded-sm text-[11px] font-mono font-bold tracking-wider uppercase border cursor-pointer appearance-none bg-no-repeat bg-[right_0.4rem_center] bg-[length:0.6rem] bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")] ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}
                   >
                     {[...new Set([candidate.recruitmentStage || 'Applied', ...STAGE_OPTIONS])].map(stage => (
                       <option key={stage} value={stage}>{stage}</option>
@@ -895,13 +923,13 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                 <div className="flex items-center gap-2">
                    <button 
                      onClick={(e) => handleDeleteCandidate(e, candidate.id)}
-                     className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                     className="p-1.5 text-[#8a7f70] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-sm transition-colors cursor-pointer"
                      title="Delete Candidate"
                      aria-label={`Delete ${candidate.name}`}
                    >
-                     <Trash2 className="w-4 h-4" />
+                     <Trash2 className="w-3.5 h-3.5" />
                    </button>
-                   <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-green-600 transition-colors" />
+                   <ChevronRight className="w-4 h-4 text-[#8a7f70] group-hover:text-[#191614] dark:group-hover:text-white transition-colors" />
                 </div>
 
               </div>
@@ -910,22 +938,22 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         })}
 
         {sortedCandidates.length === 0 && (
-          <div className="flex flex-col items-center text-center py-16 px-6 border border-dashed border-gray-300 rounded-xl bg-white">
-            <Search className="w-10 h-10 text-gray-300 mb-3" aria-hidden />
-            <p className="font-medium text-gray-900">No candidates found</p>
-            <p className="text-sm text-gray-500 mt-1 mb-4">
+          <div className="flex flex-col items-center text-center py-16 px-6 border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d]">
+            <Search className="w-8 h-8 text-[#a89c8e] mb-3" aria-hidden />
+            <p className="font-bold text-[#191614] dark:text-[#f3eee8] font-sans">No candidates found</p>
+            <p className="text-xs font-mono text-[#8a7f70] mt-1 mb-4 uppercase tracking-wider">
               {candidates.length === 0
                 ? 'Upload your first CV to get started.'
                 : 'Try a different search or clear your filters.'}
             </p>
             {candidates.length === 0 ? (
-              <button onClick={openUploadModal} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+              <button onClick={openUploadModal} className="px-4 py-2 bg-[#181513] hover:bg-black text-white text-xs font-bold rounded-sm transition-colors cursor-pointer">
                 Upload CV
               </button>
             ) : (
               <button
                 onClick={() => { setSearch(''); setActiveCategory(null); setStageFilter(null); setBranchFilter(null) }}
-                className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+                className="px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] text-xs font-mono uppercase tracking-wider font-bold rounded-sm transition-colors cursor-pointer"
               >
                 Clear filters
               </button>
