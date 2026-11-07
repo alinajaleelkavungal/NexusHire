@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { MagnifyingGlass, CircleNotch, FileText, X, ArrowRight } from '@/components/icons'
+import { MagnifyingGlass, CircleNotch, FileText, X, ArrowRight, ArrowUpRight } from '@/components/icons'
 
 interface SearchResult {
   candidateId: string
@@ -28,7 +28,7 @@ function Mark({ text, words }: { text: string; words: string[] }) {
     <>
       {text.split(re).map((part, i) =>
         valid.some(w => w.toLowerCase() === part.toLowerCase())
-          ? <mark key={i} className="bg-amber-200 text-gray-900 rounded-sm px-0.5">{part}</mark>
+          ? <mark key={i} className="bg-[#fae1cc] dark:bg-[#4a2818] text-[#191614] dark:text-[#f3eee8] rounded-xs px-1 font-bold">{part}</mark>
           : <span key={i}>{part}</span>
       )}
     </>
@@ -77,85 +77,124 @@ export default function SearchPage() {
   const words = searched.toLowerCase().split(/\s+/).filter(Boolean)
 
   const detail = (label: string, value: string | number | null, hit: boolean) =>
-    value === null || value === '' ? null : (
-      <div className="min-w-0">
-        <dt className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-gray-700">{label}</dt>
-        <dd className={`text-sm truncate ${hit ? 'text-gray-950 font-bold' : 'text-gray-800 font-medium'}`}>
+    value === null || value === '' ? (
+      <div className="p-3 sm:p-3.5 min-w-0">
+        <dt className="text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#8a7f70]">{label}</dt>
+        <dd className="text-xs text-[#a89c8e] dark:text-[#5c5347] font-mono mt-0.5">—</dd>
+      </div>
+    ) : (
+      <div className="p-3 sm:p-3.5 min-w-0">
+        <dt className="text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#a89c8e]">{label}</dt>
+        <dd className={`text-xs sm:text-[13px] truncate mt-0.5 ${hit ? 'text-[#191614] dark:text-[#f3eee8] font-black' : 'text-[#383127] dark:text-[#d4c9bd] font-medium'}`}>
           <Mark text={String(value)} words={words} />
         </dd>
       </div>
     )
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 select-none font-sans">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 min-h-screen select-none font-sans">
+      {/* Header Row */}
       <div>
-        <h1 className="text-3xl font-black text-gray-950 tracking-tight">Search</h1>
-        <p className="text-xs font-medium text-gray-500 mt-1">
-          Find a CV by anything entered when it was uploaded: name, age, category, sub category, experience, agent, or the saved file name.
+        <div className="mb-1">
+          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+            INTELLIGENT MANPOWER SEARCH
+          </span>
+        </div>
+        <h1
+          className="text-3xl sm:text-4xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1 mb-2 font-sans"
+          style={{ fontFamily: 'var(--font-satoshi), sans-serif' }}
+        >
+          Search
+        </h1>
+        <p className="text-sm font-medium text-[#6b6257] dark:text-[#a89c8e]">
+          Find any candidate by name, age, sector, experience, agent, or resume filename.
         </p>
       </div>
 
+      {/* Modernist Search Form */}
       <form onSubmit={e => { e.preventDefault(); run(query) }} className="relative">
-        <MagnifyingGlass weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden />
+        <MagnifyingGlass weight="bold" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a7f70] dark:text-[#a89c8e]" aria-hidden />
         <input
           type="search"
           autoFocus
           value={query}
           onChange={e => setQuery(e.target.value)}
           aria-label="Search CVs"
-          placeholder='e.g. "nurse 25", "software developer 3 years", an agent name or a file name...'
-          className="w-full pl-11 pr-11 py-3 bg-white border border-gray-200/90 rounded-full text-xs text-gray-950 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 shadow-2xs [&::-webkit-search-cancel-button]:hidden"
+          placeholder='e.g. "nurse 25", "software developer 3 years", agent or file name...'
+          className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm bg-white dark:bg-[#1a1410] border border-[#c8c0af] dark:border-[#3a3028] text-[#191614] dark:text-[#f3eee8] placeholder-[#8a7f70] dark:placeholder-[#6b6055] rounded-sm focus:outline-none focus:border-[#191614] dark:focus:border-[#6b5e52] transition-all shadow-2xs [&::-webkit-search-cancel-button]:hidden font-sans"
         />
         {searching ? (
-          <CircleNotch weight="bold" className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-gray-900" aria-label="Searching" />
+          <CircleNotch weight="bold" className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-[#191614] dark:text-[#f3eee8]" aria-label="Searching" />
         ) : query && (
-          <button type="button" onClick={() => setQuery('')} aria-label="Clear search" className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-950 rounded-full">
-            <X weight="bold" className="w-4 h-4" />
+          <button type="button" onClick={() => setQuery('')} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-[#8a7f70] hover:text-[#191614] dark:hover:text-white rounded-sm cursor-pointer">
+            <X weight="bold" className="w-3.5 h-3.5" />
           </button>
         )}
       </form>
 
       {error && (
-        <div role="alert" className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-2xl px-4 py-3">{error}</div>
+        <div role="alert" className="text-xs font-mono font-bold uppercase tracking-wider text-[#aa2c1e] bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] p-3 rounded-sm">{error}</div>
       )}
 
       {!query.trim() && !error && (
-        <div className="vertix-card border border-dashed border-gray-300 rounded-3xl bg-white px-6 py-12 text-center text-xs font-medium text-gray-500">
-          Type to search. Every word you enter has to match something on the CV, so adding words narrows the list.
+        <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] px-6 py-12 text-center rounded-sm">
+          <p className="text-xs font-mono uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#a89c8e] font-bold">
+            Type to search
+          </p>
+          <p className="text-xs text-[#8a7f70] dark:text-[#6b6055] mt-1.5 max-w-md mx-auto">
+            Every word you enter has to match something on the candidate profile or CV, narrowing down the results in real-time.
+          </p>
         </div>
       )}
 
       {searched && query.trim() && !error && (
-        <p className="text-xs font-bold text-gray-800" aria-live="polite">
-          {results.length} {results.length === 1 ? 'CV' : 'CVs'} found for “{searched}”
-        </p>
-      )}
-
-      {searched && !searching && !error && results.length === 0 && query.trim() === searched && (
-        <div className="vertix-card border border-gray-200/80 rounded-3xl bg-white px-6 py-12 text-center shadow-xs">
-          <p className="font-bold text-gray-950 text-sm">No CV matches “{searched}”</p>
-          <p className="text-xs font-medium text-gray-400 mt-1">Check the spelling or try fewer words.</p>
+        <div className="flex items-center justify-between px-1">
+          <p className="text-xs font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
+            {results.length} {results.length === 1 ? 'CV' : 'CVs'} found for &ldquo;{searched}&rdquo;
+          </p>
         </div>
       )}
 
-      <ul className="space-y-3 pb-16">
+      {searched && !searching && !error && results.length === 0 && query.trim() === searched && (
+        <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] px-6 py-12 text-center rounded-sm">
+          <p className="font-bold text-[#191614] dark:text-[#f3eee8] font-sans text-sm">No CV matches &ldquo;{searched}&rdquo;</p>
+          <p className="text-xs font-mono uppercase tracking-wider text-[#8a7f70] dark:text-[#6b6055] mt-1">Check spelling or try searching with fewer words.</p>
+        </div>
+      )}
+
+      {/* Results List - Architectural Divided Grid */}
+      <div className="border border-[#c8c0af] dark:border-[#3d3329] divide-y divide-[#c8c0af] dark:divide-[#3d3329] bg-white dark:bg-[#16110d]">
         {results.map(r => {
           const hit = (label: string) => r.matchedFields.includes(label)
           return (
-            <li key={r.candidateId} className="vertix-card bg-white border border-gray-200/80 rounded-2xl shadow-[0_2px_14px_-3px_rgba(0,0,0,0.04)] hover:shadow-md transition-all">
-              <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-4">
+            <div key={r.candidateId} className="hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors">
+              {/* Header row */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5">
                 <div className="min-w-0">
-                  <h2 className="text-base font-bold text-gray-950 truncate"><Mark text={r.name} words={words} /></h2>
-                  <p className="text-xs font-semibold text-gray-400 mt-0.5">
-                    {r.stage}{r.branchName && <> · <Mark text={r.branchName} words={words} /></>}
+                  <h2 className="text-base sm:text-lg font-black text-[#191614] dark:text-[#f3eee8] tracking-tight font-sans truncate">
+                    <Mark text={r.name} words={words} />
+                  </h2>
+                  <p className="text-xs font-mono uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70] mt-1 flex items-center gap-2">
+                    <span className="font-bold text-[#191614] dark:text-[#f3eee8]">{r.stage}</span>
+                    {r.branchName && (
+                      <>
+                        <span className="opacity-40">·</span>
+                        <span><Mark text={r.branchName} words={words} /></span>
+                      </>
+                    )}
                   </p>
                 </div>
-                <Link href={`/candidates/${r.candidateId}`} className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gray-950 hover:bg-black text-white text-xs font-semibold rounded-full shadow-2xs transition-colors">
-                  View profile <ArrowRight weight="bold" className="w-3.5 h-3.5" />
+                <Link
+                  href={`/candidates/${r.candidateId}`}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-mono uppercase tracking-wider font-bold rounded-sm shadow-2xs transition-all"
+                >
+                  <span>View profile</span>
+                  <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
-              <dl className="grid grid-cols-2 sm:grid-cols-5 gap-x-4 gap-y-3 px-5 py-4">
+              {/* Technical specs table */}
+              <dl className="grid grid-cols-2 sm:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-[#c8c0af]/60 dark:divide-[#3d3329]/60 border-t border-[#c8c0af] dark:border-[#3d3329]">
                 {detail('Age', r.age, hit('Age'))}
                 {detail('Category', r.sector, hit('Category'))}
                 {detail('Sub category', r.category, hit('Sub category'))}
@@ -163,8 +202,9 @@ export default function SearchPage() {
                 {detail('Agent', r.agent, hit('Agent'))}
               </dl>
 
+              {/* Matched resume files */}
               {r.files.length > 0 && (
-                <div className="border-t border-gray-200 bg-gray-50 px-5 py-3 space-y-1.5">
+                <div className="border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#15100c] px-4 sm:px-5 py-2.5 space-y-1">
                   {r.files.map(f => {
                     const isHit = r.matchedFileIds.includes(f.id)
                     return (
@@ -173,20 +213,22 @@ export default function SearchPage() {
                         href={`/api/resume/file/${f.id}`}
                         target="_blank"
                         rel="noreferrer"
-                        className={`flex items-center gap-2 text-sm rounded-sm px-2 py-1.5 -mx-2 hover:bg-green-50 ${isHit ? 'text-gray-900 font-medium' : 'text-gray-600'}`}
+                        className={`flex items-center gap-2 text-xs font-mono rounded-sm px-2 py-1.5 -mx-2 hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${
+                          isHit ? 'text-[#191614] dark:text-[#f3eee8] font-bold' : 'text-[#7a7062] dark:text-[#8a7f70]'
+                        }`}
                       >
-                        <FileText weight="bold" className="w-4 h-4 shrink-0 text-green-600" />
+                        <FileText weight="bold" className="w-3.5 h-3.5 shrink-0 text-[#e85d3f]" />
                         <span className="break-all flex-1"><Mark text={f.fileName} words={words} /></span>
-                        <span className="text-xs text-green-700 shrink-0">Open CV</span>
+                        <span className="text-[11px] uppercase tracking-wider text-[#e85d3f] font-bold shrink-0">Open CV ↗</span>
                       </a>
                     )
                   })}
                 </div>
               )}
-            </li>
+            </div>
           )
         })}
-      </ul>
+      </div>
     </div>
   )
 }
