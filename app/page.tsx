@@ -142,14 +142,14 @@ export default async function HomePage() {
       <VacancyBoard vacancies={vacancies} isAdmin={isAdmin} candidates={candidates} />
 
       {/* Recent Uploads & Pipeline Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 border border-[#c8c0af] dark:border-[#3d3329] divide-y lg:divide-y-0 lg:divide-x divide-[#c8c0af] dark:divide-[#3d3329]">
         {/* Recent Uploads */}
-        <section className="lg:col-span-3 vertix-card rounded-3xl p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1] dark:border-[#2d241d]">
-            <h2 className="text-sm font-bold text-[#24211f]">Recent candidate uploads</h2>
+        <section className="lg:col-span-3 p-5 sm:p-6">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
+            <h2 className="text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recent candidate uploads</h2>
             <Link
               href="/candidates"
-              className="text-xs font-semibold text-[#7e715f] hover:text-[#24211f] flex items-center gap-1 transition-colors"
+              className="text-[10px] font-mono tracking-[0.12em] uppercase font-bold text-[#7a7062] dark:text-[#6b5e52] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
               See all <ArrowUpRight weight="bold" className="w-3 h-3" />
             </Link>
@@ -160,28 +160,28 @@ export default async function HomePage() {
               No CVs uploaded yet. Click &quot;Upload CV&quot; to add your first candidate.
             </p>
           ) : (
-            <ul className="divide-y divide-[#f0ece1]">
+            <ul className="divide-y divide-[#e8e2d9] dark:divide-[#2d2520]">
               {recent.map(c => {
                 const palette = getAvatarPalette(c.id)
                 return (
                   <li key={c.id}>
                     <Link
                       href={`/candidates/${c.id}`}
-                      className="flex items-center gap-3.5 py-3 hover:bg-[#faf8f5] -mx-2 px-3 rounded-2xl transition-colors group"
+                      className="flex items-center gap-3.5 py-3 hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] -mx-2 px-2 transition-colors group"
                     >
-                      <span className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center font-bold text-xs border ${palette.bg} ${palette.text} ${palette.border}`}>
+                      <span className={`w-9 h-9 shrink-0 rounded-sm flex items-center justify-center font-bold text-[11px] border ${palette.bg} ${palette.text} ${palette.border}`}>
                         {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-[#24211f] truncate group-hover:text-[#e85d3f] transition-colors">
+                        <p className="text-xs font-bold text-[#191614] dark:text-[#f3eee8] truncate group-hover:text-[#e85d3f] transition-colors">
                           {c.name}
                         </p>
-                        <p className="text-[11px] font-medium text-[#7e715f] truncate mt-0.5">
+                        <p className="text-[11px] font-medium text-[#7a7062] dark:text-[#6b5e52] truncate mt-0.5">
                           {[c.sector, c.category].filter(Boolean).join(' · ') || 'No category'}
                           {isAdmin && ` · ${c.branchName || 'Unassigned'}`}
                         </p>
                       </div>
-                      <span className="text-[11px] font-semibold text-[#a79a87] shrink-0">
+                      <span className="text-[11px] font-mono text-[#a89c8e] dark:text-[#6b5e52] shrink-0 tabular-nums">
                         {c.createdAt.toLocaleDateString('default', { month: 'short', day: 'numeric' })}
                       </span>
                     </Link>
@@ -193,15 +193,15 @@ export default async function HomePage() {
         </section>
 
         {/* Pipeline Summary */}
-        <section className="lg:col-span-2 vertix-card rounded-3xl p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1] dark:border-[#2d241d]">
-            <h2 className="text-sm font-bold text-[#24211f]">Recruitment pipeline</h2>
-            <span className="text-[11px] font-semibold text-[#a79a87] dark:text-[#73675a]">
+        <section className="lg:col-span-2 p-5 sm:p-6">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
+            <h2 className="text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recruitment pipeline</h2>
+            <span className="text-[10px] font-mono tracking-[0.12em] uppercase font-bold text-[#a89c8e] dark:text-[#6b5e52] tabular-nums">
               {candidates.length} total
             </span>
           </div>
 
-          <ul className="space-y-3.5">
+          <ul className="space-y-3">
             {STAGES.map(stage => {
               const n = countStage(stage)
               const isSelected = stage === 'Selected'
@@ -212,18 +212,18 @@ export default async function HomePage() {
                 : isSelected
                 ? 'bg-[#e85d3f]'
                 : isInterview
-                ? 'bg-[#f4d06f]'
-                : 'bg-[#24211f] dark:bg-white/70'
+                ? 'bg-[#c8a84b]'
+                : 'bg-[#191614] dark:bg-[#f3eee8]'
 
               return (
                 <li key={stage}>
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="font-semibold text-[#423a30] dark:text-[#d4c9bd]">{stage}</span>
-                    <span className="font-bold text-[#24211f] dark:text-[#f3eee8] tabular-nums">{n}</span>
+                  <div className="flex justify-between text-[11px] mb-1">
+                    <span className="font-medium text-[#423a30] dark:text-[#d4c9bd]">{stage}</span>
+                    <span className="font-mono font-bold text-[#191614] dark:text-[#f3eee8] tabular-nums">{n}</span>
                   </div>
-                  <div className="h-2 bg-[#f0ece1] dark:bg-[#2d241d] overflow-hidden rounded-full">
+                  <div className="h-[3px] bg-[#e8e2d9] dark:bg-[#2d2520] overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                      className={`h-full transition-all duration-300 ${barColor}`}
                       style={{ width: `${(n / maxStage) * 100}%` }}
                     />
                   </div>
@@ -236,26 +236,26 @@ export default async function HomePage() {
 
       {/* Admin: CVs by Branch */}
       {isAdmin && byBranch.size > 0 && (
-        <section className="vertix-card rounded-3xl p-6 shadow-[0_2px_14px_-3px_rgba(36,33,31,0.04)]">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#f0ece1] dark:border-[#2d241d]">
-            <h2 className="text-sm font-bold text-[#24211f]">CVs by Branch</h2>
+        <section className="border border-[#c8c0af] dark:border-[#3d3329]">
+          <div className="flex items-center justify-between px-5 sm:px-6 py-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
+            <h2 className="text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">CVs by Branch</h2>
             <Link
               href="/admin/branches"
-              className="text-xs font-semibold text-[#7e715f] dark:text-[#a89c8e] hover:text-[#24211f] dark:hover:text-white flex items-center gap-1 transition-colors"
+              className="text-[10px] font-mono tracking-[0.12em] uppercase font-bold text-[#7a7062] dark:text-[#6b5e52] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
               Manage branches <ArrowUpRight weight="bold" className="w-3 h-3" />
             </Link>
           </div>
-          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 divide-x divide-y divide-[#c8c0af] dark:divide-[#3d3329]">
             {Array.from(byBranch.entries())
               .sort((a, b) => b[1] - a[1])
               .map(([name, n]) => (
                 <li
                   key={name}
-                  className="border border-[#e2dcce] dark:border-[#352c25] rounded-2xl p-4 bg-[#faf8f5] dark:bg-[#241c17] hover:bg-white dark:hover:bg-[#2c221c] transition-colors"
+                  className="p-4 sm:p-5 hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors"
                 >
-                  <p className="text-2xl font-black text-[#24211f] dark:text-[#f3eee8] tabular-nums">{n}</p>
-                  <p className="text-xs font-semibold text-[#423a30] dark:text-[#d4c9bd] truncate mt-0.5">{name}</p>
+                  <p className="text-2xl font-black text-[#191614] dark:text-[#f3eee8] tabular-nums font-sans">{n}</p>
+                  <p className="text-[10px] font-mono tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#6b5e52] truncate mt-1">{name}</p>
                 </li>
               ))}
           </ul>
