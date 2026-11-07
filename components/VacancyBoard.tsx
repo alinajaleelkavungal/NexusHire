@@ -199,19 +199,19 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
         {/* Search & Actions */}
         <div className="flex items-center gap-4">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#8a7f70] absolute left-0 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-[#8a7f70] dark:text-[#a89c8e] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={query}
               onChange={e => { setQuery(e.target.value); setPage(1); }}
               placeholder="Search vacancies"
-              className="w-44 sm:w-56 pl-6 pr-4 py-1 text-xs bg-transparent border-b border-[#a89f8f] dark:border-[#4a3f35] text-[#191614] dark:text-[#f3eee8] placeholder-[#8a7f70] focus:outline-none focus:border-black dark:focus:border-white transition-all rounded-none"
+              className="w-44 sm:w-56 pl-9 pr-4 py-1.5 text-xs bg-transparent dark:bg-[#1a1410] border border-[#c8c0af] dark:border-[#3a3028] text-[#191614] dark:text-[#f3eee8] placeholder-[#8a7f70] dark:placeholder-[#6b6055] focus:outline-none focus:border-[#191614] dark:focus:border-[#6b5e52] transition-all rounded-sm"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery('')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="absolute right-1 top-1/2 -translate-y-1/2 text-[#8a7f70] hover:text-[#191614] dark:hover:text-white cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
