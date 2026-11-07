@@ -258,22 +258,22 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {v.status === 'NEW' && (
-                      <span className="bg-[#c84626] text-white font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
+                      <span className="bg-[#c84626] text-white font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-jakarta">
                         NEW
                       </span>
                     )}
                     {v.status === 'CLOSING SOON' && (
-                      <span className="bg-black text-white font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
+                      <span className="bg-black text-white font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-jakarta">
                         CLOSING SOON
                       </span>
                     )}
                     {v.status === 'OPEN' && (
-                      <span className="bg-[#e5e0d8] text-[#44403c] font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
+                      <span className="bg-[#e5e0d8] text-[#44403c] font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-jakarta">
                         OPEN
                       </span>
                     )}
                     {v.status === 'CLOSED' && (
-                      <span className="bg-stone-300 text-stone-700 font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-mono">
+                      <span className="bg-stone-300 text-stone-700 font-black text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-none inline-block font-jakarta">
                         CLOSED
                       </span>
                     )}
@@ -336,7 +336,7 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                       </span>
                     </button>
                   ) : (
-                    <div className="w-16 h-16 min-w-[64px] min-h-[64px] rounded-none bg-[#f5f2eb] dark:bg-[#28211b] border border-dashed border-[#b8b0a0] flex items-center justify-center text-[10px] font-mono tracking-widest text-[#9a9080] uppercase shrink-0 select-none">
+                    <div className="w-16 h-16 min-w-[64px] min-h-[64px] rounded-none bg-[#f5f2eb] dark:bg-[#28211b] border border-dashed border-[#b8b0a0] flex items-center justify-center text-[10px] font-jakarta tracking-widest text-[#9a9080] uppercase shrink-0 select-none">
                       POSTER
                     </div>
                   )}
@@ -346,7 +346,7 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
               {/* Bottom Row: 3-column Technical Spec Table */}
               <div className="border-t border-[#191614] dark:border-[#4a3f35] grid grid-cols-3 divide-x divide-[#191614] dark:divide-[#4a3f35] bg-[#faf8f4] dark:bg-[#1a1512]">
                 <div className="p-3">
-                  <span className="block text-[9px] sm:text-[10px] font-mono uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
+                  <span className="block text-[9px] sm:text-[10px] font-jakarta uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
                     OPENINGS
                   </span>
                   <span className="block text-base sm:text-lg font-black text-[#191614] dark:text-white mt-0.5 tabular-nums font-sans">
@@ -355,19 +355,19 @@ export default function VacancyBoard({ vacancies, isAdmin = true, candidates }: 
                 </div>
 
                 <div className="p-3">
-                  <span className="block text-[9px] sm:text-[10px] font-mono uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
+                  <span className="block text-[9px] sm:text-[10px] font-jakarta uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
                     APPLY BY
                   </span>
-                  <span className="block text-xs sm:text-sm font-bold text-[#191614] dark:text-white mt-1 font-mono tabular-nums truncate">
+                  <span className="block text-xs sm:text-sm font-bold text-[#191614] dark:text-white mt-1 font-jakarta tabular-nums truncate">
                     {v.closingDate ? (mounted ? formatDate(v.closingDate) : v.closingDate) : 'Open'}
                   </span>
                 </div>
 
                 <div className="p-3">
-                  <span className="block text-[9px] sm:text-[10px] font-mono uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
+                  <span className="block text-[9px] sm:text-[10px] font-jakarta uppercase font-bold tracking-wider text-[#7a7062] dark:text-[#a89c8e]">
                     POSTED
                   </span>
-                  <span className="block text-xs sm:text-sm font-medium text-[#7a7062] dark:text-[#a89c8e] mt-1 font-mono tabular-nums truncate">
+                  <span className="block text-xs sm:text-sm font-medium text-[#7a7062] dark:text-[#a89c8e] mt-1 font-jakarta tabular-nums truncate">
                     {mounted ? formatDate(v.postedAt) : 'Recently'}
                   </span>
                 </div>

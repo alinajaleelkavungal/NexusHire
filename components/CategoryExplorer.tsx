@@ -130,11 +130,11 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-        <p className="text-xs font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
+        <p className="text-xs font-jakarta tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
           {groups.total} {groups.total === 1 ? 'CV' : 'CVs'} in {groups.list.length} {groups.list.length === 1 ? 'category' : 'categories'}
           {q && <span className="opacity-70"> · matching &ldquo;{search.trim()}&rdquo;</span>}
         </p>
-        <span className="text-[11px] font-mono text-[#8a7f70] dark:text-[#6b6055] uppercase">
+        <span className="text-[11px] font-jakarta text-[#8a7f70] dark:text-[#6b6055] uppercase">
           Hierarchical Trade Index
         </span>
       </div>
@@ -143,7 +143,7 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
         <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] px-6 py-12 text-center rounded-sm">
           <TreeStructure weight="duotone" className="w-8 h-8 text-[#a89c8e] mx-auto mb-3" aria-hidden />
           <p className="font-bold text-[#191614] dark:text-[#f3eee8] font-sans">No matching categories found</p>
-          <p className="text-xs font-mono uppercase tracking-wider text-[#8a7f70] dark:text-[#6b6055] mt-1">
+          <p className="text-xs font-jakarta uppercase tracking-wider text-[#8a7f70] dark:text-[#6b6055] mt-1">
             {entries.length === 0 ? 'Upload a CV to start populating sectors.' : 'Try a different keyword or file name.'}
           </p>
         </div>
@@ -182,12 +182,12 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
                   )}
                   <TreeStructure weight="bold" className="w-4 h-4 text-[#e85d3f] shrink-0" />
                   <div className="flex-1 min-w-0 flex items-baseline gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.14em] font-bold text-[#7a7062] dark:text-[#a89c8e]">Category</span>
+                    <span className="text-[10px] font-jakarta uppercase tracking-[0.14em] font-bold text-[#7a7062] dark:text-[#a89c8e]">Category</span>
                     <span className="font-black text-sm sm:text-base text-[#191614] dark:text-[#f3eee8] font-sans truncate">
                       <Highlight text={sector} query={q} />
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-bold border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] px-2.5 py-0.5 rounded-sm tabular-nums">
+                  <span className="text-[11px] font-jakarta font-bold border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] px-2.5 py-0.5 rounded-sm tabular-nums">
                     {count} {count === 1 ? 'CV' : 'CVs'}
                   </span>
                 </button>
@@ -219,7 +219,7 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
                 {open && (
                   <div className="border-t border-[#c8c0af] dark:border-[#3d3329]">
                     {local && shownCount === 0 && (
-                      <p className="px-5 py-6 text-center text-xs font-mono uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70]">
+                      <p className="px-5 py-6 text-center text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70]">
                         No file in {sector} matches &ldquo;{rawLocal.trim()}&rdquo;.
                       </p>
                     )}
@@ -227,11 +227,11 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
                       <div key={sub} className="border-b last:border-b-0 border-[#c8c0af] dark:border-[#3d3329]">
                         {/* Sub-category Header Bar */}
                         <div className="flex items-center gap-2 px-4 sm:px-5 py-2 bg-[#faf8f5] dark:bg-[#15100c] border-b border-[#c8c0af]/60 dark:border-[#3d3329]/60">
-                          <span className="text-[10px] font-mono uppercase tracking-[0.14em] font-bold text-[#7a7062] dark:text-[#a89c8e]">Sub category:</span>
+                          <span className="text-[10px] font-jakarta uppercase tracking-[0.14em] font-bold text-[#7a7062] dark:text-[#a89c8e]">Sub category:</span>
                           <span className="font-bold text-xs sm:text-[13px] text-[#191614] dark:text-[#f3eee8] flex-1 font-sans">
                             <Highlight text={sub} query={q} />
                           </span>
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70] tabular-nums">
+                          <span className="text-[10px] font-jakarta font-bold uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70] tabular-nums">
                             {list.length} {list.length === 1 ? 'record' : 'records'}
                           </span>
                         </div>
@@ -246,21 +246,21 @@ export default function CategoryExplorer({ candidates, isAdmin = false, initialQ
                               >
                                 <FileText weight="bold" className="w-4 h-4 text-[#e85d3f] shrink-0" />
                                 <div className="flex-1 min-w-[200px]">
-                                  <p className="text-xs sm:text-sm font-black text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors break-all font-mono">
+                                  <p className="text-xs sm:text-sm font-black text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors break-all font-jakarta">
                                     {e.fileName ? <Highlight text={e.fileName} query={hl} /> : <span className="text-[#8a7f70] font-normal italic">No file saved</span>}
                                   </p>
                                   <p className="text-xs font-semibold text-[#7a7062] dark:text-[#8a7f70] mt-0.5">
                                     <Highlight text={e.candidateName} query={hl} />
-                                    {isAdmin && e.branch && <span className="text-[#205282] dark:text-[#7bb0e0] font-mono font-bold"> · {e.branch}</span>}
+                                    {isAdmin && e.branch && <span className="text-[#205282] dark:text-[#7bb0e0] font-jakarta font-bold"> · {e.branch}</span>}
                                   </p>
                                 </div>
                                 
                                 {/* Breadcrumb spec tag */}
-                                <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                                <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
                                   {e.sector} › {e.subCategory}
                                 </span>
                                 
-                                <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#191614] dark:text-[#f3eee8]">
+                                <span className="font-jakarta text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#191614] dark:text-[#f3eee8]">
                                   {e.stage}
                                 </span>
                                 

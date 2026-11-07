@@ -125,7 +125,7 @@ export default async function HomePage() {
       <div className="border-t border-b border-[#c8c0af] dark:border-[#3d3329] grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#c8c0af] dark:divide-[#3d3329]">
         {stats.map(s => (
           <div key={s.label} className="py-3 px-3 sm:px-5 flex flex-col justify-between">
-            <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">
+            <span className="text-[9px] sm:text-[10px] font-jakarta tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">
               {s.label}
             </span>
             <div className={`text-2xl sm:text-3xl font-black leading-none my-1.5 tabular-nums font-sans ${s.colorClass}`}>
@@ -146,10 +146,10 @@ export default async function HomePage() {
         {/* Recent Uploads */}
         <section className="lg:col-span-3 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
-            <h2 className="text-xs sm:text-[13px] font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recent candidate uploads</h2>
+            <h2 className="text-xs sm:text-[13px] font-jakarta tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recent candidate uploads</h2>
             <Link
               href="/candidates"
-              className="text-xs font-mono tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
+              className="text-xs font-jakarta tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
               See all <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
             </Link>
@@ -181,7 +181,7 @@ export default async function HomePage() {
                           {isAdmin && ` · ${c.branchName || 'Unassigned'}`}
                         </p>
                       </div>
-                      <span className="text-xs font-mono text-[#8a7f70] dark:text-[#8a7f70] shrink-0 tabular-nums">
+                      <span className="text-xs font-jakarta text-[#8a7f70] dark:text-[#8a7f70] shrink-0 tabular-nums">
                         {c.createdAt.toLocaleDateString('default', { month: 'short', day: 'numeric' })}
                       </span>
                     </Link>
@@ -195,8 +195,8 @@ export default async function HomePage() {
         {/* Pipeline Summary */}
         <section className="lg:col-span-2 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
-            <h2 className="text-xs sm:text-[13px] font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recruitment pipeline</h2>
-            <span className="text-xs font-mono tracking-[0.1em] uppercase font-bold text-[#8a7f70] dark:text-[#8a7f70] tabular-nums">
+            <h2 className="text-xs sm:text-[13px] font-jakarta tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recruitment pipeline</h2>
+            <span className="text-xs font-jakarta tracking-[0.1em] uppercase font-bold text-[#8a7f70] dark:text-[#8a7f70] tabular-nums">
               {candidates.length} total
             </span>
           </div>
@@ -219,7 +219,7 @@ export default async function HomePage() {
                 <li key={stage}>
                   <div className="flex justify-between items-center text-xs sm:text-[13px] mb-1.5">
                     <span className="font-semibold text-[#383127] dark:text-[#d4c9bd]">{stage}</span>
-                    <span className="font-mono font-bold text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] tabular-nums">{n}</span>
+                    <span className="font-jakarta font-bold text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] tabular-nums">{n}</span>
                   </div>
                   <div className="h-1 bg-[#e8e2d9] dark:bg-[#2d2520] overflow-hidden">
                     <div
@@ -238,10 +238,10 @@ export default async function HomePage() {
       {isAdmin && byBranch.size > 0 && (
         <section className="border border-[#c8c0af] dark:border-[#3d3329]">
           <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 border-b border-[#c8c0af] dark:border-[#3d3329]">
-            <h2 className="text-xs sm:text-[13px] font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">CVs by Branch</h2>
+            <h2 className="text-xs sm:text-[13px] font-jakarta tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">CVs by Branch</h2>
             <Link
               href="/admin/branches"
-              className="text-xs font-mono tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
+              className="text-xs font-jakarta tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
               Manage branches <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
             </Link>
@@ -255,7 +255,7 @@ export default async function HomePage() {
                   className="p-4 sm:p-5 hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors"
                 >
                   <p className="text-2xl sm:text-3xl font-black text-[#191614] dark:text-[#f3eee8] tabular-nums font-sans">{n}</p>
-                  <p className="text-xs font-mono tracking-[0.08em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] truncate mt-1">{name}</p>
+                  <p className="text-xs font-jakarta tracking-[0.08em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] truncate mt-1">{name}</p>
                 </li>
               ))}
           </ul>

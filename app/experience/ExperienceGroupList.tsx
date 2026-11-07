@@ -95,7 +95,7 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
       {/* Header Row */}
       <div>
         <div className="mb-1">
-          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+          <span className="text-[10px] sm:text-[11px] font-jakarta tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
             MANPOWER EXPERTISE · SENIORITY BRACKETS
           </span>
         </div>
@@ -145,13 +145,13 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base font-black text-[#191614] dark:text-[#f3eee8] font-sans">{group.exp}</h3>
-                    <p className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
+                    <p className="text-[10px] sm:text-[11px] font-jakarta tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
                       {group.candidates.length} {group.candidates.length === 1 ? 'candidate' : 'candidates'}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
+                  <span className="text-[10px] sm:text-[11px] font-jakarta font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
                     {group.candidates.length}
                   </span>
                   <CaretRight weight="bold" className={`w-3.5 h-3.5 text-[#8a7f70] transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
@@ -169,19 +169,19 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                         className="flex items-center justify-between p-3 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm hover:border-[#191614] dark:hover:border-[#6b5e52] hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-all cursor-pointer group"
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-mono border ${palette.bg} ${palette.text} ${palette.border}`}>
+                          <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-jakarta border ${palette.bg} ${palette.text} ${palette.border}`}>
                             {getInitials(candidate.name)}
                           </div>
                           <div>
                             <h4 className="font-black text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors font-sans">{candidate.name}</h4>
                             <FileHit candidate={candidate} query={searchQuery} />
-                            <p className="text-[11px] font-mono text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">
+                            <p className="text-[11px] font-jakarta text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">
                               {candidate.yearsOfExperience ? `${candidate.yearsOfExperience} · ` : ''}{candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className={`px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
+                          <span className={`px-2 py-0.5 text-[10px] font-jakarta font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
                             {candidate.recruitmentStage || 'Applied'}
                           </span>
                           <ArrowUpRight weight="bold" className="w-3.5 h-3.5 text-[#8a7f70] group-hover:text-[#191614] dark:group-hover:text-white transition-colors" />
@@ -190,7 +190,7 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                     )
                   })}
                   {group.candidates.length === 0 && (
-                    <div className="text-center py-8 text-xs font-mono uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70]">
+                    <div className="text-center py-8 text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70]">
                       No candidates with this experience level yet.
                     </div>
                   )}
@@ -212,13 +212,13 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-black text-[#191614] dark:text-[#f3eee8] font-sans">Experience Not Specified</h3>
-                  <p className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
+                  <p className="text-[10px] sm:text-[11px] font-jakarta tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
                     {unassigned.length} {unassigned.length !== 1 ? 'candidates' : 'candidate'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
+                <span className="text-[10px] sm:text-[11px] font-jakarta font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
                   {unassigned.length}
                 </span>
                 <CaretRight weight="bold" className={`w-3.5 h-3.5 text-[#8a7f70] transition-transform duration-200 ${(searching || expandedExp === 'unassigned') ? 'rotate-90' : ''}`} />
@@ -236,19 +236,19 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
                       className="flex items-center justify-between p-3 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm hover:border-[#191614] dark:hover:border-[#6b5e52] hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-mono border ${palette.bg} ${palette.text} ${palette.border}`}>
+                        <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-jakarta border ${palette.bg} ${palette.text} ${palette.border}`}>
                           {getInitials(candidate.name)}
                         </div>
                         <div>
                           <h4 className="font-black text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors font-sans">{candidate.name}</h4>
                           <FileHit candidate={candidate} query={searchQuery} />
-                          <p className="text-[11px] font-mono text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">
+                          <p className="text-[11px] font-jakarta text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">
                             {candidate.sector || 'No Sector'} · {candidate.category || 'No Category'}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
+                        <span className={`px-2 py-0.5 text-[10px] font-jakarta font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
                           {candidate.recruitmentStage || 'Applied'}
                         </span>
                         <ArrowUpRight weight="bold" className="w-3.5 h-3.5 text-[#8a7f70] group-hover:text-[#191614] dark:group-hover:text-white transition-colors" />
@@ -264,7 +264,7 @@ export default function ExperienceGroupList({ initialCandidates, initialQuery = 
         {expGroups.length === 0 && unassigned.length === 0 && (
           <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] px-6 py-12 text-center rounded-sm">
             <p className="font-bold text-[#191614] dark:text-[#f3eee8] font-sans">No candidates found</p>
-            <p className="text-xs font-mono uppercase tracking-wider text-[#8a7f70] dark:text-[#6b5e52] mt-1">
+            <p className="text-xs font-jakarta uppercase tracking-wider text-[#8a7f70] dark:text-[#6b5e52] mt-1">
               Upload candidates with experience details to populate brackets.
             </p>
           </div>

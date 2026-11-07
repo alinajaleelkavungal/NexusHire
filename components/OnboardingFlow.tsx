@@ -368,7 +368,7 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
             <span className="w-3.5 sm:w-4 h-0.5 bg-[#4a3f36] rounded-full" />
           </div>
 
-          <span className="text-[11px] sm:text-xs font-mono font-medium tracking-wider text-[#a79a87] ml-1">
+          <span className="text-[11px] sm:text-xs font-jakarta font-medium tracking-wider text-[#a79a87] ml-1">
             {step === 1 ? '01 / 03' : '02 / 03'}
           </span>
         </div>

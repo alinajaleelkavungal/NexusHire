@@ -498,7 +498,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="mb-1">
-            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+            <span className="text-[10px] sm:text-[11px] font-jakarta tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
               MANPOWER DATABASE · RESUME MANAGEMENT
             </span>
           </div>
@@ -546,7 +546,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <div className="relative shrink-0" ref={sectorDropdownRef}>
             <button
               onClick={() => { setSectorDropdownOpen(p => !p); setBranchDropdownOpen(false) }}
-              className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3.5 py-2 text-xs font-mono uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
+              className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3.5 py-2 text-xs font-jakarta uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
             >
               <span className="truncate max-w-[130px]">Sector: {activeCategory || 'All'}</span>
               <ChevronDown className="w-3.5 h-3.5 text-[#8a7f70]" />
@@ -556,7 +556,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <div className="absolute right-0 sm:left-0 top-full mt-1.5 w-56 max-h-72 overflow-y-auto bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl p-1 z-40">
                 <button
                   onClick={() => { setActiveCategory(null); setSectorDropdownOpen(false) }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                     !activeCategory ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                   }`}
                 >
@@ -567,7 +567,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                   <button
                     key={s.name}
                     onClick={() => { setActiveCategory(activeCategory === s.name ? null : s.name); setSectorDropdownOpen(false) }}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                       activeCategory === s.name ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                     }`}
                   >
@@ -583,7 +583,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <div className="relative shrink-0" ref={branchDropdownRef}>
             <button
               onClick={() => { setBranchDropdownOpen(p => !p); setSectorDropdownOpen(false) }}
-              className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3.5 py-2 text-xs font-mono uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
+              className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3.5 py-2 text-xs font-jakarta uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-1.5 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
             >
               <span className="truncate max-w-[130px]">Branch: {branchFilter || 'All'}</span>
               <ChevronDown className="w-3.5 h-3.5 text-[#8a7f70]" />
@@ -593,7 +593,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <div className="absolute right-0 top-full mt-1.5 w-52 max-h-72 overflow-y-auto bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl p-1 z-40">
                 <button
                   onClick={() => { setBranchFilter(null); setBranchDropdownOpen(false) }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                     !branchFilter ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                   }`}
                 >
@@ -604,7 +604,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                   <button
                     key={branch}
                     onClick={() => { setBranchFilter(branchFilter === branch ? null : branch); setBranchDropdownOpen(false) }}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                       branchFilter === branch ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                     }`}
                   >
@@ -634,14 +634,14 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
             {/* Any stage */}
             <button
               onClick={() => setStageFilter(null)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-mono tracking-wider uppercase transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-jakarta tracking-wider uppercase transition-all cursor-pointer ${
                 !stageFilter
                   ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold shadow-2xs'
                   : 'bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] font-medium'
               }`}
             >
               <span>Any stage</span>
-              <span className={`text-[10px] font-mono tabular-nums px-1 py-0.2 ${
+              <span className={`text-[10px] font-jakarta tabular-nums px-1 py-0.2 ${
                 !stageFilter ? 'bg-white/20 text-white dark:bg-black/15 dark:text-[#191614]' : 'text-[#8a7f70] dark:text-[#8a7f70]'
               }`}>
                 {stageCounts.total}
@@ -656,14 +656,14 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                 <button
                   key={stage}
                   onClick={() => setStageFilter(active ? null : stage)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-mono tracking-wider uppercase transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-jakarta tracking-wider uppercase transition-all cursor-pointer ${
                     active
                       ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold shadow-2xs'
                       : 'bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] font-medium'
                   }`}
                 >
                   <span>{stage}</span>
-                  <span className={`text-[10px] font-mono tabular-nums px-1 py-0.2 ${
+                  <span className={`text-[10px] font-jakarta tabular-nums px-1 py-0.2 ${
                     active ? 'bg-white/20 text-white dark:bg-black/15 dark:text-[#191614]' : 'text-[#8a7f70] dark:text-[#8a7f70]'
                   }`}>
                     {count}
@@ -691,7 +691,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <Square className="w-4 h-4" />
             )}
           </button>
-          <h2 className="text-xs font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
+          <h2 className="text-xs font-jakarta tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
             {activeCategory || 'All candidates'}
             <span className="font-normal opacity-70"> · {sortedCandidates.length} {sortedCandidates.length === 1 ? 'resume' : 'resumes'}</span>
           </h2>
@@ -701,7 +701,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
         <div className="relative" ref={sortDropdownRef}>
           <button
             onClick={() => setSortDropdownOpen(prev => !prev)}
-            className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3 py-1.5 text-xs font-mono uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-2 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
+            className="bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3a3028] rounded-sm px-3 py-1.5 text-xs font-jakarta uppercase tracking-wider font-semibold text-[#191614] dark:text-[#f3eee8] flex items-center gap-2 hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] transition-colors cursor-pointer shadow-2xs"
           >
             <span>{sortBy === 'newest' ? 'Newest first' : sortBy === 'oldest' ? 'Oldest first' : 'Name (A-Z)'}</span>
             <ChevronDown className="w-3.5 h-3.5 text-[#8a7f70]" />
@@ -711,7 +711,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
             <div className="absolute right-0 top-full mt-1.5 w-36 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl p-1 z-30">
               <button
                 onClick={() => { setSortBy('newest'); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                className={`w-full text-left px-3 py-1.5 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                   sortBy === 'newest' ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                 }`}
               >
@@ -719,7 +719,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               </button>
               <button
                 onClick={() => { setSortBy('oldest'); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                className={`w-full text-left px-3 py-1.5 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                   sortBy === 'oldest' ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                 }`}
               >
@@ -727,7 +727,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               </button>
               <button
                 onClick={() => { setSortBy('name'); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                className={`w-full text-left px-3 py-1.5 text-xs font-jakarta uppercase tracking-wider transition-colors cursor-pointer ${
                   sortBy === 'name' ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold' : 'text-[#5c5347] dark:text-[#d4c9bd] hover:bg-[#faf8f5] dark:hover:bg-[#221a14]'
                 }`}
               >
@@ -740,7 +740,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
 
       {/* ── Bulk Actions Toolbar ─────────────────────────────────────────── */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center gap-3 bg-[#181513] text-white border border-[#3d3329] px-4 py-2.5 rounded-sm shadow-xl sticky top-3 z-30 font-mono text-xs">
+        <div className="flex items-center gap-3 bg-[#181513] text-white border border-[#3d3329] px-4 py-2.5 rounded-sm shadow-xl sticky top-3 z-30 font-jakarta text-xs">
           <span className="font-bold text-white bg-[#e85d3f] px-2 py-0.5 uppercase tracking-wider">
             {selectedIds.size} selected
           </span>
@@ -755,7 +755,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
             {bulkStatusDropdownOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-[#16110d] text-[#191614] dark:text-[#f3eee8] rounded-sm shadow-xl border border-[#c8c0af] dark:border-[#3d3329] z-50 w-44 py-1 overflow-hidden font-mono text-xs">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-[#16110d] text-[#191614] dark:text-[#f3eee8] rounded-sm shadow-xl border border-[#c8c0af] dark:border-[#3d3329] z-50 w-44 py-1 overflow-hidden font-jakarta text-xs">
                 {STAGE_OPTIONS.map(stage => (
                   <button
                     key={stage}
@@ -828,7 +828,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
               <div 
                 className="flex items-center gap-3.5 flex-1 min-w-0"
               >
-                <div className={`w-10 h-10 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-mono border ${palette.bg} ${palette.text} ${palette.border}`}>
+                <div className={`w-10 h-10 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-jakarta border ${palette.bg} ${palette.text} ${palette.border}`}>
                   {getInitials(candidate.name)}
                 </div>
 
@@ -843,38 +843,38 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                     </Link>
                   </h3>
                   {fileHit && (
-                    <p className="text-xs text-[#7a7062] dark:text-[#8a7f70] flex items-center gap-1 mt-0.5 break-all font-mono">
+                    <p className="text-xs text-[#7a7062] dark:text-[#8a7f70] flex items-center gap-1 mt-0.5 break-all font-jakarta">
                       <FileText className="w-3 h-3 shrink-0" /> {fileHit.fileName}
                     </p>
                   )}
                   <div className="flex items-center flex-wrap gap-1.5 mt-1.5">
                     {candidate.sector && (
-                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                      <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
                         <span className="text-[#a89c8e] dark:text-[#6b6055]">CAT:</span> {candidate.sector}
                       </span>
                     )}
                     {candidate.category && (
-                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                      <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
                         <span className="text-[#a89c8e] dark:text-[#6b6055]">SUB:</span> {candidate.category}
                       </span>
                     )}
                     {candidate.yearsOfExperience && (
-                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                      <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
                         {candidate.yearsOfExperience}
                       </span>
                     )}
                     {candidate.age && (
-                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                      <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
                         {candidate.age} yrs
                       </span>
                     )}
                     {candidate.agent && (
-                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
+                      <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#6b6055] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm">
                         Agent: {candidate.agent}
                       </span>
                     )}
                     {isAdmin && (
-                      <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#b4c8dc] dark:border-[#22394e] bg-[#f0f6fb] dark:bg-[#142332] text-[#205282] dark:text-[#7bb0e0] px-2 py-0.5 rounded-sm font-semibold" title="Uploaded by">
+                      <span className="font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider border border-[#b4c8dc] dark:border-[#22394e] bg-[#f0f6fb] dark:bg-[#142332] text-[#205282] dark:text-[#7bb0e0] px-2 py-0.5 rounded-sm font-semibold" title="Uploaded by">
                         {branchOf(candidate)}
                       </span>
                     )}
@@ -884,7 +884,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                         e.stopPropagation();
                         setEditingCandidate(candidate);
                       }}
-                      className="ml-1 text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors cursor-pointer"
+                      className="ml-1 text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 font-jakarta text-[10px] sm:text-[11px] uppercase tracking-wider transition-colors cursor-pointer"
                       aria-label={`Edit details for ${candidate.name}`}
                     >
                       <Pencil className="w-3 h-3" />
@@ -898,7 +898,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                 className="flex items-center gap-4 justify-end flex-wrap sm:flex-nowrap"
               >
                 {/* Date / Time */}
-                <div className="flex items-center text-[#8a7f70] dark:text-[#8a7f70] font-mono text-xs tabular-nums min-w-[120px]">
+                <div className="flex items-center text-[#8a7f70] dark:text-[#8a7f70] font-jakarta text-xs tabular-nums min-w-[120px]">
                   <ArrowDownCircle className="w-3.5 h-3.5 mr-1.5 opacity-60" />
                   {formattedDate}
                 </div>
@@ -911,7 +911,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
                     onChange={(e) => handleStageChange(candidate.id, e.target.value)}
                     aria-label={`Status for ${candidate.name}`}
                     title="Change status"
-                    className={`pl-2.5 pr-6 py-1 rounded-sm text-[11px] font-mono font-bold tracking-wider uppercase border cursor-pointer appearance-none bg-no-repeat bg-[right_0.4rem_center] bg-[length:0.6rem] bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")] ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}
+                    className={`pl-2.5 pr-6 py-1 rounded-sm text-[11px] font-jakarta font-bold tracking-wider uppercase border cursor-pointer appearance-none bg-no-repeat bg-[right_0.4rem_center] bg-[length:0.6rem] bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")] ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}
                   >
                     {[...new Set([candidate.recruitmentStage || 'Applied', ...STAGE_OPTIONS])].map(stage => (
                       <option key={stage} value={stage}>{stage}</option>
@@ -941,7 +941,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
           <div className="flex flex-col items-center text-center py-16 px-6 border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d]">
             <Search className="w-8 h-8 text-[#a89c8e] mb-3" aria-hidden />
             <p className="font-bold text-[#191614] dark:text-[#f3eee8] font-sans">No candidates found</p>
-            <p className="text-xs font-mono text-[#8a7f70] mt-1 mb-4 uppercase tracking-wider">
+            <p className="text-xs font-jakarta text-[#8a7f70] mt-1 mb-4 uppercase tracking-wider">
               {candidates.length === 0
                 ? 'Upload your first CV to get started.'
                 : 'Try a different search or clear your filters.'}
@@ -953,7 +953,7 @@ export default function CandidateDatabase({ initialCandidates, availableCompanie
             ) : (
               <button
                 onClick={() => { setSearch(''); setActiveCategory(null); setStageFilter(null); setBranchFilter(null) }}
-                className="px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] text-xs font-mono uppercase tracking-wider font-bold rounded-sm transition-colors cursor-pointer"
+                className="px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] text-xs font-jakarta uppercase tracking-wider font-bold rounded-sm transition-colors cursor-pointer"
               >
                 Clear filters
               </button>

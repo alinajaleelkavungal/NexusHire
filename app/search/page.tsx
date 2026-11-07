@@ -79,12 +79,12 @@ export default function SearchPage() {
   const detail = (label: string, value: string | number | null, hit: boolean) =>
     value === null || value === '' ? (
       <div className="p-3 sm:p-3.5 min-w-0">
-        <dt className="text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#8a7f70]">{label}</dt>
-        <dd className="text-xs text-[#a89c8e] dark:text-[#5c5347] font-mono mt-0.5">—</dd>
+        <dt className="text-[9.5px] sm:text-[10px] font-jakarta font-bold uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#8a7f70]">{label}</dt>
+        <dd className="text-xs text-[#a89c8e] dark:text-[#5c5347] font-jakarta mt-0.5">—</dd>
       </div>
     ) : (
       <div className="p-3 sm:p-3.5 min-w-0">
-        <dt className="text-[9.5px] sm:text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#a89c8e]">{label}</dt>
+        <dt className="text-[9.5px] sm:text-[10px] font-jakarta font-bold uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#a89c8e]">{label}</dt>
         <dd className={`text-xs sm:text-[13px] truncate mt-0.5 ${hit ? 'text-[#191614] dark:text-[#f3eee8] font-black' : 'text-[#383127] dark:text-[#d4c9bd] font-medium'}`}>
           <Mark text={String(value)} words={words} />
         </dd>
@@ -96,7 +96,7 @@ export default function SearchPage() {
       {/* Header Row */}
       <div>
         <div className="mb-1">
-          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+          <span className="text-[10px] sm:text-[11px] font-jakarta tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
             INTELLIGENT MANPOWER SEARCH
           </span>
         </div>
@@ -133,12 +133,12 @@ export default function SearchPage() {
       </form>
 
       {error && (
-        <div role="alert" className="text-xs font-mono font-bold uppercase tracking-wider text-[#aa2c1e] bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] p-3 rounded-sm">{error}</div>
+        <div role="alert" className="text-xs font-jakarta font-bold uppercase tracking-wider text-[#aa2c1e] bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] p-3 rounded-sm">{error}</div>
       )}
 
       {!query.trim() && !error && (
         <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] px-6 py-12 text-center rounded-sm">
-          <p className="text-xs font-mono uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#a89c8e] font-bold">
+          <p className="text-xs font-jakarta uppercase tracking-[0.14em] text-[#7a7062] dark:text-[#a89c8e] font-bold">
             Type to search
           </p>
           <p className="text-xs text-[#8a7f70] dark:text-[#6b6055] mt-1.5 max-w-md mx-auto">
@@ -149,7 +149,7 @@ export default function SearchPage() {
 
       {searched && query.trim() && !error && (
         <div className="flex items-center justify-between px-1">
-          <p className="text-xs font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
+          <p className="text-xs font-jakarta tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]" aria-live="polite">
             {results.length} {results.length === 1 ? 'CV' : 'CVs'} found for &ldquo;{searched}&rdquo;
           </p>
         </div>
@@ -158,7 +158,7 @@ export default function SearchPage() {
       {searched && !searching && !error && results.length === 0 && query.trim() === searched && (
         <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] px-6 py-12 text-center rounded-sm">
           <p className="font-bold text-[#191614] dark:text-[#f3eee8] font-sans text-sm">No CV matches &ldquo;{searched}&rdquo;</p>
-          <p className="text-xs font-mono uppercase tracking-wider text-[#8a7f70] dark:text-[#6b6055] mt-1">Check spelling or try searching with fewer words.</p>
+          <p className="text-xs font-jakarta uppercase tracking-wider text-[#8a7f70] dark:text-[#6b6055] mt-1">Check spelling or try searching with fewer words.</p>
         </div>
       )}
 
@@ -174,7 +174,7 @@ export default function SearchPage() {
                   <h2 className="text-base sm:text-lg font-black text-[#191614] dark:text-[#f3eee8] tracking-tight font-sans truncate">
                     <Mark text={r.name} words={words} />
                   </h2>
-                  <p className="text-xs font-mono uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70] mt-1 flex items-center gap-2">
+                  <p className="text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70] mt-1 flex items-center gap-2">
                     <span className="font-bold text-[#191614] dark:text-[#f3eee8]">{r.stage}</span>
                     {r.branchName && (
                       <>
@@ -186,7 +186,7 @@ export default function SearchPage() {
                 </div>
                 <Link
                   href={`/candidates/${r.candidateId}`}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-mono uppercase tracking-wider font-bold rounded-sm shadow-2xs transition-all"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta uppercase tracking-wider font-bold rounded-sm shadow-2xs transition-all"
                 >
                   <span>View profile</span>
                   <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
@@ -213,7 +213,7 @@ export default function SearchPage() {
                         href={`/api/resume/file/${f.id}`}
                         target="_blank"
                         rel="noreferrer"
-                        className={`flex items-center gap-2 text-xs font-mono rounded-sm px-2 py-1.5 -mx-2 hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${
+                        className={`flex items-center gap-2 text-xs font-jakarta rounded-sm px-2 py-1.5 -mx-2 hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${
                           isHit ? 'text-[#191614] dark:text-[#f3eee8] font-bold' : 'text-[#7a7062] dark:text-[#8a7f70]'
                         }`}
                       >

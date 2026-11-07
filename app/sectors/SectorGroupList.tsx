@@ -71,7 +71,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
         <button
           onClick={() => setSubSel(p => ({ ...p, [key]: null }))}
           aria-pressed={!subSel[key]}
-          className={`px-3 py-1.5 rounded-sm text-[11px] font-mono tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer ${
+          className={`px-3 py-1.5 rounded-sm text-[11px] font-jakarta tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer ${
             !subSel[key]
               ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold shadow-2xs'
               : 'bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] font-medium'
@@ -87,7 +87,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
               key={s}
               onClick={() => setSubSel(p => ({ ...p, [key]: p[key] === s ? null : s }))}
               aria-pressed={active}
-              className={`px-3 py-1.5 rounded-sm text-[11px] font-mono tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded-sm text-[11px] font-jakarta tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer ${
                 active
                   ? 'bg-[#191614] text-white dark:bg-[#f3eee8] dark:text-[#191614] font-bold shadow-2xs'
                   : 'bg-white dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] hover:bg-[#faf8f5] dark:hover:bg-[#251f1a] font-medium'
@@ -182,7 +182,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
       {/* Header Row */}
       <div>
         <div className="mb-1">
-          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+          <span className="text-[10px] sm:text-[11px] font-jakarta tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
             MANPOWER CLASSIFICATION · SECTOR DIRECTORY
           </span>
         </div>
@@ -233,13 +233,13 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base font-black text-[#191614] dark:text-[#f3eee8] font-sans">{group.sector}</h3>
-                    <p className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
+                    <p className="text-[10px] sm:text-[11px] font-jakarta tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
                       {group.candidates.length} {group.candidates.length === 1 ? 'candidate' : 'candidates'}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
+                  <span className="text-[10px] sm:text-[11px] font-jakarta font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
                     {group.candidates.length}
                   </span>
                   <CaretRight weight="bold" className={`w-3.5 h-3.5 text-[#8a7f70] transition-transform duration-200 ${(searching || expandedSector === group.sector) ? 'rotate-90' : ''}`} />
@@ -260,19 +260,19 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                         className="flex items-center justify-between p-3 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm hover:border-[#191614] dark:hover:border-[#6b5e52] hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-all cursor-pointer group"
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-mono border ${palette.bg} ${palette.text} ${palette.border}`}>
+                          <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-jakarta border ${palette.bg} ${palette.text} ${palette.border}`}>
                             {getInitials(candidate.name)}
                           </div>
                           <div>
                             <h4 className="font-black text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors font-sans">{candidate.name}</h4>
                             <FileHit candidate={candidate} query={localQ(group.sector) || searchQuery} />
-                            <p className="text-[11px] font-mono text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">
+                            <p className="text-[11px] font-jakarta text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">
                               {candidate.sector || 'No Category'} · {candidate.category || 'No Sub Category'}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className={`px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
+                          <span className={`px-2 py-0.5 text-[10px] font-jakarta font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
                             {candidate.recruitmentStage}
                           </span>
                           <ArrowUpRight weight="bold" className="w-3.5 h-3.5 text-[#8a7f70] group-hover:text-[#191614] dark:group-hover:text-white transition-colors" />
@@ -282,7 +282,7 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                   })}
                   
                   {shown.length === 0 && (
-                    <div className="text-center py-8 text-xs font-mono uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70]">
+                    <div className="text-center py-8 text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#8a7f70]">
                       {subSel[group.sector] && !localQ(group.sector)
                         ? `No CVs under ${subSel[group.sector]} yet.`
                         : localQ(group.sector)
@@ -308,13 +308,13 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-black text-[#191614] dark:text-[#f3eee8] font-sans">Uncategorized</h3>
-                  <p className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
+                  <p className="text-[10px] sm:text-[11px] font-jakarta tracking-wider uppercase font-semibold text-[#7a7062] dark:text-[#a89c8e]">
                     {unassigned.length} {unassigned.length !== 1 ? 'candidates' : 'candidate'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
+                <span className="text-[10px] sm:text-[11px] font-jakarta font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] text-[#191614] dark:text-[#f3eee8] tabular-nums">
                   {unassigned.length}
                 </span>
                 <CaretRight weight="bold" className={`w-3.5 h-3.5 text-[#8a7f70] transition-transform duration-200 ${(searching || expandedSector === 'unassigned') ? 'rotate-90' : ''}`} />
@@ -333,17 +333,17 @@ export default function SectorGroupList({ initialCandidates, initialQuery = '' }
                       className="flex items-center justify-between p-3 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm hover:border-[#191614] dark:hover:border-[#6b5e52] hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-mono border ${palette.bg} ${palette.text} ${palette.border}`}>
+                        <div className={`w-9 h-9 rounded-sm shrink-0 flex items-center justify-center font-bold text-xs font-jakarta border ${palette.bg} ${palette.text} ${palette.border}`}>
                           {getInitials(candidate.name)}
                         </div>
                         <div>
                           <h4 className="font-black text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors font-sans">{candidate.name}</h4>
                           <FileHit candidate={candidate} query={localQ('unassigned') || searchQuery} />
-                          <p className="text-[11px] font-mono text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">Uncategorized</p>
+                          <p className="text-[11px] font-jakarta text-[#7a7062] dark:text-[#a89c8e] uppercase tracking-wider mt-0.5">Uncategorized</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
+                        <span className={`px-2 py-0.5 text-[10px] font-jakarta font-bold tracking-wider uppercase rounded-sm border ${getStatusStyle(candidate.recruitmentStage || 'Applied')}`}>
                           {candidate.recruitmentStage}
                         </span>
                         <ArrowUpRight weight="bold" className="w-3.5 h-3.5 text-[#8a7f70] group-hover:text-[#191614] dark:group-hover:text-white transition-colors" />

@@ -26,7 +26,7 @@ export default async function CategoriesPage({ searchParams }: { searchParams: P
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 min-h-screen select-none font-sans">
       <div>
         <div className="mb-1">
-          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+          <span className="text-[10px] sm:text-[11px] font-jakarta tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
             MANPOWER CLASSIFICATION · SECTOR DIRECTORY
           </span>
         </div>
