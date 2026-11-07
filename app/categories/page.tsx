@@ -23,11 +23,21 @@ export default async function CategoriesPage({ searchParams }: { searchParams: P
   }))
 
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto flex flex-col gap-6 min-h-screen">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 min-h-screen select-none font-sans">
       <div>
-        <h1 className="text-2xl font-extrabold text-gray-950 tracking-tight">Category</h1>
-        <p className="text-sm font-medium text-gray-700 mt-1">
-          Find out which category and sub category a CV belongs to, or see every CV under a sub category.
+        <div className="mb-1">
+          <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+            MANPOWER CLASSIFICATION · SECTOR DIRECTORY
+          </span>
+        </div>
+        <h1
+          className="text-3xl sm:text-4xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1 mb-2 font-sans"
+          style={{ fontFamily: 'var(--font-satoshi), sans-serif' }}
+        >
+          Categories
+        </h1>
+        <p className="text-sm font-medium text-[#6b6257] dark:text-[#a89c8e]">
+          Find out which category and sub category a CV belongs to, or explore all candidates organized by trade.
         </p>
       </div>
 
