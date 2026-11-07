@@ -100,7 +100,7 @@ export default async function HomePage() {
             </span>
           </div>
           <h1
-            className="text-4xl sm:text-5xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1.5 mb-2 font-sans"
+            className="text-3xl sm:text-4xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1 mb-2 font-sans"
             style={{ fontFamily: 'var(--font-satoshi), sans-serif' }}
           >
             {greeting}, {session.name}.
