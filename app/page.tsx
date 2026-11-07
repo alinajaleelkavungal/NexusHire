@@ -146,17 +146,17 @@ export default async function HomePage() {
         {/* Recent Uploads */}
         <section className="lg:col-span-3 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
-            <h2 className="text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recent candidate uploads</h2>
+            <h2 className="text-xs sm:text-[13px] font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recent candidate uploads</h2>
             <Link
               href="/candidates"
-              className="text-[10px] font-mono tracking-[0.12em] uppercase font-bold text-[#7a7062] dark:text-[#6b5e52] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
+              className="text-xs font-mono tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
-              See all <ArrowUpRight weight="bold" className="w-3 h-3" />
+              See all <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {recent.length === 0 ? (
-            <p className="text-xs font-medium text-[#a79a87] py-8 text-center">
+            <p className="text-sm font-medium text-[#a79a87] py-8 text-center">
               No CVs uploaded yet. Click &quot;Upload CV&quot; to add your first candidate.
             </p>
           ) : (
@@ -169,19 +169,19 @@ export default async function HomePage() {
                       href={`/candidates/${c.id}`}
                       className="flex items-center gap-3.5 py-3 hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] -mx-2 px-2 transition-colors group"
                     >
-                      <span className={`w-9 h-9 shrink-0 rounded-sm flex items-center justify-center font-bold text-[11px] border ${palette.bg} ${palette.text} ${palette.border}`}>
+                      <span className={`w-10 h-10 shrink-0 rounded-sm flex items-center justify-center font-bold text-xs border ${palette.bg} ${palette.text} ${palette.border}`}>
                         {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-[#191614] dark:text-[#f3eee8] truncate group-hover:text-[#e85d3f] transition-colors">
+                        <p className="text-sm font-bold text-[#191614] dark:text-[#f3eee8] truncate group-hover:text-[#e85d3f] transition-colors">
                           {c.name}
                         </p>
-                        <p className="text-[11px] font-medium text-[#7a7062] dark:text-[#6b5e52] truncate mt-0.5">
+                        <p className="text-xs font-medium text-[#7a7062] dark:text-[#8a7f70] truncate mt-0.5">
                           {[c.sector, c.category].filter(Boolean).join(' · ') || 'No category'}
                           {isAdmin && ` · ${c.branchName || 'Unassigned'}`}
                         </p>
                       </div>
-                      <span className="text-[11px] font-mono text-[#a89c8e] dark:text-[#6b5e52] shrink-0 tabular-nums">
+                      <span className="text-xs font-mono text-[#8a7f70] dark:text-[#8a7f70] shrink-0 tabular-nums">
                         {c.createdAt.toLocaleDateString('default', { month: 'short', day: 'numeric' })}
                       </span>
                     </Link>
@@ -195,13 +195,13 @@ export default async function HomePage() {
         {/* Pipeline Summary */}
         <section className="lg:col-span-2 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
-            <h2 className="text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recruitment pipeline</h2>
-            <span className="text-[10px] font-mono tracking-[0.12em] uppercase font-bold text-[#a89c8e] dark:text-[#6b5e52] tabular-nums">
+            <h2 className="text-xs sm:text-[13px] font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">Recruitment pipeline</h2>
+            <span className="text-xs font-mono tracking-[0.1em] uppercase font-bold text-[#8a7f70] dark:text-[#8a7f70] tabular-nums">
               {candidates.length} total
             </span>
           </div>
 
-          <ul className="space-y-3">
+          <ul className="space-y-3.5">
             {STAGES.map(stage => {
               const n = countStage(stage)
               const isSelected = stage === 'Selected'
@@ -217,11 +217,11 @@ export default async function HomePage() {
 
               return (
                 <li key={stage}>
-                  <div className="flex justify-between text-[11px] mb-1">
-                    <span className="font-medium text-[#423a30] dark:text-[#d4c9bd]">{stage}</span>
-                    <span className="font-mono font-bold text-[#191614] dark:text-[#f3eee8] tabular-nums">{n}</span>
+                  <div className="flex justify-between items-center text-xs sm:text-[13px] mb-1.5">
+                    <span className="font-semibold text-[#383127] dark:text-[#d4c9bd]">{stage}</span>
+                    <span className="font-mono font-bold text-xs sm:text-sm text-[#191614] dark:text-[#f3eee8] tabular-nums">{n}</span>
                   </div>
-                  <div className="h-[3px] bg-[#e8e2d9] dark:bg-[#2d2520] overflow-hidden">
+                  <div className="h-1 bg-[#e8e2d9] dark:bg-[#2d2520] overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${barColor}`}
                       style={{ width: `${(n / maxStage) * 100}%` }}
@@ -237,13 +237,13 @@ export default async function HomePage() {
       {/* Admin: CVs by Branch */}
       {isAdmin && byBranch.size > 0 && (
         <section className="border border-[#c8c0af] dark:border-[#3d3329]">
-          <div className="flex items-center justify-between px-5 sm:px-6 py-3 border-b border-[#c8c0af] dark:border-[#3d3329]">
-            <h2 className="text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">CVs by Branch</h2>
+          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 border-b border-[#c8c0af] dark:border-[#3d3329]">
+            <h2 className="text-xs sm:text-[13px] font-mono tracking-[0.14em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">CVs by Branch</h2>
             <Link
               href="/admin/branches"
-              className="text-[10px] font-mono tracking-[0.12em] uppercase font-bold text-[#7a7062] dark:text-[#6b5e52] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
+              className="text-xs font-mono tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] hover:text-[#191614] dark:hover:text-white flex items-center gap-1 transition-colors"
             >
-              Manage branches <ArrowUpRight weight="bold" className="w-3 h-3" />
+              Manage branches <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
             </Link>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 divide-x divide-y divide-[#c8c0af] dark:divide-[#3d3329]">
@@ -254,8 +254,8 @@ export default async function HomePage() {
                   key={name}
                   className="p-4 sm:p-5 hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors"
                 >
-                  <p className="text-2xl font-black text-[#191614] dark:text-[#f3eee8] tabular-nums font-sans">{n}</p>
-                  <p className="text-[10px] font-mono tracking-[0.1em] uppercase font-bold text-[#7a7062] dark:text-[#6b5e52] truncate mt-1">{name}</p>
+                  <p className="text-2xl sm:text-3xl font-black text-[#191614] dark:text-[#f3eee8] tabular-nums font-sans">{n}</p>
+                  <p className="text-xs font-mono tracking-[0.08em] uppercase font-bold text-[#7a7062] dark:text-[#8a7f70] truncate mt-1">{name}</p>
                 </li>
               ))}
           </ul>
