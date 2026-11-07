@@ -124,14 +124,14 @@ export default async function HomePage() {
       {/* Modernist Stats Bar (Architectural 4-column divided grid) */}
       <div className="border-t border-b border-[#c8c0af] dark:border-[#3d3329] grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#c8c0af] dark:divide-[#3d3329]">
         {stats.map(s => (
-          <div key={s.label} className="py-5 px-4 sm:px-6 flex flex-col justify-between">
-            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">
+          <div key={s.label} className="py-3 px-3 sm:px-5 flex flex-col justify-between">
+            <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.16em] uppercase font-bold text-[#7a7062] dark:text-[#a89c8e]">
               {s.label}
             </span>
-            <div className={`text-4xl sm:text-5xl font-black leading-none my-3 tabular-nums font-sans ${s.colorClass}`}>
+            <div className={`text-2xl sm:text-3xl font-black leading-none my-1.5 tabular-nums font-sans ${s.colorClass}`}>
               {s.value}
             </div>
-            <span className="text-xs text-[#7a7062] dark:text-[#8a7f70] font-medium">
+            <span className="text-[11px] text-[#7a7062] dark:text-[#8a7f70] font-medium">
               {s.subtitle}
             </span>
           </div>
