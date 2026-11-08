@@ -18,35 +18,57 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Job not found' }, { status: 404 })
     }
 
-    if (!job.vector) {
-      return NextResponse.json({ error: 'Job vector not found' }, { status: 400 })
+    let jobVector: number[] = []
+    try {
+      jobVector = job.vector ? JSON.parse(job.vector) : []
+    } catch {
+      jobVector = []
     }
 
-    const jobVector = JSON.parse(job.vector) as number[]
+    // Reconstruct parsed job specification
+    let requiredSkills: string[] = []
+    let preferredSkills: string[] = []
+    let responsibilities: string[] = []
+    let keywords: string[] = []
 
-    // 1. Semantic Match via Qdrant
-    const topMatches = await matchCandidatesToJob(jobVector, 10, await allowedCandidateIds(g.session))
+    try { requiredSkills = job.requiredSkills ? JSON.parse(job.requiredSkills) : [] } catch {}
+    try { preferredSkills = job.preferredSkills ? JSON.parse(job.preferredSkills) : [] } catch {}
+    try { responsibilities = job.responsibilities ? JSON.parse(job.responsibilities) : [] } catch {}
+    try { keywords = job.keywords ? JSON.parse(job.keywords) : [] } catch {}
 
-    if (topMatches.length === 0) {
-      return NextResponse.json({ success: true, results: [] })
-    }
-
-    // 2. AI Reasoning & Recommendation via Gemini
-    // We reconstruct the ParsedJobDescription for the recommendation engine
     const parsedJob = {
       jobTitle: job.jobTitle,
       company: job.company || undefined,
       department: job.department || undefined,
       employmentType: job.employmentType || undefined,
       location: job.location || undefined,
-      requiredSkills: job.requiredSkills ? JSON.parse(job.requiredSkills) : [],
-      preferredSkills: job.preferredSkills ? JSON.parse(job.preferredSkills) : [],
-      responsibilities: job.responsibilities ? JSON.parse(job.responsibilities) : [],
-      keywords: job.keywords ? JSON.parse(job.keywords) : [],
+      requiredSkills,
+      preferredSkills,
+      responsibilities,
+      keywords,
       minimumExperience: job.minimumExperience || undefined,
       education: job.education || undefined
     }
 
+    // 1. Semantic Match via Qdrant + Hybrid Database Matcher
+    const topMatches = await matchCandidatesToJob(
+      jobVector,
+      10,
+      await allowedCandidateIds(g.session),
+      {
+        jobTitle: parsedJob.jobTitle,
+        minimumExperience: parsedJob.minimumExperience,
+        requiredSkills: parsedJob.requiredSkills,
+        location: parsedJob.location,
+        rawText: job.rawText
+      }
+    )
+
+    if (topMatches.length === 0) {
+      return NextResponse.json({ success: true, results: [] })
+    }
+
+    // 2. AI Reasoning & Recommendation via Gemini (with guaranteed fallback)
     const recommendations = await generateRecommendations(parsedJob, topMatches)
 
     return NextResponse.json({ success: true, results: recommendations })
