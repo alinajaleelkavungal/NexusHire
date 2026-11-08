@@ -43,9 +43,9 @@ Analyze the Candidate against the Job Description.
 --- JOB DESCRIPTION ---
 Title: ${jobDesc.jobTitle}
 Experience: ${jobDesc.minimumExperience || 'Not specified'}
-Required Skills: ${jobDesc.requiredSkills.join(', ')}
-Preferred Skills: ${jobDesc.preferredSkills.join(', ')}
-Responsibilities: ${jobDesc.responsibilities.join(', ')}
+Required Skills: ${(jobDesc.requiredSkills || []).join(', ')}
+Preferred Skills: ${(jobDesc.preferredSkills || []).join(', ')}
+Responsibilities: ${(jobDesc.responsibilities || []).join(', ')}
 
 --- CANDIDATE PROFILE ---
 Name: ${profile.name}

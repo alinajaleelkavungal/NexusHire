@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Jobs, MapPin, CircleNotch, FileText, CaretRight, X } from '@/components/icons'
+import { Plus, Jobs, MapPin, CircleNotch, FileText, ArrowRight, X, WarningCircle, Buildings } from '@/components/icons'
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<any[]>([])
@@ -10,6 +10,7 @@ export default function JobsPage() {
   const [showModal, setShowModal] = useState(false)
   const [rawJD, setRawJD] = useState('')
   const [analyzing, setAnalyzing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchJobs()
@@ -23,7 +24,7 @@ export default function JobsPage() {
         setJobs(data.jobs)
       }
     } catch (err) {
-      console.error(err)
+      console.error('Failed to fetch jobs:', err)
     } finally {
       setLoading(false)
     }
@@ -34,129 +35,219 @@ export default function JobsPage() {
     if (!rawJD.trim()) return
 
     setAnalyzing(true)
+    setError(null)
     try {
       const res = await fetch('/api/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rawText: rawJD })
+        body: JSON.stringify({ rawText: rawJD.trim() })
       })
       const data = await res.json()
-      if (data.success) {
+      if (res.ok && data.success) {
         setShowModal(false)
         setRawJD('')
         fetchJobs() // refresh list
+      } else {
+        setError(data.error || 'Failed to analyze and save job description. Please try again.')
       }
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      console.error('Job creation error:', err)
+      setError(err?.message || 'Network error occurred. Please check your connection and try again.')
     } finally {
       setAnalyzing(false)
     }
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 select-none">
+      {/* Header Row */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-950 tracking-tight">Job Matching</h1>
-          <p className="text-gray-700 font-medium mt-2">Manage open roles and discover the best candidate matches using AI.</p>
+          <div className="mb-1">
+            <span className="text-[10px] sm:text-[11px] font-jakarta tracking-[0.2em] uppercase font-bold text-[#e85d3f]">
+              AI VACANCY MATCHING
+            </span>
+          </div>
+          <h1
+            className="text-3xl sm:text-4xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight leading-none mt-1 mb-2 font-sans"
+            style={{ fontFamily: 'var(--font-satoshi), sans-serif' }}
+          >
+            Job Descriptions
+          </h1>
+          <p className="text-sm font-medium text-[#6b6257] dark:text-[#a89c8e]">
+            Manage open positions and match them against candidates in your CV database.
+          </p>
         </div>
-        <button 
-          onClick={() => setShowModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow-sm transition-colors flex items-center"
+
+        <button
+          onClick={() => {
+            setError(null)
+            setShowModal(true)
+          }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-98 cursor-pointer"
         >
-          <Plus weight="bold" className="w-5 h-5 mr-2" />
-          Add Job Description
+          <Plus weight="bold" className="w-3.5 h-3.5" />
+          <span>Add Job Description</span>
         </button>
       </div>
 
+      {/* Main Content Stage */}
       {loading ? (
-        <div className="flex justify-center py-20">
-          <CircleNotch weight="bold" className="w-8 h-8 animate-spin text-blue-500" />
+        <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-16 flex flex-col items-center justify-center text-center">
+          <CircleNotch weight="bold" className="w-6 h-6 animate-spin text-[#e85d3f] mb-3" />
+          <p className="text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#a89c8e]">Loading positions...</p>
+        </div>
+      ) : jobs.length === 0 ? (
+        <div className="border border-dashed border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-16 text-center rounded-sm">
+          <div className="w-12 h-12 rounded-sm bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center mx-auto mb-4">
+            <FileText weight="bold" className="w-6 h-6" />
+          </div>
+          <h3 className="text-base font-bold text-[#191614] dark:text-[#f3eee8] mb-1 font-sans">No Job Descriptions Added</h3>
+          <p className="text-xs text-[#7a7062] dark:text-[#a89c8e] max-w-md mx-auto mb-6">
+            Paste an open job requirement or role title to automatically match against your candidate resumes.
+          </p>
+          <button
+            onClick={() => {
+              setError(null)
+              setShowModal(true)
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-sm transition-all cursor-pointer"
+          >
+            <Plus weight="bold" className="w-3.5 h-3.5" />
+            <span>Add First Job Description</span>
+          </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.length === 0 ? (
-            <div className="col-span-full py-20 text-center border-2 border-dashed rounded-2xl bg-gray-50">
-              <FileText weight="bold" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-gray-950">No Jobs Found</h3>
-              <p className="text-gray-600 font-medium mt-1">Upload or paste your first Job Description to start matching candidates.</p>
-            </div>
-          ) : (
-            jobs.map(job => (
-              <Link key={job.id} href={`/recruitment/jobs/${job.id}`}>
-                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-blue-50 text-blue-700 rounded-xl">
-                      <Jobs weight="bold" className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-semibold text-gray-700 bg-gray-100 border border-gray-200 px-2 py-1 rounded-md">
-                      {new Date(job.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-gray-950 mb-1 line-clamp-1 group-hover:text-blue-700 transition-colors">{job.jobTitle}</h3>
-                  <div className="flex items-center text-gray-700 text-sm font-medium mb-4">
-                    <MapPin weight="bold" className="w-4 h-4 mr-1 text-gray-500" />
-                    {job.location || 'Remote / Unspecified'}
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {jobs.map(job => {
+            let requiredSkills: string[] = []
+            try {
+              requiredSkills = JSON.parse(job.requiredSkills || '[]')
+            } catch {
+              requiredSkills = []
+            }
 
-                  <div className="flex flex-wrap gap-2 mb-6 h-14 overflow-hidden">
-                    {JSON.parse(job.requiredSkills || '[]').slice(0, 4).map((skill: string, i: number) => (
-                      <span key={i} className="text-xs bg-gray-100 border border-gray-200 text-gray-800 px-2 py-1 rounded-md font-semibold">
-                        {skill}
+            return (
+              <Link key={job.id} href={`/recruitment/jobs/${job.id}`} className="group">
+                <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] hover:border-[#191614] dark:hover:border-[#f3eee8] rounded-sm p-5 flex flex-col justify-between h-full transition-all group-hover:shadow-sm">
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <span className="w-9 h-9 rounded-sm bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center shrink-0">
+                        <Jobs weight="bold" className="w-4 h-4" />
                       </span>
-                    ))}
+                      <span className="text-[10px] font-jakarta tracking-wider uppercase font-semibold text-[#8a7f70] dark:text-[#6b6055] tabular-nums">
+                        {new Date(job.createdAt).toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
+
+                    <h3 className="text-base font-bold text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors line-clamp-1 font-sans">
+                      {job.jobTitle}
+                    </h3>
+
+                    <div className="flex items-center gap-3 text-xs text-[#7a7062] dark:text-[#a89c8e] mt-1.5 mb-4">
+                      {job.company && (
+                        <span className="flex items-center gap-1 truncate">
+                          <Buildings weight="bold" className="w-3.5 h-3.5 text-[#8a7f70] shrink-0" />
+                          <span className="truncate">{job.company}</span>
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 truncate">
+                        <MapPin weight="bold" className="w-3.5 h-3.5 text-[#8a7f70] shrink-0" />
+                        <span className="truncate">{job.location || 'Remote / Unspecified'}</span>
+                      </span>
+                    </div>
+
+                    {/* Skill Badges */}
+                    {requiredSkills.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-4 max-h-16 overflow-hidden">
+                        {requiredSkills.slice(0, 4).map((skill, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] font-jakarta tracking-wider uppercase font-semibold bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#5d5244] dark:text-[#c4b5a3] px-2 py-0.5 rounded-sm"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex items-center justify-between text-blue-700 text-sm font-bold border-t pt-4">
-                    <span>View Matches</span>
-                    <CaretRight weight="bold" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="pt-3 border-t border-[#c8c0af] dark:border-[#3d3329] flex items-center justify-between text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] group-hover:text-[#e85d3f] transition-colors">
+                    <span>View Candidate Matches</span>
+                    <ArrowRight weight="bold" className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
-            ))
-          )}
+            )
+          })}
         </div>
       )}
 
-      {/* Modal */}
+      {/* Add Job Description Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
-              <h2 className="text-lg font-bold text-gray-950">Add New Job Description</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200">
-                <X weight="bold" className="w-5 h-5" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            <div className="px-5 py-4 border-b border-[#c8c0af] dark:border-[#3d3329] flex justify-between items-center bg-[#faf8f5] dark:bg-[#1f1a16]">
+              <div>
+                <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#e85d3f]">NEW POSITION</span>
+                <h2 className="text-sm sm:text-base font-bold text-[#191614] dark:text-[#f3eee8] font-sans">Add Job Description</h2>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white p-1 rounded-sm transition-colors cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X weight="bold" className="w-4 h-4" />
               </button>
             </div>
-            
+
             <form onSubmit={handleCreateJob} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-6 flex-1 overflow-y-auto">
-                <label className="block text-sm font-bold text-gray-900 mb-2">Paste Job Description Text</label>
-                <p className="text-sm font-medium text-gray-600 mb-4">Our AI will automatically parse the title, requirements, skills, and experience to build a semantic profile for matching.</p>
-                <textarea 
-                  value={rawJD}
-                  onChange={e => setRawJD(e.target.value)}
-                  placeholder="Paste the full job description here..."
-                  className="w-full h-64 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none text-sm text-gray-900"
-                  required
-                />
+              <div className="p-5 sm:p-6 flex-1 overflow-y-auto space-y-4">
+                {error && (
+                  <div className="p-3 rounded-sm bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] text-[#aa2c1e] dark:text-[#f87171] text-xs font-medium flex items-center gap-2">
+                    <WarningCircle weight="bold" className="w-4 h-4 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">
+                    Paste Job Description or Role Details
+                  </label>
+                  <p className="text-xs text-[#7a7062] dark:text-[#a89c8e] mb-3">
+                    Paste a full job specification or enter a role title (e.g. &quot;Eye Specialist Doctor with 3+ years experience in clinical ophthalmology&quot;). AI will structure and index it for candidate matching.
+                  </p>
+
+                  <textarea
+                    value={rawJD}
+                    onChange={e => {
+                      setRawJD(e.target.value)
+                      if (error) setError(null)
+                    }}
+                    placeholder="Paste the job description here, or enter role details (e.g., Job Title, Requirements, Skills, Location)..."
+                    className="w-full h-64 p-4 border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] rounded-sm focus:outline-none focus:ring-1 focus:ring-[#e85d3f] focus:border-[#e85d3f] resize-none text-sm font-sans placeholder:text-[#a89c8e]"
+                    required
+                    autoFocus
+                  />
+                </div>
               </div>
-              <div className="px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3">
-                <button 
-                  type="button" 
+
+              <div className="px-5 py-4 border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] flex justify-end items-center gap-3">
+                <button
+                  type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-6 py-2 border rounded-lg text-gray-600 font-medium hover:bg-gray-100 transition-colors"
+                  disabled={analyzing}
+                  className="px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] rounded-sm text-xs font-jakarta tracking-wider uppercase font-bold text-[#7a7062] dark:text-[#a89c8e] hover:bg-white dark:hover:bg-[#251f1a] transition-colors cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   type="submit"
                   disabled={analyzing || !rawJD.trim()}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center"
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-sm shadow-sm transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  {analyzing ? <CircleNotch weight="bold" className="w-5 h-5 animate-spin mr-2" /> : null}
-                  {analyzing ? 'AI Analyzing...' : 'Analyze & Save JD'}
+                  {analyzing && <CircleNotch weight="bold" className="w-3.5 h-3.5 animate-spin text-[#e85d3f]" />}
+                  <span>{analyzing ? 'AI Analyzing & Saving...' : 'Analyze & Save JD'}</span>
                 </button>
               </div>
             </form>

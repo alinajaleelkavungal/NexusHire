@@ -15,7 +15,7 @@ export async function GET() {
     return NextResponse.json({ success: true, jobs })
   } catch (error) {
     console.error('Failed to fetch jobs', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to fetch job descriptions' }, { status: 500 })
   }
 }
 
@@ -24,20 +24,22 @@ export async function POST(request: NextRequest) {
     const g = await guardSession()
     if (g.response) return g.response
 
-    const { rawText } = await request.json()
+    const body = await request.json().catch(() => ({}))
+    const rawText = (body.rawText || '').trim()
 
     if (!rawText) {
-      return NextResponse.json({ error: 'rawText is required' }, { status: 400 })
+      return NextResponse.json({ error: 'Please enter a job description or role name.' }, { status: 400 })
     }
 
-    // 1. Analyze JD with Gemini
+    // 1. Analyze JD with Gemini (guaranteed fallback if brief or AI fails)
     const parsedJob = await analyzeJobDescription(rawText)
 
-    // 2. Generate vector embedding for semantic matching later
-    // We'll embed Title + Skills + Responsibilities for the highest density vector
+    // 2. Generate vector embedding for semantic matching
+    const skills = Array.isArray(parsedJob.requiredSkills) ? parsedJob.requiredSkills : []
+    const responsibilities = Array.isArray(parsedJob.responsibilities) ? parsedJob.responsibilities : []
     const textToEmbed = `Title: ${parsedJob.jobTitle}
-Skills: ${parsedJob.requiredSkills.join(', ')}
-Responsibilities: ${parsedJob.responsibilities.join(' ')}`
+Skills: ${skills.join(', ')}
+Responsibilities: ${responsibilities.join(' ')}`
     
     const vector = await generateEmbedding(textToEmbed)
 
@@ -46,24 +48,26 @@ Responsibilities: ${parsedJob.responsibilities.join(' ')}`
       data: {
         rawText,
         jobTitle: parsedJob.jobTitle,
-        company: parsedJob.company,
-        department: parsedJob.department,
-        employmentType: parsedJob.employmentType,
-        location: parsedJob.location,
-        requiredSkills: JSON.stringify(parsedJob.requiredSkills),
-        preferredSkills: JSON.stringify(parsedJob.preferredSkills),
-        responsibilities: JSON.stringify(parsedJob.responsibilities),
-        keywords: JSON.stringify(parsedJob.keywords),
-        minimumExperience: parsedJob.minimumExperience,
-        education: parsedJob.education,
-        vector: JSON.stringify(vector) // Store vector as JSON string array to avoid re-embedding
+        company: parsedJob.company || null,
+        department: parsedJob.department || null,
+        employmentType: parsedJob.employmentType || null,
+        location: parsedJob.location || null,
+        requiredSkills: JSON.stringify(skills),
+        preferredSkills: JSON.stringify(Array.isArray(parsedJob.preferredSkills) ? parsedJob.preferredSkills : []),
+        responsibilities: JSON.stringify(responsibilities),
+        keywords: JSON.stringify(Array.isArray(parsedJob.keywords) ? parsedJob.keywords : []),
+        minimumExperience: parsedJob.minimumExperience || null,
+        education: parsedJob.education || null,
+        vector: JSON.stringify(vector)
       }
     })
 
     return NextResponse.json({ success: true, job })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to create job', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: error?.message || 'Failed to analyze and save job description. Please try again.' 
+    }, { status: 500 })
   }
 }
