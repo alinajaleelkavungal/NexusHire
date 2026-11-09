@@ -82,20 +82,23 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
   if (!isOpen || !candidate) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-      <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl flex flex-col border border-gray-200" onClick={e => e.stopPropagation()}>
-        <div className="flex justify-between items-center p-6 border-b border-gray-150">
-          <h2 className="text-xl font-black text-gray-950 tracking-tight">Edit Candidate Details</h2>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-950 rounded-full hover:bg-gray-100 transition-colors">
-            <X weight="bold" className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-200" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+      <div className="bg-white dark:bg-[#16110d] rounded-none w-full max-w-md shadow-2xl flex flex-col border border-[#c8c0af] dark:border-[#3d3329]" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center p-5 border-b border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16]">
+          <div>
+            <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#e85d3f]">CANDIDATE PROFILE</span>
+            <h2 className="text-base font-bold text-[#191614] dark:text-[#f3eee8] font-sans">Edit Candidate Details</h2>
+          </div>
+          <button onClick={onClose} className="p-1 text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white rounded-none transition-colors cursor-pointer">
+            <X weight="bold" className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-5 space-y-4">
           <div>
-            <label className="block text-xs font-bold text-gray-800 mb-1">Recruitment Stage / Pipeline</label>
+            <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">Recruitment Stage / Pipeline</label>
             <select
-              className="w-full p-2.5 border border-gray-200/90 rounded-xl text-xs bg-white text-gray-950 focus:ring-2 focus:ring-gray-900 outline-none font-medium"
+              className="w-full p-2.5 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] focus:border-[#191614] dark:focus:border-[#f3eee8] outline-none font-medium"
               value={formData.stage}
               onChange={(e) => setFormData({...formData, stage: e.target.value})}
             >
@@ -106,19 +109,19 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-800 mb-1">Age</label>
+            <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">Age</label>
             <input
               type="number"
-              className="w-full p-2.5 border border-gray-200/90 rounded-xl text-xs bg-white text-gray-950 focus:ring-2 focus:ring-gray-900 outline-none"
+              className="w-full p-2.5 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] focus:border-[#191614] dark:focus:border-[#f3eee8] outline-none"
               value={formData.age}
               onChange={(e) => setFormData({...formData, age: e.target.value})}
             />
           </div>
           
           <div>
-            <label className="block text-xs font-bold text-gray-800 mb-1">Category</label>
+            <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">Category</label>
             <select
-              className="w-full p-2.5 border border-gray-200/90 rounded-xl text-xs bg-white text-gray-950 focus:ring-2 focus:ring-gray-900 outline-none"
+              className="w-full p-2.5 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] focus:border-[#191614] dark:focus:border-[#f3eee8] outline-none"
               value={formData.sector}
               onChange={(e) => setFormData({...formData, sector: e.target.value, category: ''})}
             >
@@ -129,9 +132,9 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-800 mb-1">Sub Category</label>
+            <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">Sub Category</label>
             <select
-              className="w-full p-2.5 border border-gray-200/90 rounded-xl text-xs bg-white text-gray-950 focus:ring-2 focus:ring-gray-900 outline-none disabled:bg-gray-100 disabled:text-gray-400"
+              className="w-full p-2.5 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] focus:border-[#191614] dark:focus:border-[#f3eee8] outline-none disabled:opacity-50"
               value={formData.category}
               onChange={(e) => setFormData({...formData, category: e.target.value})}
               disabled={!formData.sector}
@@ -143,9 +146,9 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-800 mb-1">Experience</label>
+            <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">Experience</label>
             <select
-              className="w-full p-2.5 border border-gray-200/90 rounded-xl text-xs bg-white text-gray-950 focus:ring-2 focus:ring-gray-900 outline-none"
+              className="w-full p-2.5 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] focus:border-[#191614] dark:focus:border-[#f3eee8] outline-none"
               value={formData.yearsOfExperience}
               onChange={(e) => setFormData({...formData, yearsOfExperience: e.target.value})}
             >
@@ -156,35 +159,35 @@ export default function EditCandidateModal({ isOpen, onClose, onSuccess, candida
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-800 mb-1">Agent <span className="text-red-500">*</span></label>
+            <label className="block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1">Agent <span className="text-[#e85d3f]">*</span></label>
             <input
               type="text"
               required
-              className={`w-full p-2.5 border rounded-xl text-xs bg-white text-gray-950 focus:ring-2 outline-none ${
-                formData.agent.trim() ? 'border-gray-200/90 focus:ring-gray-900' : 'border-red-400 focus:ring-red-400'
+              className={`w-full p-2.5 border rounded-none text-xs bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] focus:border-[#191614] dark:focus:border-[#f3eee8] outline-none ${
+                formData.agent.trim() ? 'border-[#c8c0af] dark:border-[#3d3329]' : 'border-[#e85d3f]'
               }`}
               value={formData.agent}
               onChange={(e) => setFormData({...formData, agent: e.target.value})}
               placeholder="e.g. Agency or recruiter name"
             />
-            {!formData.agent.trim() && <p className="text-[11px] text-red-600 mt-1">Agent is required</p>}
+            {!formData.agent.trim() && <p className="text-[11px] text-[#aa2c1e] dark:text-[#f87171] mt-1">Agent is required</p>}
           </div>
         </div>
         
-        <div className="p-6 border-t border-gray-150 bg-gray-50/60 flex justify-end gap-2.5 rounded-b-3xl">
+        <div className="p-5 border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] flex justify-end gap-2.5 rounded-none">
           <button
             onClick={onClose}
-            className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold py-2 px-5 rounded-full shadow-2xs transition-colors"
+            className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#7a7062] dark:text-[#a89c8e] text-xs font-jakarta tracking-wider uppercase font-bold py-2 px-4 rounded-none transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={!isFormValid || saving}
-            className="bg-gray-950 hover:bg-black text-white text-xs font-semibold py-2 px-5 rounded-full shadow-xs transition-colors flex items-center disabled:opacity-50"
+            className="bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold py-2 px-5 rounded-none transition-colors flex items-center disabled:opacity-50 cursor-pointer"
           >
-            {saving ? <CircleNotch weight="bold" className="w-3.5 h-3.5 mr-2 animate-spin" /> : null}
-            Save Changes
+            {saving ? <CircleNotch weight="bold" className="w-3.5 h-3.5 mr-2 animate-spin text-[#e85d3f]" /> : null}
+            <span>Save Changes</span>
           </button>
         </div>
       </div>

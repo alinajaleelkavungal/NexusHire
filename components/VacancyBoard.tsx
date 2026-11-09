@@ -580,7 +580,7 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label={isEdit ? 'Edit vacancy' : 'Post a vacancy'}>
-      <form onSubmit={submit} className="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-xl">
+      <form onSubmit={submit} className="bg-white rounded-none w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#c8c0af]">
         <div className="flex items-center justify-between p-5 border-b sticky top-0 bg-white z-10">
           <div>
             <h3 className="text-lg font-bold text-gray-900">{isEdit ? 'Edit vacancy' : 'Post a vacancy'}</h3>
@@ -750,11 +750,11 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
           </div>
         </div>
 
-        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3 sticky bottom-0 rounded-b-2xl">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg">
+        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3 sticky bottom-0 rounded-none">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 rounded-none">
             Cancel
           </button>
-          <button disabled={saving} className="flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 disabled:opacity-60 rounded-lg shadow-2xs">
+          <button disabled={saving} className="flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 disabled:opacity-60 rounded-none shadow-2xs">
             {saving && <Loader2 className="w-4 h-4 animate-spin" />} {isEdit ? 'Save changes' : 'Post vacancy'}
           </button>
         </div>

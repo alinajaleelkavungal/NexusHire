@@ -84,7 +84,7 @@ export default function JobsPage() {
             setError(null)
             setShowModal(true)
           }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-98 cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-none shadow-sm hover:shadow-md transition-all active:scale-98 cursor-pointer"
         >
           <Plus weight="bold" className="w-3.5 h-3.5" />
           <span>Add Job Description</span>
@@ -93,13 +93,13 @@ export default function JobsPage() {
 
       {/* Main Content Stage */}
       {loading ? (
-        <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-16 flex flex-col items-center justify-center text-center">
+        <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-16 flex flex-col items-center justify-center text-center rounded-none">
           <CircleNotch weight="bold" className="w-6 h-6 animate-spin text-[#e85d3f] mb-3" />
           <p className="text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#a89c8e]">Loading positions...</p>
         </div>
       ) : jobs.length === 0 ? (
-        <div className="border border-dashed border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-16 text-center rounded-sm">
-          <div className="w-12 h-12 rounded-sm bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center mx-auto mb-4">
+        <div className="border border-dashed border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] p-16 text-center rounded-none">
+          <div className="w-12 h-12 rounded-none bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center mx-auto mb-4">
             <FileText weight="bold" className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-[#191614] dark:text-[#f3eee8] mb-1 font-sans">No Job Descriptions Added</h3>
@@ -111,7 +111,7 @@ export default function JobsPage() {
               setError(null)
               setShowModal(true)
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-sm transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-none transition-all cursor-pointer"
           >
             <Plus weight="bold" className="w-3.5 h-3.5" />
             <span>Add First Job Description</span>
@@ -129,10 +129,10 @@ export default function JobsPage() {
 
             return (
               <Link key={job.id} href={`/recruitment/jobs/${job.id}`} className="group">
-                <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] hover:border-[#191614] dark:hover:border-[#f3eee8] rounded-sm p-5 flex flex-col justify-between h-full transition-all group-hover:shadow-sm">
+                <div className="border border-[#c8c0af] dark:border-[#3d3329] bg-white dark:bg-[#16110d] hover:border-[#191614] dark:hover:border-[#f3eee8] rounded-none p-5 flex flex-col justify-between h-full transition-all group-hover:shadow-sm">
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-3">
-                      <span className="w-9 h-9 rounded-sm bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center shrink-0">
+                      <span className="w-9 h-9 rounded-none bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center shrink-0">
                         <Jobs weight="bold" className="w-4 h-4" />
                       </span>
                       <span className="text-[10px] font-jakarta tracking-wider uppercase font-semibold text-[#8a7f70] dark:text-[#6b6055] tabular-nums">
@@ -163,7 +163,7 @@ export default function JobsPage() {
                         {requiredSkills.slice(0, 4).map((skill, i) => (
                           <span
                             key={i}
-                            className="text-[10px] font-jakarta tracking-wider uppercase font-semibold bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#5d5244] dark:text-[#c4b5a3] px-2 py-0.5 rounded-sm"
+                            className="text-[10px] font-jakarta tracking-wider uppercase font-semibold bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#5d5244] dark:text-[#c4b5a3] px-2 py-0.5 rounded-none"
                           >
                             {skill}
                           </span>
@@ -186,7 +186,7 @@ export default function JobsPage() {
       {/* Add Job Description Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh]">
+          <div className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-none shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh]">
             <div className="px-5 py-4 border-b border-[#c8c0af] dark:border-[#3d3329] flex justify-between items-center bg-[#faf8f5] dark:bg-[#1f1a16]">
               <div>
                 <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#e85d3f]">NEW POSITION</span>
@@ -194,7 +194,7 @@ export default function JobsPage() {
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white p-1 rounded-sm transition-colors cursor-pointer"
+                className="text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white p-1 rounded-none transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
                 <X weight="bold" className="w-4 h-4" />
@@ -204,7 +204,7 @@ export default function JobsPage() {
             <form onSubmit={handleCreateJob} className="flex flex-col flex-1 overflow-hidden">
               <div className="p-5 sm:p-6 flex-1 overflow-y-auto space-y-4">
                 {error && (
-                  <div className="p-3 rounded-sm bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] text-[#aa2c1e] dark:text-[#f87171] text-xs font-medium flex items-center gap-2">
+                  <div className="p-3 rounded-none bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] text-[#aa2c1e] dark:text-[#f87171] text-xs font-medium flex items-center gap-2">
                     <WarningCircle weight="bold" className="w-4 h-4 shrink-0" />
                     <span>{error}</span>
                   </div>
@@ -225,7 +225,7 @@ export default function JobsPage() {
                       if (error) setError(null)
                     }}
                     placeholder="Paste the job description here, or enter role details (e.g., Job Title, Requirements, Skills, Location)..."
-                    className="w-full h-64 p-4 border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] rounded-sm focus:outline-none focus:ring-1 focus:ring-[#e85d3f] focus:border-[#e85d3f] resize-none text-sm font-sans placeholder:text-[#a89c8e]"
+                    className="w-full h-64 p-4 border border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] rounded-none focus:outline-none focus:border-[#191614] dark:focus:border-[#f3eee8] resize-none text-sm font-sans placeholder:text-[#a89c8e] transition-colors"
                     required
                     autoFocus
                   />
@@ -237,14 +237,14 @@ export default function JobsPage() {
                   type="button"
                   onClick={() => setShowModal(false)}
                   disabled={analyzing}
-                  className="px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] rounded-sm text-xs font-jakarta tracking-wider uppercase font-bold text-[#7a7062] dark:text-[#a89c8e] hover:bg-white dark:hover:bg-[#251f1a] transition-colors cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs font-jakarta tracking-wider uppercase font-bold text-[#7a7062] dark:text-[#a89c8e] hover:bg-white dark:hover:bg-[#251f1a] transition-colors cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={analyzing || !rawJD.trim()}
-                  className="inline-flex items-center gap-2 px-5 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-sm shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-none shadow-sm transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {analyzing && <CircleNotch weight="bold" className="w-3.5 h-3.5 animate-spin text-[#e85d3f]" />}
                   <span>{analyzing ? 'AI Analyzing & Saving...' : 'Analyze & Save JD'}</span>

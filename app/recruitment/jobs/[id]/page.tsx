@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { CircleNotch, ArrowLeft, Buildings, MapPin, Jobs, CaretDown, CaretUp, UserCircle, Star, WarningCircle, CheckCircle, XCircle } from '@/components/icons'
+import { CircleNotch, ArrowLeft, Buildings, MapPin, Jobs, CaretDown, CaretUp, UserCircle, WarningCircle, CheckCircle, XCircle } from '@/components/icons'
 
 export default function JobMatchDashboard() {
   const params = useParams()
@@ -45,7 +45,7 @@ export default function JobMatchDashboard() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 select-none">
-        <div className="w-12 h-12 rounded-sm bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] flex items-center justify-center">
+        <div className="w-12 h-12 rounded-none bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] flex items-center justify-center">
           <CircleNotch weight="bold" className="w-6 h-6 text-[#e85d3f] animate-spin" />
         </div>
         <h2 className="text-base font-bold text-[#191614] dark:text-[#f3eee8] font-sans">AI Match Engine Running</h2>
@@ -60,7 +60,7 @@ export default function JobMatchDashboard() {
         <h1 className="text-xl font-bold text-[#191614] dark:text-[#f3eee8] font-sans">Job Description Not Found</h1>
         <button
           onClick={() => router.push('/recruitment/jobs')}
-          className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] rounded-sm text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors cursor-pointer"
+          className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 border border-[#c8c0af] dark:border-[#3d3329] rounded-none text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] hover:bg-[#faf8f5] dark:hover:bg-[#1a1410] transition-colors cursor-pointer"
         >
           <ArrowLeft weight="bold" className="w-3.5 h-3.5" />
           <span>Return to Jobs</span>
@@ -102,7 +102,7 @@ export default function JobMatchDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Job Profile */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white dark:bg-[#16110d] p-5 sm:p-6 rounded-sm border border-[#c8c0af] dark:border-[#3d3329] sticky top-6">
+          <div className="bg-white dark:bg-[#16110d] p-5 sm:p-6 rounded-none border border-[#c8c0af] dark:border-[#3d3329] sticky top-6">
             <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#7a7062] dark:text-[#a89c8e] block mb-1">
               TARGET ROLE
             </span>
@@ -139,7 +139,7 @@ export default function JobMatchDashboard() {
                     {requiredSkills.map((s: string, i: number) => (
                       <span
                         key={i}
-                        className="text-[10px] font-jakarta uppercase tracking-wider font-semibold bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#5d5244] dark:text-[#c4b5a3] px-2 py-0.5 rounded-sm"
+                        className="text-[10px] font-jakarta uppercase tracking-wider font-semibold bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#5d5244] dark:text-[#c4b5a3] px-2 py-0.5 rounded-none"
                       >
                         {s}
                       </span>
@@ -174,7 +174,7 @@ export default function JobMatchDashboard() {
           </div>
 
           {matches.length === 0 ? (
-            <div className="bg-white dark:bg-[#16110d] p-12 text-center rounded-sm border border-dashed border-[#c8c0af] dark:border-[#3d3329]">
+            <div className="bg-white dark:bg-[#16110d] p-12 text-center rounded-none border border-dashed border-[#c8c0af] dark:border-[#3d3329]">
               <WarningCircle weight="bold" className="w-10 h-10 text-[#a89c8e] mx-auto mb-3" />
               <h3 className="text-sm font-bold text-[#191614] dark:text-[#f3eee8] font-sans">No Suitable Matches Yet</h3>
               <p className="text-xs text-[#7a7062] dark:text-[#a89c8e] mt-1 max-w-sm mx-auto">
@@ -186,7 +186,7 @@ export default function JobMatchDashboard() {
               {matches.map(match => (
                 <div
                   key={match.candidateId}
-                  className="bg-white dark:bg-[#16110d] rounded-sm border border-[#c8c0af] dark:border-[#3d3329] overflow-hidden transition-all hover:border-[#191614] dark:hover:border-[#f3eee8]"
+                  className="bg-white dark:bg-[#16110d] rounded-none border border-[#c8c0af] dark:border-[#3d3329] overflow-hidden transition-all hover:border-[#191614] dark:hover:border-[#f3eee8]"
                 >
                   {/* Collapsed Card */}
                   <div
@@ -194,7 +194,7 @@ export default function JobMatchDashboard() {
                     onClick={() => setExpandedMatch(expandedMatch === match.candidateId ? null : match.candidateId)}
                   >
                     <div className="flex items-start gap-3.5">
-                      <div className="w-10 h-10 rounded-sm bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-none bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#e85d3f] flex items-center justify-center shrink-0">
                         <UserCircle weight="bold" className="w-5 h-5" />
                       </div>
                       <div>
@@ -210,7 +210,7 @@ export default function JobMatchDashboard() {
                         {/* Recommendation Badge */}
                         <div className="mt-2.5">
                           <span
-                            className={`text-[10px] font-jakarta tracking-wider uppercase font-bold px-2 py-0.5 rounded-sm border ${
+                            className={`text-[10px] font-jakarta tracking-wider uppercase font-bold px-2 py-0.5 rounded-none border ${
                               match.recommendationLabel === 'Highly Recommended'
                                 ? 'border-[#c4dec4] dark:border-[#224422] bg-[#f2f8f2] dark:bg-[#142614] text-[#22632e] dark:text-[#4ade80]'
                                 : match.recommendationLabel === 'Recommended'
@@ -292,7 +292,7 @@ export default function JobMatchDashboard() {
                               {match.recommendedSkillsToLearn.map((skill: string, i: number) => (
                                 <span
                                   key={i}
-                                  className="text-[10px] font-jakarta uppercase tracking-wider bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] px-2 py-0.5 rounded-sm"
+                                  className="text-[10px] font-jakarta uppercase tracking-wider bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] dark:text-[#a89c8e] px-2 py-0.5 rounded-none"
                                 >
                                   {skill}
                                 </span>
@@ -307,7 +307,7 @@ export default function JobMatchDashboard() {
                       <div className="pt-3 border-t border-[#c8c0af] dark:border-[#3d3329] flex justify-end">
                         <Link
                           href={`/candidates/${match.candidateId}`}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-sm transition-all"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold rounded-none transition-all"
                         >
                           <span>View Full Candidate Profile</span>
                         </Link>

@@ -276,47 +276,48 @@ export default function UploadModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col border border-gray-200">
-        <div className="flex justify-between items-center p-6 border-b border-gray-150 sticky top-0 bg-white/95 backdrop-blur-md z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-[#16110d] rounded-none w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col border border-[#c8c0af] dark:border-[#3d3329]">
+        <div className="flex justify-between items-center p-5 border-b border-[#c8c0af] dark:border-[#3d3329] sticky top-0 bg-[#faf8f5] dark:bg-[#1f1a16] z-10">
           <div>
-            <h2 className="text-2xl font-black text-gray-950 tracking-tight">Upload CVs</h2>
-            <p className="text-xs font-medium text-gray-500 mt-1">The CV is saved only after you fill in the details and submit.</p>
+            <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#e85d3f]">CANDIDATE UPLOAD</span>
+            <h2 className="text-xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight font-sans">Upload CVs</h2>
+            <p className="text-xs font-medium text-[#7a7062] dark:text-[#a89c8e] mt-0.5">The CV is saved only after you fill in the details and submit.</p>
           </div>
-          <button onClick={handleClose} className="p-2 text-gray-400 hover:text-gray-950 rounded-full hover:bg-gray-100 transition-colors">
+          <button onClick={handleClose} className="p-1 text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white rounded-none transition-colors cursor-pointer">
             <X weight="bold" className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-5 sm:p-6 space-y-6">
           {vacancyTitle && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-950 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#191614] dark:text-[#f3eee8] rounded-none p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
               <div className="flex items-center gap-2.5">
-                <span className="font-extrabold text-[10px] tracking-wider uppercase bg-emerald-600 text-white px-2.5 py-0.5 rounded-full">
+                <span className="font-extrabold text-[10px] font-jakarta tracking-wider uppercase bg-[#e85d3f] text-white px-2 py-0.5 rounded-none">
                   Vacancy
                 </span>
-                <span className="font-bold text-sm text-gray-900">{vacancyTitle}</span>
-                {vacancyCompany && <span className="text-xs text-gray-500">· {vacancyCompany}</span>}
+                <span className="font-bold text-sm text-[#191614] dark:text-[#f3eee8]">{vacancyTitle}</span>
+                {vacancyCompany && <span className="text-xs text-[#7a7062] dark:text-[#a89c8e]">· {vacancyCompany}</span>}
               </div>
-              <div className="text-xs text-emerald-800 font-medium bg-white/80 border border-emerald-200 px-3 py-1 rounded-lg">
-                Auto-filled: <span className="font-bold text-emerald-950">{defaultSector || 'Category'}</span> &rsaquo; <span className="font-bold text-emerald-950">{defaultCategory || 'Sub-category'}</span>
+              <div className="text-xs text-[#5d5244] dark:text-[#c4b5a3] font-medium bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] px-3 py-1 rounded-none font-jakarta">
+                Auto-filled: <span className="font-bold text-[#191614] dark:text-[#f3eee8]">{defaultSector || 'Category'}</span> &rsaquo; <span className="font-bold text-[#191614] dark:text-[#f3eee8]">{defaultCategory || 'Sub-category'}</span>
               </div>
             </div>
           )}
 
           <div 
             {...getRootProps()} 
-            className={`border-2 border-dashed rounded-3xl p-8 text-center cursor-pointer transition-all ${
-              isDragActive ? 'border-gray-950 bg-gray-100/70 scale-99' : 'border-gray-300 hover:border-gray-900 bg-gray-50/60'
+            className={`border border-dashed rounded-none p-8 text-center cursor-pointer transition-all ${
+              isDragActive ? 'border-[#191614] dark:border-[#f3eee8] bg-[#faf8f5] dark:bg-[#1f1a16]' : 'border-[#c8c0af] dark:border-[#3d3329] hover:border-[#191614] dark:hover:border-[#f3eee8] bg-[#faf8f5] dark:bg-[#1a1410]'
             }`}
           >
             <input {...getInputProps()} />
-            <div className="w-12 h-12 rounded-full bg-white shadow-2xs border border-gray-200 flex items-center justify-center mx-auto mb-3 text-gray-600">
+            <div className="w-10 h-10 rounded-none bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] flex items-center justify-center mx-auto mb-3 text-[#e85d3f]">
               <UploadSimple weight="bold" className="h-5 w-5" />
             </div>
-            <h3 className="text-sm font-bold text-gray-950">Drag & drop files here</h3>
-            <p className="text-xs font-medium text-gray-500 mt-1">or click to browse from your computer</p>
-            <p className="text-[11px] font-semibold text-gray-400 mt-3">Supported formats: PDF, DOCX</p>
+            <h3 className="text-sm font-bold text-[#191614] dark:text-[#f3eee8] font-sans">Drag & drop files here</h3>
+            <p className="text-xs font-medium text-[#7a7062] dark:text-[#a89c8e] mt-1">or click to browse from your computer</p>
+            <p className="text-[11px] font-semibold text-[#8a7f70] mt-2 font-jakarta uppercase tracking-wider">Supported formats: PDF, DOCX</p>
           </div>
 
           {items.length > 0 && (
@@ -560,18 +561,18 @@ export default function UploadModal({
           )}
         </div>
         
-        <div className="p-4 border-t border-[#f0ece1] bg-[#faf8f5] flex justify-end sticky bottom-0 rounded-b-2xl z-10">
+        <div className="p-4 border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] flex justify-end sticky bottom-0 rounded-none z-10">
            {allCompleted ? (
              <button
                onClick={handleClose}
-               className="bg-[#24211f] hover:bg-black text-white font-medium py-2 px-6 rounded-lg shadow-sm transition-colors"
+               className="bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold py-2.5 px-6 rounded-none shadow-sm transition-colors cursor-pointer"
              >
                Done
              </button>
            ) : (
              <button
                onClick={handleClose}
-               className="bg-white border border-[#e2dcce] hover:bg-gray-50 text-[#24211f] font-medium py-2 px-6 rounded-lg shadow-sm transition-colors"
+               className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#7a7062] dark:text-[#a89c8e] text-xs font-jakarta tracking-wider uppercase font-bold py-2.5 px-6 rounded-none shadow-sm transition-colors cursor-pointer"
              >
                Close
              </button>
