@@ -277,29 +277,29 @@ export default function UploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-[#16110d] rounded-none w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col border border-[#c8c0af] dark:border-[#3d3329]">
+      <div className="bg-white dark:bg-[#16110d] rounded-sm w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col border border-[#c8c0af] dark:border-[#3d3329]">
         <div className="flex justify-between items-center p-5 border-b border-[#c8c0af] dark:border-[#3d3329] sticky top-0 bg-[#faf8f5] dark:bg-[#1f1a16] z-10">
           <div>
             <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#e85d3f]">CANDIDATE UPLOAD</span>
             <h2 className="text-xl font-black text-[#191614] dark:text-[#f3eee8] tracking-tight font-sans">Upload CVs</h2>
             <p className="text-xs font-medium text-[#7a7062] dark:text-[#a89c8e] mt-0.5">The CV is saved only after you fill in the details and submit.</p>
           </div>
-          <button onClick={handleClose} className="p-1 text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white rounded-none transition-colors cursor-pointer">
+          <button onClick={handleClose} className="p-1 text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white rounded-sm transition-colors cursor-pointer">
             <X weight="bold" className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-5 sm:p-6 space-y-6">
           {vacancyTitle && (
-            <div className="bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#191614] dark:text-[#f3eee8] rounded-none p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="bg-[#faf8f5] dark:bg-[#1f1a16] border border-[#c8c0af] dark:border-[#3d3329] text-[#191614] dark:text-[#f3eee8] rounded-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
               <div className="flex items-center gap-2.5">
-                <span className="font-extrabold text-[10px] font-jakarta tracking-wider uppercase bg-[#e85d3f] text-white px-2 py-0.5 rounded-none">
+                <span className="font-extrabold text-[10px] font-jakarta tracking-wider uppercase bg-[#e85d3f] text-white px-2 py-0.5 rounded-sm">
                   Vacancy
                 </span>
                 <span className="font-bold text-sm text-[#191614] dark:text-[#f3eee8]">{vacancyTitle}</span>
                 {vacancyCompany && <span className="text-xs text-[#7a7062] dark:text-[#a89c8e]">· {vacancyCompany}</span>}
               </div>
-              <div className="text-xs text-[#5d5244] dark:text-[#c4b5a3] font-medium bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] px-3 py-1 rounded-none font-jakarta">
+              <div className="text-xs text-[#5d5244] dark:text-[#c4b5a3] font-medium bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] px-3 py-1 rounded-sm font-jakarta">
                 Auto-filled: <span className="font-bold text-[#191614] dark:text-[#f3eee8]">{defaultSector || 'Category'}</span> &rsaquo; <span className="font-bold text-[#191614] dark:text-[#f3eee8]">{defaultCategory || 'Sub-category'}</span>
               </div>
             </div>
@@ -307,12 +307,12 @@ export default function UploadModal({
 
           <div 
             {...getRootProps()} 
-            className={`border border-dashed rounded-none p-8 text-center cursor-pointer transition-all ${
+            className={`border border-dashed rounded-sm p-8 text-center cursor-pointer transition-all ${
               isDragActive ? 'border-[#191614] dark:border-[#f3eee8] bg-[#faf8f5] dark:bg-[#1f1a16]' : 'border-[#c8c0af] dark:border-[#3d3329] hover:border-[#191614] dark:hover:border-[#f3eee8] bg-[#faf8f5] dark:bg-[#1a1410]'
             }`}
           >
             <input {...getInputProps()} />
-            <div className="w-10 h-10 rounded-none bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] flex items-center justify-center mx-auto mb-3 text-[#e85d3f]">
+            <div className="w-10 h-10 rounded-sm bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] flex items-center justify-center mx-auto mb-3 text-[#e85d3f]">
               <UploadSimple weight="bold" className="h-5 w-5" />
             </div>
             <h3 className="text-sm font-bold text-[#191614] dark:text-[#f3eee8] font-sans">Drag & drop files here</h3>
@@ -330,43 +330,43 @@ export default function UploadModal({
                 const errors = validateForm(item.formData)
                 const isFormValid = Object.keys(errors).length === 0
                 const inputClass = (field: keyof FormErrors) =>
-                  `w-full p-2 border rounded-md text-sm bg-white text-[#24211f] outline-none focus:ring-2 ${
+                  `w-full p-2 border rounded-sm text-sm bg-white dark:bg-[#1a1410] text-[#24211f] dark:text-[#f3eee8] outline-none focus:ring-1 ${
                     item.showErrors && errors[field]
                       ? 'border-[#f9dcd8] focus:ring-[#aa2c1e]/40'
-                      : 'border-[#e2dcce] focus:ring-[#e85d3f]/40 focus:border-[#e85d3f]'
-                  } disabled:bg-gray-100 disabled:text-gray-400`
+                      : 'border-[#c8c0af] dark:border-[#3a3028] focus:ring-[#e85d3f]/40 focus:border-[#e85d3f]'
+                  } disabled:bg-gray-100 disabled:text-gray-400 font-sans`
                 const fieldError = (field: keyof FormErrors) =>
                   item.showErrors && errors[field] ? (
                     <p className="text-xs text-[#aa2c1e] mt-1">{errors[field]}</p>
                   ) : null
 
                 return (
-                  <div key={item.id} className="bg-white border border-[#e2dcce] rounded-xl p-5 shadow-sm space-y-4">
+                  <div key={item.id} className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm p-5 shadow-2xs space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <FileText weight="fill" className="h-6 w-6 text-[#e85d3f]" />
                         <div>
-                          <p className="text-sm font-medium text-[#24211f]">{item.file.name}</p>
-                          <p className="text-xs text-[#7e715f]">{(item.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                          <p className="text-sm font-medium text-[#24211f] dark:text-[#f3eee8]">{item.file.name}</p>
+                          <p className="text-xs text-[#7e715f] dark:text-[#a89c8e]">{(item.file.size / 1024 / 1024).toFixed(2)} MB</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center space-x-3">
                         {isProcessing && (
-                          <div className="flex items-center text-xs text-[#225178] bg-[#f0f4f8] px-3 py-1 rounded-full font-medium">
+                          <div className="flex items-center text-xs text-[#225178] bg-[#f0f4f8] border border-[#d2dfec] px-3 py-1 rounded-sm font-medium">
                             <CircleNotch weight="bold" className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                             {item.status === 'PENDING' && 'Waiting...'}
                             {item.status === 'UPLOADING' && 'Uploading...'}
                           </div>
                         )}
                         {item.status === 'COMPLETED' && (
-                          <div className="flex items-center text-xs text-[#24211f] bg-[#fefcf3] border border-[#fbedb8] px-3 py-1 rounded-full font-medium">
+                          <div className="flex items-center text-xs text-[#24211f] bg-[#fefcf3] border border-[#fbedb8] px-3 py-1 rounded-sm font-medium">
                             <CheckCircle weight="fill" className="w-3.5 h-3.5 mr-1.5 text-[#b58933]" />
                             Completed
                           </div>
                         )}
                         {item.status === 'ERROR' && (
-                          <div className="flex items-center text-xs text-[#aa2c1e] bg-[#fdf1ef] px-3 py-1 rounded-full font-medium" title={item.error}>
+                          <div className="flex items-center text-xs text-[#aa2c1e] bg-[#fdf1ef] border border-[#f9dcd8] px-3 py-1 rounded-sm font-medium" title={item.error}>
                             <WarningCircle weight="fill" className="w-3.5 h-3.5 mr-1.5" />
                             Error
                           </div>
@@ -375,7 +375,7 @@ export default function UploadModal({
                         {!['COMPLETED', 'FINALIZING', 'UPLOADING'].includes(item.status) && (
                           <button 
                             onClick={() => removeFile(item.id)}
-                            className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
+                            className="text-gray-400 hover:text-red-500 p-1 rounded-sm transition-colors cursor-pointer"
                           >
                             <X weight="bold" className="h-4 w-4" />
                           </button>
@@ -384,7 +384,7 @@ export default function UploadModal({
                     </div>
 
                     {item.error && (
-                      <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2 rounded-lg">
+                      <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2 rounded-sm">
                         <WarningCircle weight="fill" className="w-4 h-4 flex-shrink-0 text-red-500" />
                         <span>{item.error}</span>
                       </div>
@@ -392,7 +392,7 @@ export default function UploadModal({
 
                     {/* ── Duplicate Warning Banner ── */}
                     {item.duplicateWarning && !item.duplicateWarning.dismissed && (
-                      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-sm px-4 py-3">
                         <Warning weight="fill" className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-amber-800">Possible duplicate detected</p>
@@ -423,7 +423,7 @@ export default function UploadModal({
                     )}
 
                     {item.status === 'NEEDS_FORM' && (
-                      <div className="bg-gray-50 border rounded-lg overflow-hidden mt-4">
+                      <div className="bg-gray-50 border border-[#c8c0af] dark:border-[#3d3329] rounded-sm overflow-hidden mt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x border-gray-200 h-[500px]">
                           {/* Left Side: Form */}
                           <div className="p-5 flex flex-col h-full overflow-y-auto">
@@ -529,7 +529,7 @@ export default function UploadModal({
                               <button
                                 onClick={() => submitForm(item)}
                                 aria-disabled={!isFormValid}
-                                className={`w-full bg-[#24211f] hover:bg-black text-white font-bold py-2.5 px-6 text-xs rounded-full shadow-xs transition-all ${isFormValid ? '' : 'opacity-60'}`}
+                                className={`w-full bg-[#181513] hover:bg-black text-white font-bold py-2.5 px-6 text-xs font-jakarta tracking-wider uppercase rounded-sm shadow-2xs hover:shadow transition-all cursor-pointer ${isFormValid ? '' : 'opacity-60'}`}
                               >
                                 Submit & Save CV
                               </button>
@@ -549,7 +549,7 @@ export default function UploadModal({
                     )}
                     
                     {item.status === 'FINALIZING' && (
-                      <div className="bg-[#faf8f5] border border-[#e2dcce] rounded-lg p-5 mt-4 flex items-center justify-center space-x-2 text-[#7e715f]">
+                      <div className="bg-[#faf8f5] border border-[#c8c0af] dark:border-[#3d3329] rounded-sm p-5 mt-4 flex items-center justify-center space-x-2 text-[#7e715f]">
                         <CircleNotch weight="bold" className="w-4 h-4 animate-spin text-[#e85d3f]" />
                         <span className="text-sm">Saving candidate details...</span>
                       </div>
@@ -561,18 +561,18 @@ export default function UploadModal({
           )}
         </div>
         
-        <div className="p-4 border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] flex justify-end sticky bottom-0 rounded-none z-10">
+        <div className="p-4 border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] flex justify-end sticky bottom-0 rounded-sm z-10">
            {allCompleted ? (
              <button
                onClick={handleClose}
-               className="bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold py-2.5 px-6 rounded-none shadow-sm transition-colors cursor-pointer"
+               className="bg-[#181513] hover:bg-black text-white dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white text-xs font-jakarta tracking-wider uppercase font-bold py-2.5 px-6 rounded-sm shadow-2xs hover:shadow transition-colors cursor-pointer"
              >
                Done
              </button>
            ) : (
              <button
                onClick={handleClose}
-               className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#7a7062] dark:text-[#a89c8e] text-xs font-jakarta tracking-wider uppercase font-bold py-2.5 px-6 rounded-none shadow-sm transition-colors cursor-pointer"
+               className="bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] text-[#7a7062] dark:text-[#a89c8e] text-xs font-jakarta tracking-wider uppercase font-bold py-2.5 px-6 rounded-sm shadow-2xs hover:shadow transition-colors cursor-pointer"
              >
                Close
              </button>

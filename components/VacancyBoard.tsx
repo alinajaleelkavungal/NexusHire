@@ -575,29 +575,30 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
     }
   }, [form, image, removeImage, isEdit, vacancy, onSaved, todayLocal])
 
-  const input = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:border-black'
-  const label = 'block text-xs font-semibold text-gray-700 mb-1'
+  const input = 'w-full px-3 py-2 border border-[#c8c0af] dark:border-[#3a3028] bg-[#faf8f5] dark:bg-[#1a1410] text-[#191614] dark:text-[#f3eee8] placeholder-[#8a7f70] dark:placeholder-[#6b6055] rounded-sm text-sm focus:outline-none focus:border-[#191614] dark:focus:border-[#6b5e52] font-sans'
+  const label = 'block text-xs font-jakarta tracking-wider uppercase font-bold text-[#191614] dark:text-[#f3eee8] mb-1'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label={isEdit ? 'Edit vacancy' : 'Post a vacancy'}>
-      <form onSubmit={submit} className="bg-white rounded-none w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#c8c0af]">
-        <div className="flex items-center justify-between p-5 border-b sticky top-0 bg-white z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-200" role="dialog" aria-modal="true" aria-label={isEdit ? 'Edit vacancy' : 'Post a vacancy'}>
+      <form onSubmit={submit} className="bg-white dark:bg-[#16110d] rounded-sm w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl border border-[#c8c0af] dark:border-[#3d3329]">
+        <div className="flex items-center justify-between p-5 border-b border-[#c8c0af] dark:border-[#3d3329] sticky top-0 bg-[#faf8f5] dark:bg-[#1f1a16] z-10">
           <div>
-            <h3 className="text-lg font-bold text-gray-900">{isEdit ? 'Edit vacancy' : 'Post a vacancy'}</h3>
-            <p className="text-xs text-gray-500">
+            <span className="text-[10px] font-jakarta tracking-wider uppercase font-bold text-[#e85d3f]">VACANCY BOARD</span>
+            <h3 className="text-base font-bold text-[#191614] dark:text-[#f3eee8] font-sans">{isEdit ? 'Edit Vacancy' : 'Post a Vacancy'}</h3>
+            <p className="text-xs text-[#7a7062] dark:text-[#a89c8e]">
               {isEdit
                 ? 'Changes show on everyone\'s Home page straight away. The original posted date is kept.'
                 : 'It appears on everyone\'s Home page. The posted date is added automatically.'}
             </p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100">
+          <button type="button" onClick={onClose} aria-label="Close" className="p-1.5 text-[#7a7062] hover:text-[#191614] dark:text-[#a89c8e] dark:hover:text-white rounded-sm hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-5 space-y-4">
           {error && (
-            <div role="alert" className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-lg">
+            <div role="alert" className="flex items-center gap-2 bg-[#fbf2f2] dark:bg-[#2a1616] border border-[#e0b4b4] dark:border-[#522525] text-[#aa2c1e] dark:text-[#f87171] text-xs px-3 py-2 rounded-sm font-medium">
               <AlertCircle className="w-4 h-4 shrink-0" /> {error}
             </div>
           )}
@@ -683,13 +684,13 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
           <div>
             <label className={label}>Poster image (optional)</label>
             {hasExistingImage && (
-              <div className="flex items-center gap-3 mb-2 p-2 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-center gap-3 mb-2 p-2 border border-[#c8c0af] dark:border-[#3d3329] rounded-sm bg-[#faf8f5] dark:bg-[#1a1410]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {!removeImage && <img src={vacancy!.imageUrl!} alt="Current poster" className="w-16 h-12 object-contain bg-white rounded border" />}
-                <p className="flex-1 text-xs text-gray-600">
+                {!removeImage && <img src={vacancy!.imageUrl!} alt="Current poster" className="w-16 h-12 object-contain bg-white dark:bg-[#16110d] rounded-sm border border-[#c8c0af] dark:border-[#3d3329]" />}
+                <p className="flex-1 text-xs text-[#7a7062] dark:text-[#a89c8e]">
                   {removeImage ? 'The current poster will be removed.' : image ? 'The current poster will be replaced by the new image.' : 'Current poster is kept unless you replace or remove it.'}
                 </p>
-                <label className="flex items-center gap-1.5 text-xs text-red-600 cursor-pointer font-medium">
+                <label className="flex items-center gap-1.5 text-xs text-[#aa2c1e] cursor-pointer font-medium">
                   <input type="checkbox" checked={removeImage} onChange={e => setRemoveImage(e.target.checked)} /> Remove
                 </label>
               </div>
@@ -707,29 +708,29 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
               onDragOver={e => { e.preventDefault(); setDragging(true) }}
               onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragging(false) }}
               onDrop={e => { e.preventDefault(); setDragging(false); pickImage(e.dataTransfer.files?.[0]) }}
-              className={`relative flex flex-col items-center justify-center gap-2 px-4 py-6 min-h-[140px] text-sm text-gray-700 border-2 border-dashed rounded-lg w-full text-center transition-colors ${
-                dragging ? 'border-black bg-gray-50' : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+              className={`relative flex flex-col items-center justify-center gap-2 px-4 py-6 min-h-[140px] text-xs font-jakarta uppercase tracking-wider text-[#7a7062] dark:text-[#a89c8e] border border-dashed rounded-sm w-full text-center transition-colors cursor-pointer ${
+                dragging ? 'border-[#191614] dark:border-[#f3eee8] bg-[#faf8f5] dark:bg-[#1f1a16]' : 'border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1a1410] hover:border-[#191614] dark:hover:border-[#f3eee8]'
               }`}
             >
               {preview && !dragging ? (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={preview} alt="Selected poster preview" className="max-h-36 max-w-full object-contain bg-white rounded border" />
-                  <span className="max-w-full truncate text-xs text-gray-600">
+                  <img src={preview} alt="Selected poster preview" className="max-h-36 max-w-full object-contain bg-white dark:bg-[#16110d] rounded-sm border border-[#c8c0af] dark:border-[#3d3329]" />
+                  <span className="max-w-full truncate text-xs text-[#7a7062] dark:text-[#a89c8e] normal-case">
                     {image!.name} ({(image!.size / 1024).toFixed(0)} KB) · click or drop to change
                   </span>
                 </>
               ) : (
                 <>
-                  <ImagePlus className={`w-7 h-7 ${dragging ? 'text-black' : 'text-gray-400'}`} />
-                  <span className="font-semibold text-gray-800 text-xs">
+                  <ImagePlus className={`w-7 h-7 ${dragging ? 'text-[#191614] dark:text-[#f3eee8]' : 'text-[#8a7f70]'}`} />
+                  <span className="font-bold text-[#191614] dark:text-[#f3eee8] text-xs">
                     {dragging ? 'Drop the poster here'
                       : hasExistingImage ? 'Drag & drop a new poster here, or click to browse'
                       : 'Drag & drop a poster here, or click to browse'}
                   </span>
                   {!dragging && (
-                    <span className="text-[11px] text-gray-500">
-                      PNG, JPG or WEBP, up to 5 MB
+                    <span className="text-[11px] text-[#8a7f70] lowercase">
+                      png, jpg or webp, up to 5 mb
                     </span>
                   )}
                 </>
@@ -741,7 +742,7 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
                   aria-label="Clear selected image"
                   onClick={e => { e.stopPropagation(); setImage(null) }}
                   onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setImage(null) } }}
-                  className="absolute top-2 right-2 p-1 bg-white border border-gray-200 text-gray-500 hover:text-red-600 rounded-full"
+                  className="absolute top-2 right-2 p-1 bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] text-[#7a7062] hover:text-[#aa2c1e] rounded-sm cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </span>
@@ -750,12 +751,12 @@ function VacancyFormModal({ vacancy, onClose, onSaved }: { vacancy?: Vacancy; on
           </div>
         </div>
 
-        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3 sticky bottom-0 rounded-none">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 rounded-none">
+        <div className="p-4 border-t border-[#c8c0af] dark:border-[#3d3329] bg-[#faf8f5] dark:bg-[#1f1a16] flex justify-end gap-3 sticky bottom-0 rounded-sm">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-jakarta tracking-wider uppercase font-bold text-[#7a7062] dark:text-[#a89c8e] bg-white dark:bg-[#16110d] border border-[#c8c0af] dark:border-[#3d3329] hover:bg-[#faf8f5] dark:hover:bg-[#1f1a16] rounded-sm transition-colors cursor-pointer">
             Cancel
           </button>
-          <button disabled={saving} className="flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 disabled:opacity-60 rounded-none shadow-2xs">
-            {saving && <Loader2 className="w-4 h-4 animate-spin" />} {isEdit ? 'Save changes' : 'Post vacancy'}
+          <button disabled={saving} className="flex items-center gap-2 px-5 py-2 text-xs font-jakarta tracking-wider uppercase font-bold text-white bg-[#181513] hover:bg-black dark:bg-[#f3eee8] dark:text-[#191614] dark:hover:bg-white disabled:opacity-60 rounded-sm shadow-2xs hover:shadow transition-all cursor-pointer">
+            {saving && <Loader2 className="w-4 h-4 animate-spin text-[#e85d3f]" />} {isEdit ? 'Save Changes' : 'Post Vacancy'}
           </button>
         </div>
       </form>
